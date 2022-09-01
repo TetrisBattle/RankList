@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { Backdrop, Box, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
-import Header from 'components/Header'
 import { ReactChildren } from 'interfaces/react'
 
 const RootWrapper = ({ children }: ReactChildren) => {
@@ -17,7 +16,6 @@ const RootWrapper = ({ children }: ReactChildren) => {
 				color: theme.palette.text.primary,
 			})}
 		>
-			<Header />
 			<Box>{children}</Box>
 
 			<Backdrop open={appStore.isLoading}>

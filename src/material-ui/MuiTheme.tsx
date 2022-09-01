@@ -31,10 +31,13 @@ const MuiTheme = (isDarkTheme: boolean) => {
 				? {
 						mode: 'dark',
 						primary: {
-							main: '#BB85FC',
+							main: '#850303',
 						},
 						secondary: {
-							main: '#10DAC6',
+							main: '#003549',
+						},
+						background: {
+							default: '#000'
 						},
 				  }
 				: {
