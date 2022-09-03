@@ -20,11 +20,11 @@ const Home = () => {
 				<Button
 					onClick={() => setActivePAge(text)}
 					sx={{
-						borderRadius: 0,
-						width: 1 / 7,
-						minWidth: 'unset',
-						p: 0,
-						m: 0,
+						flex: 1,
+						minWidth: 30,
+						fontSize: 20,
+						fontWeight: 600,
+						p: 0.25,
 						bgcolor: (theme) =>
 							activePage === text
 								? theme.palette.primary.main
@@ -39,13 +39,29 @@ const Home = () => {
 		return (
 			<Box>
 				<Box sx={{ display: 'flex' }}>
-					<Typography sx={{ flex: 1, pl: 1, fontSize: 20 }}>
-						RankList
-					</Typography>
-					<PageButton text={'X'} />
-					<PageButton text={'?'} />
+					<Box
+						sx={{
+							display: 'flex',
+							flex: 4,
+							alignItems: 'center',
+						}}
+					>
+						<Typography
+							sx={{
+								pl: 1,
+								fontSize: 22,
+							}}
+						>
+							RankList
+						</Typography>
+					</Box>
+					<Box sx={{ display: 'flex', flex: 3 }}>
+						<PageButton text={'X'} />
+						<PageButton text={'?'} />
+						<PageButton text={'+'} />
+					</Box>
 				</Box>
-				<Box>
+				<Box sx={{ display: 'flex', width: 1 }}>
 					<PageButton text={'S'} />
 					<PageButton text={'A'} />
 					<PageButton text={'B'} />
@@ -58,35 +74,47 @@ const Home = () => {
 		)
 	}
 
-	const ListItem = () => {
+	const ListItem = ({
+		counter,
+		name,
+		chapter,
+	}: {
+		counter: number
+		name: string
+		chapter: string
+	}) => {
 		return (
 			<Stack
 				direction={'row'}
-				gap={.5}
+				gap={0.5}
 				sx={{
 					width: 1,
 					justifyContent: 'center',
-					pt: 0,
-					pb: 0.5,
 					'& .MuiListItemText-root': {
 						bgcolor: (theme) => theme.palette.secondary.main,
 						mt: 0,
-						paddingInline: 1,
 					},
 				}}
 			>
-				<ListItemText primary={1} sx={{ flex: 1, textAlign: 'center' }} />
-				<ListItemText primary='Solo Leveling' sx={{ flex: 12 }} />
-				<ListItemText primary={1234} sx={{ flex: 2, textAlign: 'center' }} />
+				<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
+				<ListItemText primary={name} sx={{ flex: 8, pl: 1 }} />
+				<ListItemText primary={chapter} sx={{ flex: 2, textAlign: 'center' }} />
 			</Stack>
 		)
 	}
 
 	return (
-		<Box sx={{ maxWidth: 360, marginInline: 'auto' }}>
+		<Box sx={{ maxWidth: 1200, marginInline: 'auto' }}>
 			<TopBar />
-			<List sx={{ m: 0, p: 0 }}>
-				<ListItem />
+			<List
+				sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}
+			>
+				<ListItem counter={1} name={'Solo Leveling'} chapter={'1234'} />
+				<ListItem
+					counter={2}
+					name={'The Beginning After The End'}
+					chapter={'64'}
+				/>
 			</List>
 		</Box>
 	)
