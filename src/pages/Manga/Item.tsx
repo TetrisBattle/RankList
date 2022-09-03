@@ -1,6 +1,6 @@
 import { ListItemText, Stack } from "@mui/material"
 
-const ListItem = ({
+const Item = ({
 	counter,
 	name,
 	chapter,
@@ -29,4 +29,4 @@ const ListItem = ({
 	)
 }
 
-export default ListItem
+export default Item
