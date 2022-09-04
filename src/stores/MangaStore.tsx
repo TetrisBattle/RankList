@@ -1,6 +1,9 @@
 import { makeAutoObservable } from 'mobx'
+import firebaseApp from 'firebaseApp'
+import { getFirestore } from 'firebase/firestore'
 
 export default class MangaStore {
+	private firestore = getFirestore(firebaseApp)
 	private _activePage = "S"
 
 	constructor() {
