@@ -14,12 +14,21 @@ class Manga {
 
 export default class MangaStore {
 	private _mangas: Manga[] = []
+	private _isLoading = true
 	private _activePage = 'rankS'
 	private _db = getFirestore(firebaseApp)
 	private _mangaPath = 'users/xTrouble/lists/manga'
 
 	constructor() {
 		makeAutoObservable(this)
+	}
+
+	get isLoading() {
+		return this._isLoading
+	}
+
+	set isLoading(value: boolean) {
+		this._isLoading = value
 	}
 
 	get activePage() {
@@ -39,6 +48,8 @@ export default class MangaStore {
 	}
 
 	async updateMangas() {
+		this.mangas = []
+		this.isLoading = true
 		const mangas: Manga[] = []
 
 		const ref = collection(this._db, `${this._mangaPath}/${this._activePage}`)
@@ -50,5 +61,6 @@ export default class MangaStore {
 		})
 
 		this.mangas = mangas
+		this.isLoading = false
 	}
 }

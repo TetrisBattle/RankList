@@ -1,14 +1,30 @@
-import { Box } from '@mui/material'
+import { observer } from 'mobx-react-lite'
+import { Box, CircularProgress } from '@mui/material'
+import { useStoreContext } from 'stores/StoreContext'
 import TopBar from './TopBar'
 import MangaList from './MangaList'
 
 const Manga = () => {
+	const { mangaStore } = useStoreContext()
+
 	return (
-		<Box sx={{ maxWidth: 1200, marginInline: 'auto' }}>
-			<TopBar />
-			<MangaList />
+		<Box>
+			<Box
+				sx={{
+					maxWidth: (theme) => theme.breakpoints.values.md,
+					marginInline: 'auto',
+				}}
+			>
+				<TopBar />
+				<MangaList />
+				{mangaStore.isLoading && (
+					<Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
+						<CircularProgress />
+					</Box>
+				)}
+			</Box>
 		</Box>
 	)
 }
 
-export default Manga
+export default observer(Manga)

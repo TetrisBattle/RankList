@@ -1,4 +1,4 @@
-import { ListItemText, Stack } from "@mui/material"
+import { Box, ListItemText } from '@mui/material'
 
 const Item = ({
 	counter,
@@ -10,10 +10,10 @@ const Item = ({
 	chapter: string
 }) => {
 	return (
-		<Stack
-			direction={'row'}
-			gap={0.5}
+		<Box
 			sx={{
+				display: 'flex',
+				gap: 0.5,
 				width: 1,
 				justifyContent: 'center',
 				'& .MuiListItemText-root': {
@@ -25,7 +25,7 @@ const Item = ({
 			<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
 			<ListItemText primary={name} sx={{ flex: 8, pl: 1 }} />
 			<ListItemText primary={chapter} sx={{ flex: 2, textAlign: 'center' }} />
-		</Stack>
+		</Box>
 	)
 }
 

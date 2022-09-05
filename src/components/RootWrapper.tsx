@@ -16,8 +16,7 @@ const RootWrapper = ({ children }: ReactChildren) => {
 				color: theme.palette.text.primary,
 			})}
 		>
-			<Box>{children}</Box>
-
+			{children}
 			<Backdrop open={appStore.isLoading}>
 				<CircularProgress />
 			</Backdrop>
