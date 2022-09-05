@@ -32,9 +32,9 @@ const NewMangaDialog = ({
 						size={'small'}
 						sx={{
 							mt: 2,
-							'& input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button':
+							'& .MuiTextField-root::-webkit-inner-spin-button, .MuiTextField-root::-webkit-outer-spin-button':
 								{
-									'-webkit-appearance': 'none',
+									WebkitAppearance: 'none',
 									margin: 0,
 								},
 						}}

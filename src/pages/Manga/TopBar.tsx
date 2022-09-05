@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { Box, Button, ButtonProps, Typography } from '@mui/material'
 import NewMangaDialog from './NewMangaDialog'
+import { useStoreContext } from 'stores/StoreContext'
 
 const TopBar = () => {
 	const [open, setOpen] = useState(false)
-	const [activePage, setActivePAge] = useState('S')
+	const { mangaStore } = useStoreContext()
+	const [x, render] = useState(false)
 
 	const PageButton = ({
 		text,
@@ -16,11 +18,17 @@ const TopBar = () => {
 		return (
 			<Button
 				onClick={
-					baseProps?.onClick ? baseProps.onClick : () => setActivePAge(text)
+					baseProps?.onClick
+						? baseProps.onClick
+						: () => {
+								mangaStore.activePage = 'rank' + text
+								render(!x)
+						  }
 				}
 				sx={{
+					borderRadius: 0,
 					bgcolor: (theme) =>
-						activePage === text
+						mangaStore.activePage === 'rank' + text
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
