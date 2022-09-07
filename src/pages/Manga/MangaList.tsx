@@ -15,7 +15,8 @@ const MangaList = () => {
 		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>
 			{mangaStore.mangas.map((manga, counter) => (
 				<Item
-					key={manga.name}
+					key={manga.id}
+					id={manga.id}
 					counter={counter + 1}
 					name={manga.name}
 					chapter={manga.chapter}

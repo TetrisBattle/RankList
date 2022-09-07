@@ -5,6 +5,8 @@ import {
 	collection,
 	getDocs,
 	addDoc,
+	deleteDoc,
+	doc,
 	query,
 	orderBy,
 } from 'firebase/firestore'
@@ -71,5 +73,10 @@ export default class MangaStore {
 			name: name,
 			chapter: chapter
 		})
+	}
+
+	async deleteManga(id: string) {
+		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
+		await deleteDoc(ref)
 	}
 }

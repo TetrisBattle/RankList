@@ -1,10 +1,12 @@
 import { Box, ListItemText } from '@mui/material'
 
 const Item = ({
+	id,
 	counter,
 	name,
 	chapter,
 }: {
+	id: string
 	counter: number
 	name: string
 	chapter: string
