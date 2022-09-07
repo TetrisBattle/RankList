@@ -4,6 +4,7 @@ import {
 	getFirestore,
 	collection,
 	getDocs,
+	addDoc,
 	query,
 	orderBy,
 } from 'firebase/firestore'
@@ -62,5 +63,13 @@ export default class MangaStore {
 
 		this.mangas = mangas
 		this.isLoading = false
+	}
+
+	async saveNewManga(name: string, chapter: string) {
+		const ref = collection(this._db, `${this._mangaPath}/${this._activePage}`)
+		await addDoc(ref, {
+			name: name,
+			chapter: chapter
+		})
 	}
 }

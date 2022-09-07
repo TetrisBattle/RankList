@@ -17,7 +17,7 @@ const RootWrapper = ({ children }: ReactChildren) => {
 			})}
 		>
 			{children}
-			<Backdrop open={appStore.isLoading}>
+			<Backdrop open={appStore.isLoading} sx={{ zIndex: 9999 }}>
 				<CircularProgress />
 			</Backdrop>
 		</Box>

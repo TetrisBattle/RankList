@@ -1,30 +1,19 @@
 import { useState } from 'react'
-import { Box, Button, ButtonProps, Typography } from '@mui/material'
-import NewMangaDialog from './NewMangaDialog'
+import { Box, Button, Typography } from '@mui/material'
+import NewMangaDialogButton from './NewMangaDialogButton'
 import { useStoreContext } from 'stores/StoreContext'
 
 const TopBar = () => {
-	const [open, setOpen] = useState(false)
 	const { mangaStore } = useStoreContext()
 	const [x, render] = useState(false)
 
-	const PageButton = ({
-		text,
-		baseProps,
-	}: {
-		text: string
-		baseProps?: ButtonProps
-	}) => {
+	const PageButton = ({ text }: { text: string }) => {
 		return (
 			<Button
-				onClick={
-					baseProps?.onClick
-						? baseProps.onClick
-						: () => {
-								mangaStore.activePage = 'rank' + text
-								render(!x)
-						  }
-				}
+				onClick={() => {
+					mangaStore.activePage = 'rank' + text
+					render(!x)
+				}}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
@@ -32,7 +21,6 @@ const TopBar = () => {
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
-				{...baseProps}
 			>
 				{text}
 			</Button>
@@ -64,16 +52,7 @@ const TopBar = () => {
 				<Box sx={{ display: 'flex', flex: 3 }}>
 					<PageButton text={'X'} />
 					<PageButton text={'?'} />
-					<PageButton
-						text={'+'}
-						baseProps={{
-							color: 'secondary',
-							onClick: () => setOpen(true),
-							sx: {
-								bgcolor: (theme) => theme.palette.secondary.main,
-							},
-						}}
-					/>
+					<NewMangaDialogButton />
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>
@@ -85,8 +64,6 @@ const TopBar = () => {
 				<PageButton text={'E'} />
 				<PageButton text={'F'} />
 			</Box>
-
-			<NewMangaDialog open={open} setOpen={setOpen} />
 		</Box>
 	)
 }
