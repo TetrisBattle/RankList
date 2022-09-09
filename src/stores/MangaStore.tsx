@@ -85,12 +85,21 @@ export default class MangaStore {
 			name: name,
 			chapter: chapter,
 		})
-		this.updateMangaList()
+
+		const index = this.mangas.findIndex((manga) => manga.id === id)
+		const copy = JSON.parse(JSON.stringify(this.mangas))
+		copy[index].name = name
+		copy[index].chapter = chapter
+		copy.sort((a: Manga, b: Manga) => {
+			if (a.name.toUpperCase() > b.name.toUpperCase()) return 1
+			else return -1
+		})
+		this.mangas = copy
 	}
 
 	async delete(id: string) {
 		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
 		await deleteDoc(ref)
-		this.updateMangaList()
+		this.mangas = this.mangas.filter((manga) => manga.id !== id)
 	}
 }
