@@ -23,7 +23,7 @@ export default class MangaStore {
 	private _isLoading = true
 	private _activePage = 'rankS'
 	private _db = getFirestore(firebaseApp)
-	private _mangaPath = 'users/xTrouble/lists/manga'
+	private _mangaPath = 'users/anonymous/lists/manga'
 
 	constructor() {
 		makeAutoObservable(this)
@@ -51,6 +51,14 @@ export default class MangaStore {
 
 	private set mangas(value: Manga[]) {
 		this._mangas = value
+	}
+
+	get mangaPath() {
+		return this._mangaPath
+	}
+
+	set mangaPath(value: string) {
+		this._mangaPath = value
 	}
 
 	async updateMangaList() {

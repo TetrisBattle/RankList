@@ -4,9 +4,22 @@ import { useStoreContext } from 'stores/StoreContext'
 import TopBar from './TopBar'
 import MangaList from './MangaList'
 import MangaDialog from './MangaDialog'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { useEffect } from 'react'
 
 const Manga = () => {
-	const { mangaStore } = useStoreContext()
+	const { userStore, mangaStore } = useStoreContext()
+
+	useEffect(() => {
+		const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
+			console.log('this', user)
+			userStore.currentUser = user
+			mangaStore.mangaPath = user
+				? `users/${user.uid}/lists/manga`
+				: 'users/anonymous/lists/manga'
+		})
+		return unsubscribe
+	}, [userStore, mangaStore])
 
 	return (
 		<Box>

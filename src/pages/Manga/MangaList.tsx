@@ -9,7 +9,7 @@ const MangaList = () => {
 
 	useEffect(() => {
 		mangaStore.updateMangaList()
-	}, [mangaStore, mangaStore.activePage])
+	}, [mangaStore, mangaStore.activePage, mangaStore.mangaPath])
 
 	return (
 		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>

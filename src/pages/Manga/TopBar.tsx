@@ -1,9 +1,11 @@
 import { useState } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
+import SettingsIcon from '@mui/icons-material/Settings'
 
 const TopBar = () => {
-	const { mangaStore, mangaDialogStore } = useStoreContext()
+	const { userStore, mangaStore, mangaDialogStore } = useStoreContext()
+	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 	const [x, render] = useState(false)
 
 	const PageButton = ({ text }: { text: string }) => {
@@ -23,6 +25,36 @@ const TopBar = () => {
 			>
 				{text}
 			</Button>
+		)
+	}
+
+	const CustomMenu = () => {
+		return (
+			<Menu
+				anchorEl={menuAnchor}
+				open={!!menuAnchor}
+				onClose={() => setMenuAnchor(null)}
+			>
+				{userStore.currentUser && (
+					<MenuItem
+						onClick={() => {
+							mangaDialogStore.dialogType = 'new'
+							mangaDialogStore.openDialog = true
+							setMenuAnchor(null)
+						}}
+					>
+						Add new manga
+					</MenuItem>
+				)}
+				<MenuItem
+					onClick={() => {
+						userStore.currentUser ? userStore.logout() : userStore.login()
+						setMenuAnchor(null)
+					}}
+				>
+					{userStore.currentUser ? 'Logout' : 'Login'}
+				</MenuItem>
+			</Menu>
 		)
 	}
 
@@ -52,18 +84,17 @@ const TopBar = () => {
 					<PageButton text={'X'} />
 					<PageButton text={'?'} />
 					<Button
-						color={'secondary'}
-						onClick={() => {
-							mangaDialogStore.dialogType = 'new'
-							mangaDialogStore.openDialog = true
+						onClick={(e) => {
+							setMenuAnchor(e.currentTarget)
 						}}
 						sx={{
 							borderRadius: 0,
-							bgcolor: (theme) => theme.palette.secondary.main,
+							bgcolor: (theme) => theme.palette.background.default,
 						}}
 					>
-						+
+						<SettingsIcon fontSize='small' />
 					</Button>
+					<CustomMenu />
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>

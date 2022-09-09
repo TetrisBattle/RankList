@@ -17,14 +17,13 @@ const Item = ({
 	name: string
 	chapter: string
 }) => {
+	const { userStore, mangaStore, mangaDialogStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
-	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
-	const open = Boolean(anchorEl)
-	const { mangaStore, mangaDialogStore } = useStoreContext()
+	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 
 	const onCopy = () => {
 		navigator.clipboard.writeText(`${name} chapter ${chapter}`)
-		setAnchorEl(null)
+		setMenuAnchor(null)
 	}
 
 	const onEdit = () => {
@@ -33,17 +32,17 @@ const Item = ({
 		mangaDialogStore.mangaName = name
 		mangaDialogStore.mangaChapter = chapter
 		mangaDialogStore.openDialog = true
-		setAnchorEl(null)
+		setMenuAnchor(null)
 	}
 
 	const onDelete = () => {
 		mangaStore.delete(id)
-		setAnchorEl(null)
+		setMenuAnchor(null)
 	}
 
 	return (
 		<Box
-			{...useLongPress(() => setAnchorEl(itemRef.current))}
+			{...useLongPress(() => setMenuAnchor(itemRef.current))}
 			sx={{
 				display: 'flex',
 				gap: 0.5,
@@ -58,25 +57,33 @@ const Item = ({
 			<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
 			<ListItemText primary={name} ref={itemRef} sx={{ flex: 8, pl: 1 }} />
 			<ListItemText primary={chapter} sx={{ flex: 2, textAlign: 'center' }} />
-			<Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
+			<Menu
+				anchorEl={menuAnchor}
+				open={!!menuAnchor}
+				onClose={() => setMenuAnchor(null)}
+			>
 				<MenuItem onClick={onCopy}>
 					<ListItemIcon>
 						<ContentCopyIcon fontSize='small' />
 					</ListItemIcon>
 					<ListItemText>Copy</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={onEdit}>
-					<ListItemIcon>
-						<EditIcon fontSize='small' />
-					</ListItemIcon>
-					<ListItemText>Edit</ListItemText>
-				</MenuItem>
-				<MenuItem onClick={onDelete}>
-					<ListItemIcon>
-						<DeleteIcon fontSize='small' />
-					</ListItemIcon>
-					<ListItemText>Delete</ListItemText>
-				</MenuItem>
+				{userStore.currentUser && (
+					<MenuItem onClick={onEdit}>
+						<ListItemIcon>
+							<EditIcon fontSize='small' />
+						</ListItemIcon>
+						<ListItemText>Edit</ListItemText>
+					</MenuItem>
+				)}
+				{userStore.currentUser && (
+					<MenuItem onClick={onDelete}>
+						<ListItemIcon>
+							<DeleteIcon fontSize='small' />
+						</ListItemIcon>
+						<ListItemText>Delete</ListItemText>
+					</MenuItem>
+				)}
 			</Menu>
 		</Box>
 	)
