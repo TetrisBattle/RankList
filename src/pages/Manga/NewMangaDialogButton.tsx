@@ -20,7 +20,6 @@ const NewMangaDialogButton = () => {
 		mangaStore.saveNewManga(name, chapter)
 			.then(() => {
 				appStore.isLoading = false
-				mangaStore.updateMangas()
 				setOpen(false)
 				setName('')
 				setChapter('')

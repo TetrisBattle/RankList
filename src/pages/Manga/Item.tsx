@@ -1,6 +1,7 @@
+import { useState, useRef } from 'react'
 import { Box, ListItemText, Menu, MenuItem } from '@mui/material'
 import useLongPress from 'hooks/useLongPress'
-import { useState, useRef } from 'react'
+import { useStoreContext } from 'stores/StoreContext'
 
 const Item = ({
 	id,
@@ -16,16 +17,19 @@ const Item = ({
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 	const open = Boolean(anchorEl)
+	const { mangaStore } = useStoreContext()
 
 	const onEdit = () => {
 		setAnchorEl(null)
 	}
 
 	const onCopy = () => {
+		navigator.clipboard.writeText(name)
 		setAnchorEl(null)
 	}
 
 	const onDelete = () => {
+		mangaStore.delete(id)
 		setAnchorEl(null)
 	}
 

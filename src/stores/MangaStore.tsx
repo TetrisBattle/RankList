@@ -73,10 +73,12 @@ export default class MangaStore {
 			name: name,
 			chapter: chapter
 		})
+		this.updateMangas()
 	}
 
-	async deleteManga(id: string) {
+	async delete(id: string) {
 		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
 		await deleteDoc(ref)
+		this.updateMangas()
 	}
 }
