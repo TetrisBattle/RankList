@@ -5,7 +5,7 @@ import {
 	Navigate,
 } from 'react-router-dom'
 import RootWrapper from 'components/RootWrapper'
-import Home from 'pages/Home'
+// import Login from 'pages/Login'
 import Manga from 'pages/Manga'
 
 export default function App() {
@@ -13,8 +13,8 @@ export default function App() {
 		<Router>
 			<RootWrapper>
 				<Routes>
-					<Route path='/' element={<Navigate replace to='/Manga' />} />
-					<Route path='/Home' element={<Home />} />
+					<Route path='/' element={<Navigate replace to={'/manga'} />} />
+					{/* <Route path='/Login' element={<Login />} /> */}
 					<Route path='/Manga' element={<Manga />} />
 				</Routes>
 			</RootWrapper>

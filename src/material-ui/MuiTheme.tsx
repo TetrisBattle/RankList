@@ -37,7 +37,7 @@ const MuiTheme = (isDarkTheme: boolean) => {
 							main: '#003549',
 						},
 						background: {
-							default: '#000'
+							default: '#000',
 						},
 				  }
 				: {
@@ -48,12 +48,7 @@ const MuiTheme = (isDarkTheme: boolean) => {
 			toolbar: {}, // This will get rid of minHeight styles
 		},
 		typography: {
-			fontFamily: [
-				'Open Sans',
-				'Roboto',
-				'Arial',
-				'sans-serif',
-			].join(','),
+			fontFamily: ['Open Sans', 'Roboto', 'Arial', 'sans-serif'].join(','),
 			h1: {
 				fontSize: '3rem', // 48px
 				fontWeight: 400,
@@ -88,11 +83,15 @@ const MuiTheme = (isDarkTheme: boolean) => {
 				defaultProps: {
 					variant: 'contained',
 				},
-				// styleOverrides: {
-				// 	root: {
-				// 		padding: '4px 14px',
-				// 	},
-				// },
+			},
+			MuiTextField: {
+				styleOverrides: {
+					root: {
+						'& input:-webkit-autofill': {
+							webkitBoxShadow: '0 0 0 100px rgba(0, 0, 0, 0.8) inset',
+						},
+					},
+				},
 			},
 			MuiLink: {
 				defaultProps: {
