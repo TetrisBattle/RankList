@@ -5,14 +5,17 @@ import {
 	collection,
 	getDocs,
 	addDoc,
+	setDoc,
 	deleteDoc,
 	doc,
 	query,
 	orderBy,
 } from 'firebase/firestore'
 
-class Manga {
-	constructor(public id: string, public name: string, public chapter: string) {}
+export class Manga {
+	constructor(public id = '', public name = '', public chapter = '') {
+		makeAutoObservable(this)
+	}
 }
 
 export default class MangaStore {
@@ -71,7 +74,16 @@ export default class MangaStore {
 		const ref = collection(this._db, `${this._mangaPath}/${this._activePage}`)
 		await addDoc(ref, {
 			name: name,
-			chapter: chapter
+			chapter: chapter,
+		})
+		this.updateMangaList()
+	}
+
+	async edit(id: string, name: string, chapter: string) {
+		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
+		await setDoc(ref, {
+			name: name,
+			chapter: chapter,
 		})
 		this.updateMangaList()
 	}

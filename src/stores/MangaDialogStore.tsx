@@ -1,10 +1,10 @@
 import { makeAutoObservable } from 'mobx'
+import { Manga } from 'stores/MangaStore'
 
 export default class MangaStore {
 	private _openDialog = false
 	private _dialogType = 'new'
-	private _name = ''
-	private _chapter = ''
+	private _manga = new Manga()
 
 	constructor() {
 		makeAutoObservable(this)
@@ -16,8 +16,8 @@ export default class MangaStore {
 
 	set openDialog(value: boolean) {
 		if (!value) {
-			this.name = ''
-			this.chapter = ''
+			this.mangaName = ''
+			this.mangaChapter = ''
 		}
 		this._openDialog = value
 	}
@@ -30,19 +30,27 @@ export default class MangaStore {
 		this._dialogType = value
 	}
 
-	get name() {
-		return this._name
+	get mangaId() {
+		return this._manga.id
 	}
 
-	set name(value: string) {
-		this._name = value
+	set mangaId(value: string) {
+		this._manga.id = value
 	}
 
-	get chapter() {
-		return this._chapter
+	get mangaName() {
+		return this._manga.name
 	}
 
-	set chapter(value: string) {
-		this._chapter = value
+	set mangaName(value: string) {
+		this._manga.name = value
+	}
+
+	get mangaChapter() {
+		return this._manga.chapter
+	}
+
+	set mangaChapter(value: string) {
+		this._manga.chapter = value
 	}
 }

@@ -21,14 +21,15 @@ const Item = ({
 
 	const onEdit = () => {
 		mangaDialogStore.dialogType = 'edit'
-		mangaDialogStore.name = name
-		mangaDialogStore.chapter = chapter
+		mangaDialogStore.mangaId = id
+		mangaDialogStore.mangaName = name
+		mangaDialogStore.mangaChapter = chapter
 		mangaDialogStore.openDialog = true
 		setAnchorEl(null)
 	}
 
 	const onCopy = () => {
-		navigator.clipboard.writeText(name)
+		navigator.clipboard.writeText(`${name} chapter ${chapter}`)
 		setAnchorEl(null)
 	}
 

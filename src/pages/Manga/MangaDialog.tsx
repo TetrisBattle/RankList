@@ -15,22 +15,28 @@ const MangaDialog = () => {
 	const dialogTitle =
 		mangaDialogStore.dialogType === 'new' ? 'New Manga' : 'Edit'
 
-	const saveNewManga = () => {
-		appStore.isLoading = true
-		mangaStore
-			.saveNewManga(mangaDialogStore.name, mangaDialogStore.chapter)
-			.then(() => {
-				appStore.isLoading = false
-				mangaDialogStore.openDialog = false
-			})
-	}
-
-	const saveEditedManga = () => {
-		console.log('edit')
-	}
-
 	const onSave = () => {
-		mangaDialogStore.dialogType === 'new' ? saveNewManga() : saveEditedManga()
+		appStore.isLoading = true
+
+		if (mangaDialogStore.dialogType === 'new') {
+			mangaStore
+				.saveNewManga(mangaDialogStore.mangaName, mangaDialogStore.mangaChapter)
+				.then(() => {
+					appStore.isLoading = false
+					mangaDialogStore.openDialog = false
+				})
+		} else {
+			mangaStore
+				.edit(
+					mangaDialogStore.mangaId,
+					mangaDialogStore.mangaName,
+					mangaDialogStore.mangaChapter
+				)
+				.then(() => {
+					appStore.isLoading = false
+					mangaDialogStore.openDialog = false
+				})
+		}
 	}
 
 	return (
@@ -43,9 +49,9 @@ const MangaDialog = () => {
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={mangaDialogStore.name}
+					value={mangaDialogStore.mangaName}
 					onChange={(e) => {
-						mangaDialogStore.name = e.target.value
+						mangaDialogStore.mangaName = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
@@ -53,9 +59,9 @@ const MangaDialog = () => {
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={mangaDialogStore.chapter}
+					value={mangaDialogStore.mangaChapter}
 					onChange={(e) => {
-						mangaDialogStore.chapter = e.target.value
+						mangaDialogStore.mangaChapter = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}
