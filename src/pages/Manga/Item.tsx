@@ -1,6 +1,6 @@
 import { Box, ListItemText, Menu, MenuItem } from '@mui/material'
 import useLongPress from 'hooks/useLongPress'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 
 const Item = ({
 	id,
@@ -13,16 +13,25 @@ const Item = ({
 	name: string
 	chapter: string
 }) => {
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
+	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 	const open = Boolean(anchorEl)
 
-	const onLongPress = () => {
-		console.log('longpress is triggered')
+	const onEdit = () => {
+		setAnchorEl(null)
+	}
+
+	const onCopy = () => {
+		setAnchorEl(null)
+	}
+
+	const onDelete = () => {
+		setAnchorEl(null)
 	}
 
 	return (
 		<Box
-			{...useLongPress(onLongPress)}
+			{...useLongPress(() => setAnchorEl(itemRef.current))}
 			sx={{
 				display: 'flex',
 				gap: 0.5,
@@ -35,12 +44,12 @@ const Item = ({
 			}}
 		>
 			<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
-			<ListItemText primary={name} sx={{ flex: 8, pl: 1 }} />
+			<ListItemText primary={name} ref={itemRef} sx={{ flex: 8, pl: 1 }} />
 			<ListItemText primary={chapter} sx={{ flex: 2, textAlign: 'center' }} />
 			<Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
-				<MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
-				<MenuItem onClick={() => setAnchorEl(null)}>My account</MenuItem>
-				<MenuItem onClick={() => setAnchorEl(null)}>Logout</MenuItem>
+				<MenuItem onClick={onEdit}>Edit</MenuItem>
+				<MenuItem onClick={onCopy}>Copy</MenuItem>
+				<MenuItem onClick={onDelete}>Delete</MenuItem>
 			</Menu>
 		</Box>
 	)
