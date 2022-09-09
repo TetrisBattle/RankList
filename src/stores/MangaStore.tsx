@@ -50,7 +50,7 @@ export default class MangaStore {
 		this._mangas = value
 	}
 
-	async updateMangas() {
+	async updateMangaList() {
 		this.mangas = []
 		this.isLoading = true
 		const mangas: Manga[] = []
@@ -73,12 +73,12 @@ export default class MangaStore {
 			name: name,
 			chapter: chapter
 		})
-		this.updateMangas()
+		this.updateMangaList()
 	}
 
 	async delete(id: string) {
 		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
 		await deleteDoc(ref)
-		this.updateMangas()
+		this.updateMangaList()
 	}
 }

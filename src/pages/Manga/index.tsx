@@ -3,6 +3,7 @@ import { Box, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from './TopBar'
 import MangaList from './MangaList'
+import MangaDialog from './MangaDialog'
 
 const Manga = () => {
 	const { mangaStore } = useStoreContext()
@@ -23,6 +24,7 @@ const Manga = () => {
 					</Box>
 				)}
 			</Box>
+			<MangaDialog />
 		</Box>
 	)
 }

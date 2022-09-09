@@ -17,9 +17,13 @@ const Item = ({
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null)
 	const open = Boolean(anchorEl)
-	const { mangaStore } = useStoreContext()
+	const { mangaStore, mangaDialogStore } = useStoreContext()
 
 	const onEdit = () => {
+		mangaDialogStore.dialogType = 'edit'
+		mangaDialogStore.name = name
+		mangaDialogStore.chapter = chapter
+		mangaDialogStore.openDialog = true
 		setAnchorEl(null)
 	}
 

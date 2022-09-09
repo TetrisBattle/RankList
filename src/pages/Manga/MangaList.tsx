@@ -8,7 +8,7 @@ const MangaList = () => {
 	const { mangaStore } = useStoreContext()
 
 	useEffect(() => {
-		mangaStore.updateMangas()
+		mangaStore.updateMangaList()
 	}, [mangaStore, mangaStore.activePage])
 
 	return (

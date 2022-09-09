@@ -1,10 +1,9 @@
 import { useState } from 'react'
 import { Box, Button, Typography } from '@mui/material'
-import NewMangaDialogButton from './NewMangaDialogButton'
 import { useStoreContext } from 'stores/StoreContext'
 
 const TopBar = () => {
-	const { mangaStore } = useStoreContext()
+	const { mangaStore, mangaDialogStore } = useStoreContext()
 	const [x, render] = useState(false)
 
 	const PageButton = ({ text }: { text: string }) => {
@@ -52,7 +51,19 @@ const TopBar = () => {
 				<Box sx={{ display: 'flex', flex: 3 }}>
 					<PageButton text={'X'} />
 					<PageButton text={'?'} />
-					<NewMangaDialogButton />
+					<Button
+						color={'secondary'}
+						onClick={() => {
+							mangaDialogStore.dialogType = 'new'
+							mangaDialogStore.openDialog = true
+						}}
+						sx={{
+							borderRadius: 0,
+							bgcolor: (theme) => theme.palette.secondary.main,
+						}}
+					>
+						+
+					</Button>
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>
