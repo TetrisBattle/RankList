@@ -35,24 +35,22 @@ const TopBar = () => {
 				open={!!menuAnchor}
 				onClose={() => setMenuAnchor(null)}
 			>
-				{userStore.currentUser && (
-					<MenuItem
-						onClick={() => {
-							mangaDialogStore.dialogType = 'new'
-							mangaDialogStore.openDialog = true
-							setMenuAnchor(null)
-						}}
-					>
-						Add new manga
-					</MenuItem>
-				)}
 				<MenuItem
 					onClick={() => {
-						userStore.currentUser ? userStore.logout() : userStore.login()
+						mangaDialogStore.dialogType = 'new'
+						mangaDialogStore.openDialog = true
 						setMenuAnchor(null)
 					}}
 				>
-					{userStore.currentUser ? 'Logout' : 'Login'}
+					Add new manga
+				</MenuItem>
+				<MenuItem
+					onClick={() => {
+						userStore.logout()
+						setMenuAnchor(null)
+					}}
+				>
+					Logout
 				</MenuItem>
 			</Menu>
 		)
@@ -85,7 +83,7 @@ const TopBar = () => {
 					<PageButton text={'?'} />
 					<Button
 						onClick={(e) => {
-							setMenuAnchor(e.currentTarget)
+							if (userStore.currentUser) setMenuAnchor(e.currentTarget)
 						}}
 						sx={{
 							borderRadius: 0,

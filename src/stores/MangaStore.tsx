@@ -20,10 +20,10 @@ export class Manga {
 
 export default class MangaStore {
 	private _mangas: Manga[] = []
-	private _isLoading = true
+	private _isLoading = false
 	private _activePage = 'rankS'
 	private _db = getFirestore(firebaseApp)
-	private _mangaPath = 'users/anonymous/lists/manga'
+	private _mangaPath: string | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -57,11 +57,16 @@ export default class MangaStore {
 		return this._mangaPath
 	}
 
-	set mangaPath(value: string) {
+	set mangaPath(value: string | null) {
 		this._mangaPath = value
 	}
 
 	async updateMangaList() {
+		if (!this._mangaPath) {
+			this.mangas = []
+			return
+		}
+
 		this.mangas = []
 		this.isLoading = true
 		const mangas: Manga[] = []
@@ -79,6 +84,8 @@ export default class MangaStore {
 	}
 
 	async saveNewManga(name: string, chapter: string) {
+		if (!this._mangaPath) return
+
 		const ref = collection(this._db, `${this._mangaPath}/${this._activePage}`)
 		await addDoc(ref, {
 			name: name,
@@ -88,6 +95,8 @@ export default class MangaStore {
 	}
 
 	async edit(id: string, name: string, chapter: string) {
+		if (!this._mangaPath) return
+
 		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
 		await setDoc(ref, {
 			name: name,
@@ -106,6 +115,8 @@ export default class MangaStore {
 	}
 
 	async delete(id: string) {
+		if (!this._mangaPath) return
+
 		const ref = doc(this._db, `${this._mangaPath}/${this._activePage}`, id)
 		await deleteDoc(ref)
 		this.mangas = this.mangas.filter((manga) => manga.id !== id)

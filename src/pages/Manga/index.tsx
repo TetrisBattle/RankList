@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { Box, CircularProgress } from '@mui/material'
+import { Box, Button, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from './TopBar'
 import MangaList from './MangaList'
@@ -12,11 +12,8 @@ const Manga = () => {
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-			console.log('this', user)
 			userStore.currentUser = user
-			mangaStore.mangaPath = user
-				? `users/${user.uid}/lists/manga`
-				: 'users/anonymous/lists/manga'
+			mangaStore.mangaPath = user ? `users/${user.uid}/lists/manga` : null
 		})
 		return unsubscribe
 	}, [userStore, mangaStore])
@@ -30,9 +27,22 @@ const Manga = () => {
 				}}
 			>
 				<TopBar />
+				{userStore.currentUser === null && (
+					<Button
+						onClick={() => userStore.login()}
+						sx={{
+							display: 'block',
+							mt: 2,
+							mx: 'auto',
+							fontWeight: 600,
+						}}
+					>
+						Log in with Google
+					</Button>
+				)}
 				<MangaList />
 				{mangaStore.isLoading && (
-					<Box sx={{ mt: 5, display: 'flex', justifyContent: 'center' }}>
+					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
 						<CircularProgress />
 					</Box>
 				)}
