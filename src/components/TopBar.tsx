@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
-import { useStoreContext } from 'stores/StoreContext'
 import SettingsIcon from '@mui/icons-material/Settings'
+import { useStoreContext } from 'stores/StoreContext'
 
 const TopBar = () => {
 	const { userStore, listStore, dialogStore } = useStoreContext()
@@ -12,13 +12,13 @@ const TopBar = () => {
 		return (
 			<Button
 				onClick={() => {
-					listStore.activePage = 'rank' + text
+					listStore.currentRank = 'rank' + text
 					render(!x)
 				}}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.activePage === 'rank' + text
+						listStore.currentRank === 'rank' + text
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}

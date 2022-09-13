@@ -1,13 +1,10 @@
 import { makeAutoObservable } from 'mobx'
 import {
 	collection,
-	getDocs,
 	addDoc,
 	setDoc,
 	deleteDoc,
 	doc,
-	query,
-	orderBy,
 } from 'firebase/firestore'
 import RootStore from './RootStore'
 import UserStore from './UserStore'
@@ -19,10 +16,11 @@ export class Item {
 }
 
 export default class ListStore {
+	private _userStore: UserStore
 	private _items: Item[] = []
 	private _isLoading = false
-	private _activePage = 'rankS'
-	private _userStore: UserStore
+	private _currentList = 'mangaList'
+	private _currentRank = 'rankS'
 
 	constructor(rootStore: RootStore) {
 		this._userStore = rootStore.userStore
@@ -37,67 +35,45 @@ export default class ListStore {
 		this._isLoading = value
 	}
 
-	get activePage() {
-		return this._activePage
+	get currentList() {
+		return this._currentList
 	}
 
-	set activePage(value: string) {
-		this._activePage = value
+	set currentList(value: string) {
+		this._currentList = value
+	}
+
+	get currentRank() {
+		return this._currentRank
+	}
+
+	set currentRank(value: string) {
+		this._currentRank = value
 	}
 
 	get items() {
 		return this._items
 	}
 
-	private set items(value: Item[]) {
+	set items(value: Item[]) {
 		this._items = value
 	}
 
-	async updateList() {
-		if (!this._userStore.dbPath) {
-			this.items = []
-			return
-		}
-
-		this.items = []
-		this.isLoading = true
-		const items: Item[] = []
-
-		const ref = collection(
-			this._userStore.db,
-			`${this._userStore.dbPath}/${this._activePage}`
-		)
-		const q = query(ref, orderBy('name', 'asc'))
-		const snapshot = await getDocs(q)
-
-		snapshot.docs.forEach((doc) => {
-			items.push(new Item(doc.id, doc.data().name, doc.data().chapter))
-		})
-
-		this.items = items
-		this.isLoading = false
-	}
-
 	async saveNewItem(name: string, chapter: string) {
-		if (!this._userStore.dbPath) return
-
 		const ref = collection(
 			this._userStore.db,
-			`${this._userStore.dbPath}/${this._activePage}`
+			`${this._userStore.dbPath}/${this._currentRank}`
 		)
 		await addDoc(ref, {
 			name: name,
 			chapter: chapter,
 		})
-		this.updateList()
 	}
 
 	async edit(name: string, chapter: string) {
-		if (!this._userStore.dbPath) return
-
 		const ref = doc(
 			this._userStore.db,
-			`${this._userStore.dbPath}/${this._activePage}`,
+			`${this._userStore.dbPath}/${this._currentRank}`,
 			name
 		)
 		await setDoc(ref, {
@@ -117,11 +93,9 @@ export default class ListStore {
 	}
 
 	async delete(name: string) {
-		if (!this._userStore.dbPath) return
-
 		const ref = doc(
 			this._userStore.db,
-			`${this._userStore.dbPath}/${this._activePage}`,
+			`${this._userStore.dbPath}/${this._currentRank}`,
 			name
 		)
 		await deleteDoc(ref)
