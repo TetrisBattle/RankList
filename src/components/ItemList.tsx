@@ -13,9 +13,10 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import useLongPress from 'hooks/useLongPress'
 import { useStoreContext } from 'stores/StoreContext'
 import { Item } from 'stores/ListStore'
+import { observer } from 'mobx-react-lite'
 
-const ItemList = () => {
-	const { listStore, dialogStore } = useStoreContext()
+const ListItem = ({ index, item }: { index: number; item: Item }) => {
+	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 
@@ -24,20 +25,21 @@ const ItemList = () => {
 		setMenuAnchor(null)
 	}
 
-	const onEdit = (item: Item) => {
-		dialogStore.dialogType = 'edit'
-		dialogStore.name = item.name
-		dialogStore.progress = item.progress
-		dialogStore.openDialog = true
+	const onEdit = (item: Item, index: number) => {
+		listStore.dialogType = 'edit'
+		listStore.editableItem = item
+		listStore.editableItemIndex = index
+		listStore.openDialog = true
 		setMenuAnchor(null)
 	}
 
-	const onDelete = (item: Item) => {
-		listStore.delete(item.name)
+	const onDelete = (index: number) => {
+		listStore.editableItemIndex = index
+		listStore.delete()
 		setMenuAnchor(null)
 	}
 
-	const ListItem = ({ counter, item }: { counter: number, item: Item }) => (
+	return (
 		<Box
 			{...useLongPress(() => setMenuAnchor(itemRef.current))}
 			sx={{
@@ -51,9 +53,19 @@ const ItemList = () => {
 				},
 			}}
 		>
-			<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
-			<ListItemText primary={item.name} ref={itemRef} sx={{ flex: 8, pl: 1 }} />
-			<ListItemText primary={item.progress} sx={{ flex: 2, textAlign: 'center' }} />
+			<ListItemText primary={index + 1} sx={{ flex: 1, textAlign: 'center' }} />
+			<ListItemText
+				primary={item.name}
+				ref={itemRef}
+				sx={{ flex: item.progress ? 8 : 10, pl: 1 }}
+			/>
+			{item.progress && (
+				<ListItemText
+					primary={item.progress}
+					sx={{ flex: 2, textAlign: 'center' }}
+				/>
+			)}
+
 			<Menu
 				anchorEl={menuAnchor}
 				open={!!menuAnchor}
@@ -65,13 +77,13 @@ const ItemList = () => {
 					</ListItemIcon>
 					<ListItemText>Copy</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={() => onEdit(item)}>
+				<MenuItem onClick={() => onEdit(item, index)}>
 					<ListItemIcon>
 						<EditIcon fontSize='small' />
 					</ListItemIcon>
 					<ListItemText>Edit</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={() => onDelete(item)}>
+				<MenuItem onClick={() => onDelete(index)}>
 					<ListItemIcon>
 						<DeleteIcon fontSize='small' />
 					</ListItemIcon>
@@ -80,14 +92,18 @@ const ItemList = () => {
 			</Menu>
 		</Box>
 	)
+}
+
+const ItemList = () => {
+	const { listStore } = useStoreContext()
 
 	return (
 		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>
-			{listStore.items.map((item, counter) => (
-				<ListItem key={item.name} counter={counter + 1} item={item} />
+			{listStore.items.map((item, index) => (
+				<ListItem key={`${index}-${item.name}`} index={index} item={item} />
 			))}
 		</List>
 	)
 }
 
-export default ItemList
+export default observer(ItemList)

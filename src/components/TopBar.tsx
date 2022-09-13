@@ -1,24 +1,30 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
+import { observer } from 'mobx-react-lite'
+import { Rank } from 'stores/ListStore'
 
 const TopBar = () => {
-	const { userStore, listStore, dialogStore } = useStoreContext()
+	const { authStore, listStore } = useStoreContext()
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
-	const [x, render] = useState(false)
 
-	const PageButton = ({ text }: { text: string }) => {
+	useEffect(() => {}, [listStore.currentPage])
+
+	type PageLetter = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
+
+	const PageButton = ({ text }: { text: PageLetter }) => {
+		const page: Rank = `rank${text === '?' ? 'Unknown' : text}`
+
 		return (
 			<Button
 				onClick={() => {
-					listStore.currentRank = 'rank' + text
-					render(!x)
+					listStore.currentPage = page
 				}}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.currentRank === 'rank' + text
+						listStore.currentPage === page
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
@@ -37,8 +43,8 @@ const TopBar = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						dialogStore.dialogType = 'new'
-						dialogStore.openDialog = true
+						listStore.dialogType = 'new'
+						listStore.openDialog = true
 						setMenuAnchor(null)
 					}}
 				>
@@ -46,7 +52,7 @@ const TopBar = () => {
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						userStore.logout()
+						authStore.logout()
 						setMenuAnchor(null)
 					}}
 				>
@@ -76,7 +82,10 @@ const TopBar = () => {
 						alignItems: 'center',
 					}}
 				>
-					<Typography sx={{ pl: 1, fontSize: 22 }}>RankList</Typography>
+					<Typography sx={{ pl: 1, fontSize: 22 }}>
+						{listStore.currentList.charAt(0).toUpperCase() +
+							listStore.currentList.slice(1)}
+					</Typography>
 				</Box>
 				<Box sx={{ display: 'flex', flex: 3 }}>
 					<PageButton text={'X'} />
@@ -108,4 +117,4 @@ const TopBar = () => {
 	)
 }
 
-export default TopBar
+export default observer(TopBar)

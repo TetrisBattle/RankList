@@ -1,29 +1,61 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable, toJS } from 'mobx'
 import {
-	collection,
-	addDoc,
-	setDoc,
-	deleteDoc,
 	doc,
+	DocumentReference,
+	DocumentData,
+	getFirestore,
+	setDoc,
 } from 'firebase/firestore'
-import RootStore from './RootStore'
-import UserStore from './UserStore'
+import firebaseApp from 'firebaseApp'
+import { User } from 'firebase/auth'
 
 export class Item {
-	constructor(public id = '', public name = '', public progress = '') {
+	constructor(public name = '', public progress = '') {
 		makeAutoObservable(this)
 	}
 }
 
-export default class ListStore {
-	private _userStore: UserStore
-	private _items: Item[] = []
-	private _isLoading = false
-	private _currentList = 'mangaList'
-	private _currentRank = 'rankS'
+interface RankList {
+	rankS?: Item[]
+	rankA?: Item[]
+	rankB?: Item[]
+	rankC?: Item[]
+	rankD?: Item[]
+	rankE?: Item[]
+	rankF?: Item[]
+	rankX?: Item[]
+	rankUnknown?: Item[]
+}
 
-	constructor(rootStore: RootStore) {
-		this._userStore = rootStore.userStore
+export type Rank =
+	| 'rankS'
+	| 'rankA'
+	| 'rankB'
+	| 'rankC'
+	| 'rankD'
+	| 'rankE'
+	| 'rankF'
+	| 'rankX'
+	| 'rankUnknown'
+
+export default class ListStore {
+	private _isLoading = false
+	private _openDialog = false
+	private _dialogType = 'new'
+
+	private _currentList = 'mangaList'
+	private _currentPage: Rank = 'rankS'
+
+	private _rankList: RankList = {}
+	private _items: Item[] = []
+	private _editableItems: Item[] = []
+	private _editableItem = new Item()
+	private _editableItemIndex = 0
+
+	private _db = getFirestore(firebaseApp)
+	private _listRef: DocumentReference<DocumentData> | null = null
+
+	constructor() {
 		makeAutoObservable(this)
 	}
 
@@ -31,74 +63,120 @@ export default class ListStore {
 		return this._isLoading
 	}
 
-	set isLoading(value: boolean) {
+	set isLoading(value) {
 		this._isLoading = value
+	}
+
+	get openDialog() {
+		return this._openDialog
+	}
+
+	set openDialog(value) {
+		this._openDialog = value
+		if (!this._openDialog) {
+			this.editableItem.name = ''
+			this.editableItem.progress = ''
+		}
+	}
+
+	get dialogType() {
+		return this._dialogType
+	}
+
+	set dialogType(value) {
+		this._dialogType = value
+	}
+
+	get items() {
+		return toJS(this._items)
 	}
 
 	get currentList() {
 		return this._currentList
 	}
 
-	set currentList(value: string) {
-		this._currentList = value
+	get currentPage() {
+		return this._currentPage
 	}
 
-	get currentRank() {
-		return this._currentRank
+	set currentPage(value: Rank) {
+		this._currentPage = value
+		this._items = this._rankList[this._currentPage] ?? []
 	}
 
-	set currentRank(value: string) {
-		this._currentRank = value
+	get listRef() {
+		return this._listRef
 	}
 
-	get items() {
-		return this._items
+	get editableItem() {
+		return this._editableItem
 	}
 
-	set items(value: Item[]) {
-		this._items = value
+	set editableItem(value) {
+		this._editableItem = value
 	}
 
-	async saveNewItem(name: string, chapter: string) {
-		const ref = collection(
-			this._userStore.db,
-			`${this._userStore.dbPath}/${this._currentRank}`
+	set editableItemName(value: string) {
+		this._editableItem.name = value
+	}
+
+	set editableItemProgress(value: string) {
+		this._editableItem.progress = value
+	}
+
+	get editableItemIndex() {
+		return this._editableItemIndex
+	}
+
+	set editableItemIndex(value) {
+		this._editableItemIndex = value
+	}
+
+	setupRef(user: User | null) {
+		if (!user) {
+			this._listRef = null
+			return
+		}
+
+		this._listRef = doc(
+			this._db,
+			`users/${user.email}/lists/${this._currentList}`
 		)
-		await addDoc(ref, {
-			name: name,
-			chapter: chapter,
-		})
 	}
 
-	async edit(name: string, chapter: string) {
-		const ref = doc(
-			this._userStore.db,
-			`${this._userStore.dbPath}/${this._currentRank}`,
-			name
-		)
-		await setDoc(ref, {
-			name: name,
-			chapter: chapter,
-		})
+	setupItems(data: RankList | undefined) {
+		if (!data) {
+			this._rankList = {}
+			this._items = []
+			this._editableItems = []
+			return
+		}
 
-		const index = this.items.findIndex((item) => item.name === name)
-		const copy = JSON.parse(JSON.stringify(this.items))
-		copy[index].name = name
-		copy[index].chapter = chapter
-		copy.sort((a: Item, b: Item) => {
-			if (a.name.toUpperCase() > b.name.toUpperCase()) return 1
-			else return -1
-		})
-		this.items = copy
+		this._rankList = data
+		this._items = this._rankList[this.currentPage] ?? []
+		this._editableItems = this._rankList[this.currentPage] ?? []
 	}
 
-	async delete(name: string) {
-		const ref = doc(
-			this._userStore.db,
-			`${this._userStore.dbPath}/${this._currentRank}`,
-			name
-		)
-		await deleteDoc(ref)
-		this.items = this.items.filter((item) => item.name !== name)
+	async addNewItem() {
+		if (!this._listRef) return
+
+		this._editableItems.push({
+			name: this.editableItem.name,
+			progress: this.editableItem.progress,
+		})
+
+		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
+	}
+
+	async edit() {
+		if (!this._listRef) return
+		this._editableItems[this._editableItemIndex] = this._editableItem
+		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
+	}
+
+	async delete() {
+		if (!this._listRef) return
+		this._editableItems.splice(this._editableItemIndex, 1)
+		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
 	}
 }

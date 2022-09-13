@@ -10,47 +10,38 @@ import {
 import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
-	const { appStore, listStore, dialogStore } = useStoreContext()
-
-	const dialogTitle =
-		dialogStore.dialogType === 'new' ? 'New' : 'Edit'
+	const { appStore, listStore } = useStoreContext()
+	const dialogTitle = listStore.dialogType === 'new' ? 'New' : 'Edit'
 
 	const onSave = () => {
 		appStore.isLoading = true
 
-		if (dialogStore.dialogType === 'new') {
-			listStore
-				.saveNewItem(dialogStore.name, dialogStore.progress)
-				.then(() => {
-					appStore.isLoading = false
-					dialogStore.openDialog = false
-				})
+		if (listStore.dialogType === 'new') {
+			listStore.addNewItem().then(() => {
+				appStore.isLoading = false
+				listStore.openDialog = false
+			})
 		} else {
-			listStore
-				.edit(
-					dialogStore.name,
-					dialogStore.progress
-				)
-				.then(() => {
-					appStore.isLoading = false
-					dialogStore.openDialog = false
-				})
+			listStore.edit().then(() => {
+				appStore.isLoading = false
+				listStore.openDialog = false
+			})
 		}
 	}
 
 	return (
 		<Dialog
-			open={dialogStore.openDialog}
+			open={listStore.openDialog}
 			onClose={() => {
-				dialogStore.openDialog = false
+				listStore.openDialog = false
 			}}
 		>
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={dialogStore.name}
+					value={listStore.editableItem.name}
 					onChange={(e) => {
-						dialogStore.name = e.target.value
+						listStore.editableItemName = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
@@ -58,9 +49,9 @@ const ItemDialog = () => {
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={dialogStore.progress}
+					value={listStore.editableItem.progress}
 					onChange={(e) => {
-						dialogStore.progress = e.target.value
+						listStore.editableItemProgress = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}
@@ -71,7 +62,7 @@ const ItemDialog = () => {
 			<DialogActions>
 				<Button
 					onClick={() => {
-						dialogStore.openDialog = false
+						listStore.openDialog = false
 					}}
 				>
 					Cancel

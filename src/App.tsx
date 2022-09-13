@@ -6,20 +6,32 @@ import ItemList from 'components/ItemList'
 import ItemDialog from 'components/ItemDialog'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
+import { onSnapshot } from 'firebase/firestore'
 
 const App = () => {
-	const { appStore, userStore, listStore } = useStoreContext()
+	const { appStore, authStore, listStore } = useStoreContext()
 
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-			userStore.dbPath = user ? `users/${user.uid}` : null
+		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
+			authStore.user = user?.email
+			listStore.setupRef(user)
 		})
-		return unsubscribe
-	}, [userStore, listStore])
+
+		if (!listStore.listRef) return
+
+		const unsubList = onSnapshot(listStore.listRef, (doc) => {
+			listStore.setupItems(doc.data())
+		})
+
+		return () => {
+			unsubUser()
+			unsubList()
+		}
+	}, [authStore, authStore.user, listStore])
 
 	const LoginButton = () => (
 		<Button
-			onClick={() => userStore.login()}
+			onClick={() => authStore.login()}
 			sx={{
 				position: 'absolute',
 				top: '50%',
@@ -58,7 +70,7 @@ const App = () => {
 					marginInline: 'auto',
 				}}
 			>
-				{!userStore.dbPath ? <LoginButton /> : <RankList />}
+				{!authStore.user ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
