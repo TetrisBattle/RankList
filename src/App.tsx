@@ -2,21 +2,21 @@ import { observer } from 'mobx-react-lite'
 import { Backdrop, Box, Button, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from 'components/TopBar'
-import MangaList from 'components/MangaList'
-import MangaDialog from 'components/MangaDialog'
+import ItemList from 'components/ItemList'
+import ItemDialog from 'components/ItemDialog'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
 
 const App = () => {
-	const { appStore, userStore, mangaStore } = useStoreContext()
+	const { appStore, userStore, listStore } = useStoreContext()
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
 			userStore.currentUser = user
-			mangaStore.mangaPath = user ? `users/${user.uid}/lists/manga` : null
+			listStore.dbPath = user ? `users/${user.uid}` : null
 		})
 		return unsubscribe
-	}, [userStore, mangaStore])
+	}, [userStore, listStore])
 
 	return (
 		<Box
@@ -46,15 +46,15 @@ const App = () => {
 						Log in with Google
 					</Button>
 				)}
-				<MangaList />
-				{mangaStore.isLoading && (
+				<ItemList />
+				{listStore.isLoading && (
 					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
 						<CircularProgress />
 					</Box>
 				)}
 			</Box>
-			<MangaDialog />
-			<Backdrop open={appStore.isLoading} sx={{ zIndex: 9999 }}>
+			<ItemDialog />
+			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
 				<CircularProgress />
 			</Backdrop>
 		</Box>

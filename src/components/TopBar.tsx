@@ -4,7 +4,7 @@ import { useStoreContext } from 'stores/StoreContext'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 const TopBar = () => {
-	const { userStore, mangaStore, mangaDialogStore } = useStoreContext()
+	const { userStore, listStore, dialogStore } = useStoreContext()
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 	const [x, render] = useState(false)
 
@@ -12,13 +12,13 @@ const TopBar = () => {
 		return (
 			<Button
 				onClick={() => {
-					mangaStore.activePage = 'rank' + text
+					listStore.activePage = 'rank' + text
 					render(!x)
 				}}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						mangaStore.activePage === 'rank' + text
+						listStore.activePage === 'rank' + text
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
@@ -37,12 +37,12 @@ const TopBar = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						mangaDialogStore.dialogType = 'new'
-						mangaDialogStore.openDialog = true
+						dialogStore.dialogType = 'new'
+						dialogStore.openDialog = true
 						setMenuAnchor(null)
 					}}
 				>
-					Add new manga
+					Add new
 				</MenuItem>
 				<MenuItem
 					onClick={() => {

@@ -7,36 +7,33 @@ import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 
 const Item = ({
-	id,
 	counter,
 	name,
-	chapter,
+	progress,
 }: {
-	id: string
 	counter: number
 	name: string
-	chapter: string
+	progress: string
 }) => {
-	const { userStore, mangaStore, mangaDialogStore } = useStoreContext()
+	const { userStore, listStore, dialogStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 
 	const onCopy = () => {
-		navigator.clipboard.writeText(`${name} chapter ${chapter}`)
+		navigator.clipboard.writeText(`${name} chapter ${progress}`)
 		setMenuAnchor(null)
 	}
 
 	const onEdit = () => {
-		mangaDialogStore.dialogType = 'edit'
-		mangaDialogStore.mangaId = id
-		mangaDialogStore.mangaName = name
-		mangaDialogStore.mangaChapter = chapter
-		mangaDialogStore.openDialog = true
+		dialogStore.dialogType = 'edit'
+		dialogStore.name = name
+		dialogStore.progress = progress
+		dialogStore.openDialog = true
 		setMenuAnchor(null)
 	}
 
 	const onDelete = () => {
-		mangaStore.delete(id)
+		listStore.delete(name)
 		setMenuAnchor(null)
 	}
 
@@ -56,7 +53,7 @@ const Item = ({
 		>
 			<ListItemText primary={counter} sx={{ flex: 1, textAlign: 'center' }} />
 			<ListItemText primary={name} ref={itemRef} sx={{ flex: 8, pl: 1 }} />
-			<ListItemText primary={chapter} sx={{ flex: 2, textAlign: 'center' }} />
+			<ListItemText primary={progress} sx={{ flex: 2, textAlign: 'center' }} />
 			<Menu
 				anchorEl={menuAnchor}
 				open={!!menuAnchor}

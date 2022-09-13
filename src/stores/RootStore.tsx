@@ -1,14 +1,14 @@
 import { makeAutoObservable } from 'mobx'
 import AppStore from './AppStore'
 import UserStore from './UserStore'
-import MangaStore from './MangaStore'
-import MangaDialogStore from './MangaDialogStore'
+import ListStore from './ListStore'
+import DialogStore from './DialogStore'
 
 export default class RootStore {
 	appStore = new AppStore()
 	userStore = new UserStore()
-	mangaStore = new MangaStore()
-	mangaDialogStore = new MangaDialogStore()
+	listStore = new ListStore()
+	dialogStore = new DialogStore()
 
 	constructor() {
 		makeAutoObservable(this)

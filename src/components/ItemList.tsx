@@ -4,26 +4,25 @@ import { useEffect } from 'react'
 import { useStoreContext } from 'stores/StoreContext'
 import Item from './Item'
 
-const MangaList = () => {
-	const { mangaStore } = useStoreContext()
+const ItemList = () => {
+	const { listStore } = useStoreContext()
 
 	useEffect(() => {
-		mangaStore.updateMangaList()
-	}, [mangaStore, mangaStore.activePage, mangaStore.mangaPath])
+		listStore.updateList()
+	}, [listStore, listStore.activePage, listStore.dbPath])
 
 	return (
 		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>
-			{mangaStore.mangas.map((manga, counter) => (
+			{listStore.items.map((item, counter) => (
 				<Item
-					key={manga.id}
-					id={manga.id}
+					key={item.name}
 					counter={counter + 1}
-					name={manga.name}
-					chapter={manga.chapter}
+					name={item.name}
+					progress={item.progress}
 				/>
 			))}
 		</List>
 	)
 }
 
-export default observer(MangaList)
+export default observer(ItemList)

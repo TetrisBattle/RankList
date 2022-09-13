@@ -9,49 +9,48 @@ import {
 	TextField,
 } from '@mui/material'
 
-const MangaDialog = () => {
-	const { appStore, mangaStore, mangaDialogStore } = useStoreContext()
+const ItemDialog = () => {
+	const { appStore, listStore, dialogStore } = useStoreContext()
 
 	const dialogTitle =
-		mangaDialogStore.dialogType === 'new' ? 'New Manga' : 'Edit'
+		dialogStore.dialogType === 'new' ? 'New' : 'Edit'
 
 	const onSave = () => {
 		appStore.isLoading = true
 
-		if (mangaDialogStore.dialogType === 'new') {
-			mangaStore
-				.saveNewManga(mangaDialogStore.mangaName, mangaDialogStore.mangaChapter)
+		if (dialogStore.dialogType === 'new') {
+			listStore
+				.saveNewItem(dialogStore.name, dialogStore.progress)
 				.then(() => {
 					appStore.isLoading = false
-					mangaDialogStore.openDialog = false
+					dialogStore.openDialog = false
 				})
 		} else {
-			mangaStore
+			listStore
 				.edit(
-					mangaDialogStore.mangaId,
-					mangaDialogStore.mangaName,
-					mangaDialogStore.mangaChapter
+					dialogStore.name,
+					dialogStore.progress
 				)
 				.then(() => {
 					appStore.isLoading = false
-					mangaDialogStore.openDialog = false
+					dialogStore.openDialog = false
 				})
 		}
 	}
 
 	return (
 		<Dialog
-			open={mangaDialogStore.openDialog}
+			open={dialogStore.openDialog}
 			onClose={() => {
-				mangaDialogStore.openDialog = false
+				dialogStore.openDialog = false
 			}}
 		>
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={mangaDialogStore.mangaName}
+					value={dialogStore.name}
 					onChange={(e) => {
-						mangaDialogStore.mangaName = e.target.value
+						dialogStore.name = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
@@ -59,9 +58,9 @@ const MangaDialog = () => {
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={mangaDialogStore.mangaChapter}
+					value={dialogStore.progress}
 					onChange={(e) => {
-						mangaDialogStore.mangaChapter = e.target.value
+						dialogStore.progress = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}
@@ -72,7 +71,7 @@ const MangaDialog = () => {
 			<DialogActions>
 				<Button
 					onClick={() => {
-						mangaDialogStore.openDialog = false
+						dialogStore.openDialog = false
 					}}
 				>
 					Cancel
@@ -83,4 +82,4 @@ const MangaDialog = () => {
 	)
 }
 
-export default observer(MangaDialog)
+export default observer(ItemDialog)
