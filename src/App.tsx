@@ -12,11 +12,37 @@ const App = () => {
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(getAuth(), (user) => {
-			userStore.currentUser = user
-			listStore.dbPath = user ? `users/${user.uid}` : null
+			userStore.dbPath = user ? `users/${user.uid}` : null
 		})
 		return unsubscribe
 	}, [userStore, listStore])
+
+	const LoginButton = () => (
+		<Button
+			onClick={() => userStore.login()}
+			sx={{
+				position: 'absolute',
+				top: '50%',
+				left: '50%',
+				transform: 'translate(-50%, -50%)',
+				fontWeight: 600,
+			}}
+		>
+			Log in with Google
+		</Button>
+	)
+
+	const RankList = () => (
+		<>
+			<TopBar />
+			<ItemList />
+			{listStore.isLoading && (
+				<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+					<CircularProgress />
+				</Box>
+			)}
+		</>
+	)
 
 	return (
 		<Box
@@ -32,26 +58,7 @@ const App = () => {
 					marginInline: 'auto',
 				}}
 			>
-				<TopBar />
-				{userStore.currentUser === null && (
-					<Button
-						onClick={() => userStore.login()}
-						sx={{
-							display: 'block',
-							mt: 2,
-							mx: 'auto',
-							fontWeight: 600,
-						}}
-					>
-						Log in with Google
-					</Button>
-				)}
-				<ItemList />
-				{listStore.isLoading && (
-					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-						<CircularProgress />
-					</Box>
-				)}
+				{!userStore.dbPath ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>

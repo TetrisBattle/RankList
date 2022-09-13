@@ -5,11 +5,11 @@ import { useStoreContext } from 'stores/StoreContext'
 import Item from './Item'
 
 const ItemList = () => {
-	const { listStore } = useStoreContext()
+	const { userStore, listStore } = useStoreContext()
 
 	useEffect(() => {
 		listStore.updateList()
-	}, [listStore, listStore.activePage, listStore.dbPath])
+	}, [listStore, listStore.activePage, userStore.dbPath])
 
 	return (
 		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>

@@ -15,7 +15,7 @@ const Item = ({
 	name: string
 	progress: string
 }) => {
-	const { userStore, listStore, dialogStore } = useStoreContext()
+	const { listStore, dialogStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
 
@@ -65,22 +65,18 @@ const Item = ({
 					</ListItemIcon>
 					<ListItemText>Copy</ListItemText>
 				</MenuItem>
-				{userStore.currentUser && (
-					<MenuItem onClick={onEdit}>
-						<ListItemIcon>
-							<EditIcon fontSize='small' />
-						</ListItemIcon>
-						<ListItemText>Edit</ListItemText>
-					</MenuItem>
-				)}
-				{userStore.currentUser && (
-					<MenuItem onClick={onDelete}>
-						<ListItemIcon>
-							<DeleteIcon fontSize='small' />
-						</ListItemIcon>
-						<ListItemText>Delete</ListItemText>
-					</MenuItem>
-				)}
+				<MenuItem onClick={onEdit}>
+					<ListItemIcon>
+						<EditIcon fontSize='small' />
+					</ListItemIcon>
+					<ListItemText>Edit</ListItemText>
+				</MenuItem>
+				<MenuItem onClick={onDelete}>
+					<ListItemIcon>
+						<DeleteIcon fontSize='small' />
+					</ListItemIcon>
+					<ListItemText>Delete</ListItemText>
+				</MenuItem>
 			</Menu>
 		</Box>
 	)

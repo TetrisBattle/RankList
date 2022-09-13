@@ -7,7 +7,7 @@ import DialogStore from './DialogStore'
 export default class RootStore {
 	appStore = new AppStore()
 	userStore = new UserStore()
-	listStore = new ListStore()
+	listStore = new ListStore(this)
 	dialogStore = new DialogStore()
 
 	constructor() {

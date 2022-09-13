@@ -12,19 +12,14 @@ import firebaseApp from 'firebaseApp'
 export default class UserStore {
 	private _db = getFirestore(firebaseApp)
 	private _googleAuthProvider = new GoogleAuthProvider()
-	private _currentUser: User | null | undefined
 	private _dbPath: string | null = null
 
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	get currentUser() {
-		return this._currentUser
-	}
-
-	set currentUser(value: User | null | undefined) {
-		this._currentUser = value
+	get db() {
+		return this._db
 	}
 
 	get dbPath() {

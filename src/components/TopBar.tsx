@@ -83,7 +83,7 @@ const TopBar = () => {
 					<PageButton text={'?'} />
 					<Button
 						onClick={(e) => {
-							if (userStore.currentUser) setMenuAnchor(e.currentTarget)
+							setMenuAnchor(e.currentTarget)
 						}}
 						sx={{
 							borderRadius: 0,
