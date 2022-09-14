@@ -15,6 +15,17 @@ export class Item {
 	}
 }
 
+export type Rank =
+	| 'rankS'
+	| 'rankA'
+	| 'rankB'
+	| 'rankC'
+	| 'rankD'
+	| 'rankE'
+	| 'rankF'
+	| 'rankX'
+	| 'rankUnknown'
+
 interface RankList {
 	rankS?: Item[]
 	rankA?: Item[]
@@ -27,33 +38,23 @@ interface RankList {
 	rankUnknown?: Item[]
 }
 
-export type Rank =
-	| 'rankS'
-	| 'rankA'
-	| 'rankB'
-	| 'rankC'
-	| 'rankD'
-	| 'rankE'
-	| 'rankF'
-	| 'rankX'
-	| 'rankUnknown'
-
 export default class ListStore {
 	private _isLoading = false
-	private _openDialog = false
+	private _db = getFirestore(firebaseApp)
+	private _dbPath: string | null = null
+	private _listRef: DocumentReference<DocumentData> | null = null
+
+	private _dialogItem = new Item()
+	private _dialogOpen = false
 	private _dialogType = 'new'
+	private _dialogErrorText: string | null = null
+
+	private _rankList: RankList = {}
+	private _editableItems: Item[] = []
+	private _editableItemIndex = 0
 
 	private _currentList = 'mangaList'
 	private _currentPage: Rank = 'rankS'
-
-	private _rankList: RankList = {}
-	private _items: Item[] = []
-	private _editableItems: Item[] = []
-	private _editableItem = new Item()
-	private _editableItemIndex = 0
-
-	private _db = getFirestore(firebaseApp)
-	private _listRef: DocumentReference<DocumentData> | null = null
 
 	constructor() {
 		makeAutoObservable(this)
@@ -67,15 +68,39 @@ export default class ListStore {
 		this._isLoading = value
 	}
 
-	get openDialog() {
-		return this._openDialog
+	get listRef() {
+		return this._listRef
 	}
 
-	set openDialog(value) {
-		this._openDialog = value
-		if (!this._openDialog) {
-			this.editableItem.name = ''
-			this.editableItem.progress = ''
+	get dialogItem() {
+		return this._dialogItem
+	}
+
+	set dialogItem(value: Item) {
+		this._dialogItem = value
+	}
+
+	set dialogItemName(value: string) {
+		this._dialogItem.name = value
+	}
+
+	set dialogItemProgress(value: string) {
+		this._dialogItem.progress = value
+	}
+
+	resetDialogItem() {
+		this._dialogItem = new Item()
+	}
+
+	get dialogOpen() {
+		return this._dialogOpen
+	}
+
+	set dialogOpen(value) {
+		this._dialogOpen = value
+		if (!this._dialogOpen) {
+			this.dialogItem.name = ''
+			this.dialogItem.progress = ''
 		}
 	}
 
@@ -87,41 +112,30 @@ export default class ListStore {
 		this._dialogType = value
 	}
 
+	get dialogErrorText() {
+		return this._dialogErrorText
+	}
+
 	get items() {
-		return toJS(this._items)
+		return toJS(this._rankList[this.currentPage]) ?? []
 	}
 
 	get currentList() {
 		return this._currentList
 	}
 
+	set currentList(value) {
+		this._currentList = value
+	}
+
 	get currentPage() {
 		return this._currentPage
 	}
 
-	set currentPage(value: Rank) {
+	set currentPage(value) {
 		this._currentPage = value
-		this._items = this._rankList[this._currentPage] ?? []
-	}
-
-	get listRef() {
-		return this._listRef
-	}
-
-	get editableItem() {
-		return this._editableItem
-	}
-
-	set editableItem(value) {
-		this._editableItem = value
-	}
-
-	set editableItemName(value: string) {
-		this._editableItem.name = value
-	}
-
-	set editableItemProgress(value: string) {
-		this._editableItem.progress = value
+		this.setListRef()
+		this._editableItems = this.items
 	}
 
 	get editableItemIndex() {
@@ -132,51 +146,103 @@ export default class ListStore {
 		this._editableItemIndex = value
 	}
 
+	dialogClose() {
+		this._dialogOpen = false
+		this._dialogErrorText = null
+		this.resetDialogItem()
+	}
+
+	dialogSave() {
+		this._dialogType === 'new' ? this.addNewItem() : this.edit()
+	}
+
+	setListRef() {
+		this._listRef = doc(this._db, `${this._dbPath}/lists/${this._currentList}`)
+	}
+
 	setupRef(user: User | null) {
 		if (!user) {
+			this._dbPath = null
 			this._listRef = null
 			return
 		}
 
-		this._listRef = doc(
-			this._db,
-			`users/${user.email}/lists/${this._currentList}`
-		)
+		this._dbPath = `users/${user.email}`
+		this.setListRef()
 	}
 
 	setupItems(data: RankList | undefined) {
 		if (!data) {
 			this._rankList = {}
-			this._items = []
 			this._editableItems = []
 			return
 		}
 
 		this._rankList = data
-		this._items = this._rankList[this.currentPage] ?? []
-		this._editableItems = this._rankList[this.currentPage] ?? []
+		this._editableItems = this.items
+	}
+
+	itemExists() {
+		for (const key in this._rankList) {
+			let foundItem: {
+				rank: Rank
+				pos: number
+			}
+			const rank = key as Rank
+			const exists = this._rankList[rank]?.some((item, index) => {
+				if (item.name === this._dialogItem.name) {
+					foundItem = {
+						rank: rank,
+						pos: index,
+					}
+					return true
+				} else return false
+			})
+
+			if (exists) {
+				this._dialogErrorText = `Item already exists in ${
+					foundItem!.rank
+				} at number ${foundItem!.pos + 1}`
+				return true
+			} else {
+				return false
+			}
+		}
+	}
+
+	async saveToDb() {
+		if (!this._listRef) return
+		await setDoc(
+			this._listRef,
+			{ [this._currentPage]: this._editableItems },
+			{ merge: true }
+		)
+		this.resetDialogItem()
 	}
 
 	async addNewItem() {
-		if (!this._listRef) return
+		if (this.itemExists()) return
 
 		this._editableItems.push({
-			name: this.editableItem.name,
-			progress: this.editableItem.progress,
+			name: this.dialogItem.name,
+			progress: this.dialogItem.progress,
 		})
 
-		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
+		this._editableItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.saveToDb()
+		this.dialogClose()
 	}
 
 	async edit() {
-		if (!this._listRef) return
-		this._editableItems[this._editableItemIndex] = this._editableItem
-		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
+		if (this.itemExists()) return
+		this._editableItems[this._editableItemIndex] = this._dialogItem
+		this._editableItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.saveToDb()
+		this.dialogClose()
 	}
 
 	async delete() {
-		if (!this._listRef) return
 		this._editableItems.splice(this._editableItemIndex, 1)
-		await setDoc(this._listRef, { [this._currentPage]: this._editableItems })
+		this.saveToDb()
 	}
 }

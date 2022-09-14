@@ -27,9 +27,9 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 
 	const onEdit = (item: Item, index: number) => {
 		listStore.dialogType = 'edit'
-		listStore.editableItem = item
+		listStore.dialogItem = item
 		listStore.editableItemIndex = index
-		listStore.openDialog = true
+		listStore.dialogOpen = true
 		setMenuAnchor(null)
 	}
 

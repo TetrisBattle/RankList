@@ -44,7 +44,7 @@ const TopBar = () => {
 				<MenuItem
 					onClick={() => {
 						listStore.dialogType = 'new'
-						listStore.openDialog = true
+						listStore.dialogOpen = true
 						setMenuAnchor(null)
 					}}
 				>

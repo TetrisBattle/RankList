@@ -10,48 +10,32 @@ import {
 import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
-	const { appStore, listStore } = useStoreContext()
+	const { listStore } = useStoreContext()
 	const dialogTitle = listStore.dialogType === 'new' ? 'New' : 'Edit'
-
-	const onSave = () => {
-		appStore.isLoading = true
-
-		if (listStore.dialogType === 'new') {
-			listStore.addNewItem().then(() => {
-				appStore.isLoading = false
-				listStore.openDialog = false
-			})
-		} else {
-			listStore.edit().then(() => {
-				appStore.isLoading = false
-				listStore.openDialog = false
-			})
-		}
-	}
 
 	return (
 		<Dialog
-			open={listStore.openDialog}
-			onClose={() => {
-				listStore.openDialog = false
-			}}
+			open={listStore.dialogOpen}
+			onClose={() => listStore.dialogClose()}
 		>
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={listStore.editableItem.name}
+					value={listStore.dialogItem.name}
 					onChange={(e) => {
-						listStore.editableItemName = e.target.value
+						listStore.dialogItemName = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
 					size={'small'}
+					error={!!listStore.dialogErrorText}
+					helperText={listStore.dialogErrorText}
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={listStore.editableItem.progress}
+					value={listStore.dialogItem.progress}
 					onChange={(e) => {
-						listStore.editableItemProgress = e.target.value
+						listStore.dialogItemProgress = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}
@@ -60,14 +44,8 @@ const ItemDialog = () => {
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button
-					onClick={() => {
-						listStore.openDialog = false
-					}}
-				>
-					Cancel
-				</Button>
-				<Button onClick={onSave}>Save</Button>
+				<Button onClick={() => listStore.dialogClose()}>Cancel</Button>
+				<Button onClick={() => listStore.dialogSave()}>Save</Button>
 			</DialogActions>
 		</Dialog>
 	)
