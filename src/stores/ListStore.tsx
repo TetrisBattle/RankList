@@ -7,7 +7,7 @@ import {
 	setDoc,
 } from 'firebase/firestore'
 import firebaseApp from 'firebaseApp'
-import { User } from 'firebase/auth'
+import AuthStore from './AuthStore'
 
 export class Item {
 	constructor(public name = '', public progress = '') {
@@ -41,7 +41,6 @@ interface RankList {
 export default class ListStore {
 	private _isLoading = false
 	private _db = getFirestore(firebaseApp)
-	private _dbPath: string | null = null
 	private _listRef: DocumentReference<DocumentData> | null = null
 
 	private _dialogItem = new Item()
@@ -57,7 +56,7 @@ export default class ListStore {
 	private _selectedListIndex = 0
 	private _selectedPage: Rank = 'rankS'
 
-	constructor() {
+	constructor(private _authStore: AuthStore) {
 		makeAutoObservable(this)
 	}
 
@@ -140,7 +139,6 @@ export default class ListStore {
 
 	set selectedPage(value) {
 		this._selectedPage = value
-		this.setListRef()
 		this._editableItems = this.items
 	}
 
@@ -152,36 +150,12 @@ export default class ListStore {
 		this._editableItemIndex = value
 	}
 
-	resetDialogItem() {
-		this._dialogItem = new Item()
-	}
-
-	dialogClose() {
-		this._dialogOpen = false
-		this._dialogErrorText = null
-		this.resetDialogItem()
-	}
-
-	dialogSave() {
-		this._dialogType === 'new' ? this.addNewItem() : this.edit()
-	}
-
-	setListRef() {
-		this._listRef = doc(
-			this._db,
-			`${this._dbPath}/lists/${this._listOptions[this._selectedListIndex]}`
-		)
-	}
-
-	setupRef(user: User | null) {
-		if (!user) {
-			this._dbPath = null
+	setupRef() {
+		if (this._authStore.user) {
+			this.setListRef()
+		} else {
 			this._listRef = null
-			return
 		}
-
-		this._dbPath = `users/${user.email}`
-		this.setListRef()
 	}
 
 	setupItems(data: RankList | undefined) {
@@ -195,7 +169,30 @@ export default class ListStore {
 		this._editableItems = this.items
 	}
 
-	itemExists() {
+	dialogClose() {
+		this._dialogOpen = false
+		this._dialogErrorText = null
+		this.resetDialogItem()
+	}
+
+	dialogSave() {
+		this._dialogType === 'new' ? this.addNewItem() : this.edit()
+	}
+
+	private resetDialogItem() {
+		this._dialogItem = new Item()
+	}
+
+	private setListRef() {
+		this._listRef = doc(
+			this._db,
+			`users/${this._authStore.user}/lists/${
+				this._listOptions[this._selectedListIndex]
+			}`
+		)
+	}
+
+	private itemExists() {
 		for (const key in this._rankList) {
 			let foundItem: {
 				rank: Rank
@@ -223,7 +220,7 @@ export default class ListStore {
 		}
 	}
 
-	async saveToDb() {
+	private async saveToDb() {
 		if (!this._listRef) return
 		await setDoc(
 			this._listRef,
@@ -233,7 +230,7 @@ export default class ListStore {
 		this.resetDialogItem()
 	}
 
-	async addNewItem() {
+	private async addNewItem() {
 		if (this.itemExists()) return
 
 		this._editableItems.push({
@@ -246,7 +243,7 @@ export default class ListStore {
 		this.dialogClose()
 	}
 
-	async edit() {
+	private async edit() {
 		if (this.itemExists()) return
 		this._editableItems[this._editableItemIndex] = this._dialogItem
 		this._editableItems.sort((a, b) => a.name.localeCompare(b.name))

@@ -14,7 +14,7 @@ const App = () => {
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
 			authStore.user = user?.email
-			listStore.setupRef(user)
+			listStore.setupRef()
 		})
 		return () => unsubUser()
 	}, [authStore, listStore])
@@ -22,12 +22,14 @@ const App = () => {
 	useEffect(() => {
 		if (!listStore.listRef) return
 
+		appStore.isLoading = true
 		const unsubList = onSnapshot(listStore.listRef, (doc) => {
 			listStore.setupItems(doc.data())
+			appStore.isLoading = false
 		})
 
 		return () => unsubList()
-	}, [listStore, listStore.listRef])
+	}, [appStore, listStore, listStore.listRef, listStore.selectedListIndex])
 
 	const LoginButton = () => (
 		<Button
