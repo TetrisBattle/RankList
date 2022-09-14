@@ -2,7 +2,7 @@ import { makeAutoObservable } from 'mobx'
 import {
 	getAuth,
 	GoogleAuthProvider,
-	signInWithRedirect,
+	signInWithPopup,
 	signOut,
 } from 'firebase/auth'
 
@@ -23,7 +23,7 @@ export default class AuthStore {
 	}
 
 	login() {
-		signInWithRedirect(getAuth(), this._googleAuthProvider)
+		signInWithPopup(getAuth(), this._googleAuthProvider)
 	}
 
 	logout() {

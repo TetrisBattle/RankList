@@ -1,18 +1,25 @@
 import { useEffect, useState } from 'react'
-import { Box, Button, Menu, MenuItem, Typography } from '@mui/material'
+import {
+	Box,
+	Button,
+	ListItemIcon,
+	Menu,
+	MenuItem,
+	Typography,
+} from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
 import { observer } from 'mobx-react-lite'
 import { Rank } from 'stores/ListStore'
+import { Logout as LogoutIcon, Add as AddIcon } from '@mui/icons-material'
 
 const TopBar = () => {
 	const { authStore, listStore } = useStoreContext()
-	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
+	const [settingsMenu, setSettingsMenu] = useState<HTMLElement | null>(null)
 
 	useEffect(() => {}, [listStore.currentPage])
 
 	type PageLetter = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
-
 	const PageButton = ({ text }: { text: PageLetter }) => {
 		const page: Rank = `rank${text === '?' ? 'Unknown' : text}`
 
@@ -34,28 +41,34 @@ const TopBar = () => {
 		)
 	}
 
-	const CustomMenu = () => {
+	const ItemMenu = () => {
 		return (
 			<Menu
-				anchorEl={menuAnchor}
-				open={!!menuAnchor}
-				onClose={() => setMenuAnchor(null)}
+				anchorEl={settingsMenu}
+				open={!!settingsMenu}
+				onClose={() => setSettingsMenu(null)}
 			>
 				<MenuItem
 					onClick={() => {
 						listStore.dialogType = 'new'
 						listStore.dialogOpen = true
-						setMenuAnchor(null)
+						setSettingsMenu(null)
 					}}
 				>
+					<ListItemIcon>
+						<AddIcon fontSize='small' />
+					</ListItemIcon>
 					Add new
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
 						authStore.logout()
-						setMenuAnchor(null)
+						setSettingsMenu(null)
 					}}
 				>
+					<ListItemIcon>
+						<LogoutIcon fontSize='small' />
+					</ListItemIcon>
 					Logout
 				</MenuItem>
 			</Menu>
@@ -92,7 +105,7 @@ const TopBar = () => {
 					<PageButton text={'?'} />
 					<Button
 						onClick={(e) => {
-							setMenuAnchor(e.currentTarget)
+							setSettingsMenu(e.currentTarget)
 						}}
 						sx={{
 							borderRadius: 0,
@@ -101,7 +114,7 @@ const TopBar = () => {
 					>
 						<SettingsIcon fontSize='small' />
 					</Button>
-					<CustomMenu />
+					<ItemMenu />
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>

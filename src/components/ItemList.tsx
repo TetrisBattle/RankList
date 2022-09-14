@@ -10,7 +10,6 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
-import useLongPress from 'hooks/useLongPress'
 import { useStoreContext } from 'stores/StoreContext'
 import { Item } from 'stores/ListStore'
 import { observer } from 'mobx-react-lite'
@@ -18,11 +17,14 @@ import { observer } from 'mobx-react-lite'
 const ListItem = ({ index, item }: { index: number; item: Item }) => {
 	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
-	const [menuAnchor, setMenuAnchor] = useState<HTMLElement | null>(null)
+	const [contextMenu, setContextMenu] = useState<{
+		mouseX: number
+		mouseY: number
+	} | null>(null)
 
 	const onCopy = (item: Item) => {
 		navigator.clipboard.writeText(`${item.name} chapter ${item.progress}`)
-		setMenuAnchor(null)
+		setContextMenu(null)
 	}
 
 	const onEdit = (item: Item, index: number) => {
@@ -30,18 +32,30 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 		listStore.dialogItem = item
 		listStore.editableItemIndex = index
 		listStore.dialogOpen = true
-		setMenuAnchor(null)
+		setContextMenu(null)
 	}
 
 	const onDelete = (index: number) => {
 		listStore.editableItemIndex = index
 		listStore.delete()
-		setMenuAnchor(null)
+		setContextMenu(null)
+	}
+
+	const handleContextMenu = (event: React.MouseEvent) => {
+		event.preventDefault()
+		setContextMenu(
+			contextMenu
+				? null
+				: {
+						mouseX: event.clientX,
+						mouseY: event.clientY,
+				  }
+		)
 	}
 
 	return (
 		<Box
-			{...useLongPress(() => setMenuAnchor(itemRef.current))}
+			onContextMenu={handleContextMenu}
 			sx={{
 				display: 'flex',
 				gap: 0.5,
@@ -57,9 +71,9 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 			<ListItemText
 				primary={item.name}
 				ref={itemRef}
-				sx={{ flex: item.progress ? 8 : 10, pl: 1 }}
+				sx={{ flex: listStore.currentList !== 'movies' ? 10 : 8, pl: 1 }}
 			/>
-			{item.progress && (
+			{listStore.currentList !== 'movies' && (
 				<ListItemText
 					primary={item.progress}
 					sx={{ flex: 2, textAlign: 'center' }}
@@ -67,9 +81,18 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 			)}
 
 			<Menu
-				anchorEl={menuAnchor}
-				open={!!menuAnchor}
-				onClose={() => setMenuAnchor(null)}
+				open={!!contextMenu}
+				onClose={() => setContextMenu(null)}
+				anchorReference='anchorPosition'
+				anchorPosition={
+					contextMenu
+						? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+						: undefined
+				}
+				transformOrigin={{
+					vertical: 'bottom',
+					horizontal: 'center',
+				}}
 			>
 				<MenuItem onClick={() => onCopy(item)}>
 					<ListItemIcon>
