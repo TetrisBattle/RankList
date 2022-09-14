@@ -71,9 +71,9 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 			<ListItemText
 				primary={item.name}
 				ref={itemRef}
-				sx={{ flex: listStore.currentList !== 'movies' ? 10 : 8, pl: 1 }}
+				sx={{ flex: listStore.selectedList !== 'movies' ? 10 : 8, pl: 1 }}
 			/>
-			{listStore.currentList !== 'movies' && (
+			{listStore.selectedList !== 'movies' && (
 				<ListItemText
 					primary={item.progress}
 					sx={{ flex: 2, textAlign: 'center' }}

@@ -15,23 +15,24 @@ import { Logout as LogoutIcon, Add as AddIcon } from '@mui/icons-material'
 
 const TopBar = () => {
 	const { authStore, listStore } = useStoreContext()
-	const [settingsMenu, setSettingsMenu] = useState<HTMLElement | null>(null)
+	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
+	const [settingsMenuAnchor, setSettingsMenuAnchor] =
+		useState<HTMLElement | null>(null)
 
-	useEffect(() => {}, [listStore.currentPage])
+	useEffect(() => {}, [listStore.selectedPage])
 
 	type PageLetter = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
 	const PageButton = ({ text }: { text: PageLetter }) => {
 		const page: Rank = `rank${text === '?' ? 'Unknown' : text}`
-
 		return (
 			<Button
 				onClick={() => {
-					listStore.currentPage = page
+					listStore.selectedPage = page
 				}}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.currentPage === page
+						listStore.selectedPage === page
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
@@ -41,18 +42,41 @@ const TopBar = () => {
 		)
 	}
 
-	const ItemMenu = () => {
+	const ListMenu = () => {
 		return (
 			<Menu
-				anchorEl={settingsMenu}
-				open={!!settingsMenu}
-				onClose={() => setSettingsMenu(null)}
+				anchorEl={listMenuAnchor}
+				open={!!listMenuAnchor}
+				onClose={() => setListMenuAnchor(null)}
+			>
+				{listStore.listOptions.map((option, index) => (
+					<MenuItem
+						key={option}
+						selected={index === listStore.selectedListIndex}
+						onClick={() => {
+							listStore.selectedListIndex = index
+							setListMenuAnchor(null)
+						}}
+					>
+						{option}
+					</MenuItem>
+				))}
+			</Menu>
+		)
+	}
+
+	const SettingsMenu = () => {
+		return (
+			<Menu
+				anchorEl={settingsMenuAnchor}
+				open={!!settingsMenuAnchor}
+				onClose={() => setSettingsMenuAnchor(null)}
 			>
 				<MenuItem
 					onClick={() => {
 						listStore.dialogType = 'new'
 						listStore.dialogOpen = true
-						setSettingsMenu(null)
+						setSettingsMenuAnchor(null)
 					}}
 				>
 					<ListItemIcon>
@@ -63,7 +87,7 @@ const TopBar = () => {
 				<MenuItem
 					onClick={() => {
 						authStore.logout()
-						setSettingsMenu(null)
+						setSettingsMenuAnchor(null)
 					}}
 				>
 					<ListItemIcon>
@@ -89,24 +113,34 @@ const TopBar = () => {
 		>
 			<Box sx={{ display: 'flex' }}>
 				<Box
+					onClick={(e) => setListMenuAnchor(e.currentTarget)}
 					sx={{
-						display: 'flex',
 						flex: 4,
+						display: 'flex',
 						alignItems: 'center',
+						':hover': {
+							cursor: 'pointer',
+							color: (theme) => theme.palette.primary.light,
+						},
 					}}
 				>
-					<Typography sx={{ pl: 1, fontSize: 22 }}>
-						{listStore.currentList.charAt(0).toUpperCase() +
-							listStore.currentList.slice(1)}
+					<Typography
+						sx={{
+							px: 1,
+							fontSize: 22,
+							color: (theme) =>
+								listMenuAnchor ? theme.palette.primary.light : 'inherit',
+						}}
+					>
+						{listStore.selectedList}
 					</Typography>
 				</Box>
+				<ListMenu />
 				<Box sx={{ display: 'flex', flex: 3 }}>
 					<PageButton text={'X'} />
 					<PageButton text={'?'} />
 					<Button
-						onClick={(e) => {
-							setSettingsMenu(e.currentTarget)
-						}}
+						onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
 						sx={{
 							borderRadius: 0,
 							bgcolor: (theme) => theme.palette.background.default,
@@ -114,7 +148,7 @@ const TopBar = () => {
 					>
 						<SettingsIcon fontSize='small' />
 					</Button>
-					<ItemMenu />
+					<SettingsMenu />
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>

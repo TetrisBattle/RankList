@@ -16,18 +16,18 @@ const App = () => {
 			authStore.user = user?.email
 			listStore.setupRef(user)
 		})
+		return () => unsubUser()
+	}, [authStore, listStore])
 
+	useEffect(() => {
 		if (!listStore.listRef) return
 
 		const unsubList = onSnapshot(listStore.listRef, (doc) => {
 			listStore.setupItems(doc.data())
 		})
 
-		return () => {
-			unsubUser()
-			unsubList()
-		}
-	}, [authStore, authStore.user, listStore])
+		return () => unsubList()
+	}, [listStore, listStore.listRef])
 
 	const LoginButton = () => (
 		<Button

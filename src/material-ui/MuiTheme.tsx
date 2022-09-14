@@ -93,6 +93,15 @@ const MuiTheme = (isDarkTheme: boolean) => {
 					},
 				},
 			},
+			MuiMenuItem: {
+				styleOverrides: {
+					root: {
+						'&.Mui-selected': {
+							backgroundColor: theme.palette.grey[800] + '!important',
+						},
+					},
+				},
+			},
 			MuiLink: {
 				defaultProps: {
 					underline: 'none',

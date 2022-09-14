@@ -53,8 +53,9 @@ export default class ListStore {
 	private _editableItems: Item[] = []
 	private _editableItemIndex = 0
 
-	private _currentList = 'mangaList'
-	private _currentPage: Rank = 'rankS'
+	private _listOptions = ['MangaList', 'Series', 'Movies']
+	private _selectedListIndex = 0
+	private _selectedPage: Rank = 'rankS'
 
 	constructor() {
 		makeAutoObservable(this)
@@ -88,10 +89,6 @@ export default class ListStore {
 		this._dialogItem.progress = value
 	}
 
-	resetDialogItem() {
-		this._dialogItem = new Item()
-	}
-
 	get dialogOpen() {
 		return this._dialogOpen
 	}
@@ -117,23 +114,32 @@ export default class ListStore {
 	}
 
 	get items() {
-		return toJS(this._rankList[this.currentPage]) ?? []
+		return toJS(this._rankList[this.selectedPage]) ?? []
 	}
 
-	get currentList() {
-		return this._currentList
+	get listOptions() {
+		return this._listOptions
 	}
 
-	set currentList(value) {
-		this._currentList = value
+	get selectedListIndex() {
+		return this._selectedListIndex
 	}
 
-	get currentPage() {
-		return this._currentPage
+	set selectedListIndex(value) {
+		this._selectedListIndex = value
+		this.setListRef()
 	}
 
-	set currentPage(value) {
-		this._currentPage = value
+	get selectedList() {
+		return this._listOptions[this._selectedListIndex]
+	}
+
+	get selectedPage() {
+		return this._selectedPage
+	}
+
+	set selectedPage(value) {
+		this._selectedPage = value
 		this.setListRef()
 		this._editableItems = this.items
 	}
@@ -144,6 +150,10 @@ export default class ListStore {
 
 	set editableItemIndex(value) {
 		this._editableItemIndex = value
+	}
+
+	resetDialogItem() {
+		this._dialogItem = new Item()
 	}
 
 	dialogClose() {
@@ -157,7 +167,10 @@ export default class ListStore {
 	}
 
 	setListRef() {
-		this._listRef = doc(this._db, `${this._dbPath}/lists/${this._currentList}`)
+		this._listRef = doc(
+			this._db,
+			`${this._dbPath}/lists/${this._listOptions[this._selectedListIndex]}`
+		)
 	}
 
 	setupRef(user: User | null) {
@@ -214,7 +227,7 @@ export default class ListStore {
 		if (!this._listRef) return
 		await setDoc(
 			this._listRef,
-			{ [this._currentPage]: this._editableItems },
+			{ [this._selectedPage]: this._editableItems },
 			{ merge: true }
 		)
 		this.resetDialogItem()
