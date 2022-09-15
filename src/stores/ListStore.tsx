@@ -50,7 +50,7 @@ export default class ListStore {
 
 	private _rankList: RankList = {}
 	private _editableItems: Item[] = []
-	private _editableItemIndex = 0
+	private _editableItemIndex: number | null = null
 
 	private _listOptions = ['MangaList', 'Series', 'Movies']
 	private _selectedListIndex = 0
@@ -227,7 +227,6 @@ export default class ListStore {
 			{ [this._selectedPage]: this._editableItems },
 			{ merge: true }
 		)
-		this.resetDialogItem()
 	}
 
 	private async addNewItem() {
@@ -241,18 +240,22 @@ export default class ListStore {
 		this._editableItems.sort((a, b) => a.name.localeCompare(b.name))
 		this.saveToDb()
 		this.dialogClose()
+		this._editableItemIndex = null
 	}
 
 	private async edit() {
-		if (this.itemExists()) return
+		if (this.itemExists() || this._editableItemIndex === null) return
 		this._editableItems[this._editableItemIndex] = this._dialogItem
 		this._editableItems.sort((a, b) => a.name.localeCompare(b.name))
 		this.saveToDb()
 		this.dialogClose()
+		this._editableItemIndex = null
 	}
 
 	async delete() {
+		if (this._editableItemIndex === null) return
 		this._editableItems.splice(this._editableItemIndex, 1)
 		this.saveToDb()
+		this._editableItemIndex = null
 	}
 }

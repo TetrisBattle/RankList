@@ -1,7 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
 	Box,
+	Collapse,
+	Divider,
 	List,
+	ListItemButton,
 	ListItemIcon,
 	ListItemText,
 	Menu,
@@ -10,17 +13,24 @@ import {
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
 import { Item } from 'stores/ListStore'
 import { observer } from 'mobx-react-lite'
 
 const ListItem = ({ index, item }: { index: number; item: Item }) => {
+	const [x, y] = useState(false)
 	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<{
 		mouseX: number
 		mouseY: number
 	} | null>(null)
+
+	useEffect(() => {}, [listStore.editableItemIndex])
+
+	const render = () => y((z) => !z)
 
 	const onCopy = (item: Item) => {
 		navigator.clipboard.writeText(`${item.name} chapter ${item.progress}`)
@@ -39,6 +49,10 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 		listStore.editableItemIndex = index
 		listStore.delete()
 		setContextMenu(null)
+	}
+
+	const onSendTo = () => {
+		// setContextMenu(null)
 	}
 
 	const handleContextMenu = (event: React.MouseEvent) => {
@@ -61,7 +75,7 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 				gap: 0.5,
 				width: 1,
 				justifyContent: 'center',
-				'& .MuiListItemText-root': {
+				'.MuiListItemText-root': {
 					bgcolor: (theme) => theme.palette.secondary.main,
 					mt: 0,
 				},
@@ -112,6 +126,56 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 					</ListItemIcon>
 					<ListItemText>Delete</ListItemText>
 				</MenuItem>
+				<Divider />
+				<MenuItem
+					onClick={() => {
+						listStore.editableItemIndex =
+							listStore.editableItemIndex === null ? index : null
+						render()
+					}}
+				>
+					<ListItemText>Send to</ListItemText>
+					{listStore.editableItemIndex === null ? (
+						<ExpandMoreIcon />
+					) : (
+						<ExpandLessIcon />
+					)}
+				</MenuItem>
+				<Collapse in={listStore.editableItemIndex !== null}>
+					<List
+						disablePadding
+						dense
+						sx={{ '.MuiListItemButton-root': { textAlign: 'center' } }}
+					>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='S' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='A' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='B' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='C' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='D' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='E' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='F' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='X' />
+						</ListItemButton>
+						<ListItemButton onClick={onSendTo}>
+							<ListItemText primary='?' />
+						</ListItemButton>
+					</List>
+				</Collapse>
 			</Menu>
 		</Box>
 	)
@@ -121,7 +185,7 @@ const ItemList = () => {
 	const { listStore } = useStoreContext()
 
 	return (
-		<List sx={{ m: 0, p: 0, '& .MuiListItemText-root': { paddingBlock: 0.5 } }}>
+		<List sx={{ m: 0, p: 0, '.MuiListItemText-root': { paddingBlock: 0.5 } }}>
 			{listStore.items.map((item, index) => (
 				<ListItem key={`${index}-${item.name}`} index={index} item={item} />
 			))}
