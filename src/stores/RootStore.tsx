@@ -1,14 +1,17 @@
-import { makeAutoObservable } from 'mobx'
 import AppStore from './AppStore'
-import AuthStore from './AuthStore'
+import FirebaseStore from './FirebaseStore'
+import DialogStore from './DialogStore'
 import ListStore from './ListStore'
 
 export default class RootStore {
 	appStore = new AppStore()
-	authStore = new AuthStore()
-	listStore = new ListStore(this.authStore)
+	firebaseStore = new FirebaseStore()
+	listStore = new ListStore()
+	dialogStore = new DialogStore()
 
 	constructor() {
-		makeAutoObservable(this)
+		this.firebaseStore.init(this)
+		this.listStore.init(this)
+		this.dialogStore.init(this)
 	}
 }

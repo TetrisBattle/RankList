@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
 import {
 	Box,
 	Collapse,
@@ -16,21 +17,22 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
-import { Item } from 'stores/ListStore'
-import { observer } from 'mobx-react-lite'
+import Item from 'models/Item'
 
 const ListItem = ({ index, item }: { index: number; item: Item }) => {
-	const [x, y] = useState(false)
-	const { listStore } = useStoreContext()
+	const { listStore, firebaseStore, dialogStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<{
 		mouseX: number
 		mouseY: number
 	} | null>(null)
+	const [editableItemIndex, setEditableItemIndex] = useState<number | null>(
+		null
+	)
 
-	useEffect(() => {}, [listStore.editableItemIndex])
-
-	const render = () => y((z) => !z)
+	useEffect(() => {
+		listStore.editableItemIndex = editableItemIndex
+	}, [listStore, editableItemIndex])
 
 	const onCopy = (item: Item) => {
 		navigator.clipboard.writeText(`${item.name} chapter ${item.progress}`)
@@ -38,16 +40,18 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 	}
 
 	const onEdit = (item: Item, index: number) => {
-		listStore.dialogType = 'edit'
-		listStore.dialogItem = item
+		dialogStore.dialogType = 'edit'
+		dialogStore.dialogItem = {
+			index,
+			...item,
+		}
 		listStore.editableItemIndex = index
-		listStore.dialogOpen = true
+		dialogStore.openDialog()
 		setContextMenu(null)
 	}
 
 	const onDelete = (index: number) => {
-		listStore.editableItemIndex = index
-		listStore.delete()
+		firebaseStore.delete(index)
 		setContextMenu(null)
 	}
 
@@ -129,51 +133,28 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 				<Divider />
 				<MenuItem
 					onClick={() => {
-						listStore.editableItemIndex =
-							listStore.editableItemIndex === null ? index : null
-						render()
+						setEditableItemIndex(editableItemIndex === null ? index : null)
 					}}
 				>
 					<ListItemText>Send to</ListItemText>
-					{listStore.editableItemIndex === null ? (
-						<ExpandMoreIcon />
-					) : (
-						<ExpandLessIcon />
-					)}
+					{editableItemIndex === null ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				</MenuItem>
-				<Collapse in={listStore.editableItemIndex !== null}>
+				<Collapse in={editableItemIndex !== null}>
 					<List
 						disablePadding
 						dense
 						sx={{ '.MuiListItemButton-root': { textAlign: 'center' } }}
 					>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='S' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='A' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='B' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='C' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='D' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='E' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='F' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='X' />
-						</ListItemButton>
-						<ListItemButton onClick={onSendTo}>
-							<ListItemText primary='?' />
-						</ListItemButton>
+						{listStore.pageOptions.rankPages.map((page) => (
+							<ListItemButton key={page.value} onClick={onSendTo}>
+								<ListItemText primary={page.displayName} />
+							</ListItemButton>
+						))}
+						{listStore.pageOptions.extraPages.map((page) => (
+							<ListItemButton key={page.value} onClick={onSendTo}>
+								<ListItemText primary={page.displayName} />
+							</ListItemButton>
+						))}
 					</List>
 				</Collapse>
 			</Menu>

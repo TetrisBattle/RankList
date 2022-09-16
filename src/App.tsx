@@ -9,31 +9,32 @@ import { useEffect } from 'react'
 import { onSnapshot } from 'firebase/firestore'
 
 const App = () => {
-	const { appStore, authStore, listStore } = useStoreContext()
+	const { appStore, firebaseStore, listStore } = useStoreContext()
 
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			authStore.user = user?.email
-			listStore.setupRef()
+			firebaseStore.user = user?.email
+			firebaseStore.setupListRef()
 		})
 		return () => unsubUser()
-	}, [authStore, listStore])
+	}, [firebaseStore, listStore])
 
 	useEffect(() => {
-		if (!listStore.listRef) return
+		if (!firebaseStore.listRef) return
 
 		appStore.isLoading = true
-		const unsubList = onSnapshot(listStore.listRef, (doc) => {
-			listStore.setupItems(doc.data())
+		const unsubList = onSnapshot(firebaseStore.listRef, (doc) => {
+			if (!doc.data() === undefined) return
+			listStore.rankList = doc.data() ?? []
 			appStore.isLoading = false
 		})
 
 		return () => unsubList()
-	}, [appStore, listStore, listStore.listRef, listStore.selectedListIndex])
+	}, [appStore, listStore, firebaseStore.listRef, listStore.selectedListIndex])
 
 	const LoginButton = () => (
 		<Button
-			onClick={() => authStore.login()}
+			onClick={() => firebaseStore.login()}
 			sx={{
 				position: 'absolute',
 				top: '50%',
@@ -72,7 +73,7 @@ const App = () => {
 					marginInline: 'auto',
 				}}
 			>
-				{!authStore.user ? <LoginButton /> : <RankList />}
+				{!firebaseStore.user ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>

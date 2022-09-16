@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
 	Box,
 	Button,
@@ -10,34 +10,32 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
 import { observer } from 'mobx-react-lite'
-import { Rank } from 'stores/ListStore'
 import { Logout as LogoutIcon, Add as AddIcon } from '@mui/icons-material'
+import { Page } from 'stores/ListStore'
 
 const TopBar = () => {
-	const { authStore, listStore } = useStoreContext()
+	const { firebaseStore, listStore, dialogStore } = useStoreContext()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
 
-	useEffect(() => {}, [listStore.selectedPage])
-
-	type PageLetter = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
-	const PageButton = ({ text }: { text: PageLetter }) => {
-		const page: Rank = `rank${text === '?' ? 'Unknown' : text}`
+	const PageButton = ({
+		page,
+	}: {
+		page: { value: Page; displayName: string }
+	}) => {
 		return (
 			<Button
-				onClick={() => {
-					listStore.selectedPage = page
-				}}
+				onClick={() => (listStore.selectedPage = page.value)}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.selectedPage === page
+						listStore.selectedPage === page.value
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
 			>
-				{text}
+				{page.displayName}
 			</Button>
 		)
 	}
@@ -74,8 +72,8 @@ const TopBar = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						listStore.dialogType = 'new'
-						listStore.dialogOpen = true
+						dialogStore.dialogType = 'new'
+						dialogStore.openDialog()
 						setSettingsMenuAnchor(null)
 					}}
 				>
@@ -86,7 +84,7 @@ const TopBar = () => {
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						authStore.logout()
+						firebaseStore.logout()
 						setSettingsMenuAnchor(null)
 					}}
 				>
@@ -137,8 +135,9 @@ const TopBar = () => {
 				</Box>
 				<ListMenu />
 				<Box sx={{ display: 'flex', flex: 3 }}>
-					<PageButton text={'X'} />
-					<PageButton text={'?'} />
+					{listStore.pageOptions.extraPages.map((page) => (
+						<PageButton key={page.value} page={page} />
+					))}
 					<Button
 						onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
 						sx={{
@@ -152,13 +151,9 @@ const TopBar = () => {
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>
-				<PageButton text={'S'} />
-				<PageButton text={'A'} />
-				<PageButton text={'B'} />
-				<PageButton text={'C'} />
-				<PageButton text={'D'} />
-				<PageButton text={'E'} />
-				<PageButton text={'F'} />
+				{listStore.pageOptions.rankPages.map((page) => (
+					<PageButton key={page.value} page={page} />
+				))}
 			</Box>
 		</Box>
 	)

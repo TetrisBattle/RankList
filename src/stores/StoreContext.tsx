@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 import RootStore from 'stores/RootStore'
 
-const StoreContext = createContext<RootStore>({} as RootStore)
+const StoreContext = createContext({} as RootStore)
 
 export const StoreContextProvider = ({
 	children,
