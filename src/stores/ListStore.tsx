@@ -1,4 +1,4 @@
-import { makeAutoObservable, toJS } from 'mobx'
+import { makeAutoObservable } from 'mobx'
 import RootStore from './RootStore'
 import FirebaseStore from './FirebaseStore'
 import Item from 'models/Item'
@@ -123,7 +123,7 @@ export default class ListStore {
 	}
 
 	get items() {
-		return toJS(this._rankList[this.selectedPage]) ?? []
+		return this._rankList[this.selectedPage] ?? []
 	}
 
 	get selectedListIndex() {

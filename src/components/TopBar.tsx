@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -18,6 +18,8 @@ const TopBar = () => {
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
+
+	useEffect(() => {}, [listStore.selectedPage])
 
 	const PageButton = ({
 		page,

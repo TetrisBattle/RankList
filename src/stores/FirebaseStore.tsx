@@ -14,7 +14,7 @@ import {
 } from 'firebase/firestore'
 import firebaseApp from 'firebaseApp'
 import RootStore from './RootStore'
-import ListStore from './ListStore'
+import ListStore, { Page } from './ListStore'
 import DialogStore from './DialogStore'
 
 export default class FirebaseStore {
@@ -98,5 +98,20 @@ export default class FirebaseStore {
 	delete(index: number) {
 		this._listStore.items.splice(index, 1)
 		this.saveToDb()
+	}
+
+	async sendTo(index: number, page: Page) {
+		if (!this._listRef) return
+
+		const targetList = this._listStore.rankList[page]
+		if (!targetList) {
+			this._listStore.rankList[page] = [this._listStore.items[index]]
+		} else {
+			targetList.push(this._listStore.items[index])
+			this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
+		}
+
+		this.delete(index)
+		await setDoc(this._listRef, this._listStore.rankList, { merge: true })
 	}
 }

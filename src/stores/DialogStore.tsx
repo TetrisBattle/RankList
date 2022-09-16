@@ -105,6 +105,11 @@ export default class DialogStore {
 	}
 
 	dialogSave() {
+		if (!this.dialogItem.name) {
+			this._dialogErrorText = "Name can't be empty"
+			return
+		}
+
 		if (this.dialogType === 'new') {
 			const existingItem = this.itemExists(this.dialogItem.name)
 			if (existingItem) {

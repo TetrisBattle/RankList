@@ -18,6 +18,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
 import Item from 'models/Item'
+import { Page } from 'stores/ListStore'
 
 const ListItem = ({ index, item }: { index: number; item: Item }) => {
 	const { listStore, firebaseStore, dialogStore } = useStoreContext()
@@ -55,8 +56,10 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 		setContextMenu(null)
 	}
 
-	const onSendTo = () => {
-		// setContextMenu(null)
+	const onSendTo = (page: Page) => {
+		if (editableItemIndex === null) return
+		firebaseStore.sendTo(editableItemIndex, page)
+		setContextMenu(null)
 	}
 
 	const handleContextMenu = (event: React.MouseEvent) => {
@@ -145,16 +148,28 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 						dense
 						sx={{ '.MuiListItemButton-root': { textAlign: 'center' } }}
 					>
-						{listStore.pageOptions.rankPages.map((page) => (
-							<ListItemButton key={page.value} onClick={onSendTo}>
-								<ListItemText primary={page.displayName} />
-							</ListItemButton>
-						))}
-						{listStore.pageOptions.extraPages.map((page) => (
-							<ListItemButton key={page.value} onClick={onSendTo}>
-								<ListItemText primary={page.displayName} />
-							</ListItemButton>
-						))}
+						{listStore.pageOptions.rankPages.map((page) => {
+							return (
+								<ListItemButton
+									key={page.value}
+									disabled={page.value === listStore.selectedPage}
+									onClick={() => onSendTo(page.value)}
+								>
+									<ListItemText primary={page.displayName} />
+								</ListItemButton>
+							)
+						})}
+						{listStore.pageOptions.extraPages.map((page) => {
+							return (
+								<ListItemButton
+									key={page.value}
+									disabled={page.value === listStore.selectedPage}
+									onClick={() => onSendTo(page.value)}
+								>
+									<ListItemText primary={page.displayName} />
+								</ListItemButton>
+							)
+						})}
 					</List>
 				</Collapse>
 			</Menu>
