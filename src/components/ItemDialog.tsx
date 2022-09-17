@@ -10,32 +10,32 @@ import {
 import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
-	const { dialogStore } = useStoreContext()
-	const dialogTitle = dialogStore.dialogType === 'new' ? 'New' : 'Edit'
+	const { itemDialogStore } = useStoreContext()
+	const dialogTitle = itemDialogStore.dialogType === 'new' ? 'New' : 'Edit'
 
 	return (
 		<Dialog
-			open={dialogStore.dialogOpen}
-			onClose={() => dialogStore.closeDialog()}
+			open={itemDialogStore.dialogOpen}
+			onClose={() => itemDialogStore.closeDialog()}
 		>
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={dialogStore.dialogItem.name}
+					value={itemDialogStore.dialogItem.name}
 					onChange={(e) => {
-						dialogStore.dialogItemName = e.target.value
+						itemDialogStore.dialogItemName = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
 					size={'small'}
-					error={!!dialogStore.dialogErrorText}
-					helperText={dialogStore.dialogErrorText}
+					error={!!itemDialogStore.dialogErrorText}
+					helperText={itemDialogStore.dialogErrorText}
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={dialogStore.dialogItem.progress}
+					value={itemDialogStore.dialogItem.progress}
 					onChange={(e) => {
-						dialogStore.dialogItemProgress = e.target.value
+						itemDialogStore.dialogItemProgress = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}
@@ -44,8 +44,8 @@ const ItemDialog = () => {
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => dialogStore.closeDialog()}>Cancel</Button>
-				<Button onClick={() => dialogStore.dialogSave()}>Save</Button>
+				<Button onClick={() => itemDialogStore.closeDialog()}>Cancel</Button>
+				<Button onClick={() => itemDialogStore.dialogSave()}>Save</Button>
 			</DialogActions>
 		</Dialog>
 	)

@@ -10,11 +10,15 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
 import { observer } from 'mobx-react-lite'
-import { Logout as LogoutIcon, Add as AddIcon } from '@mui/icons-material'
+import LogoutIcon from '@mui/icons-material/Logout'
+import AddIcon from '@mui/icons-material/Add'
+import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'stores/ListStore'
+import SearchDialog from './SearchDialog'
 
 const TopBar = () => {
-	const { firebaseStore, listStore, dialogStore } = useStoreContext()
+	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =
+		useStoreContext()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
@@ -74,8 +78,8 @@ const TopBar = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						dialogStore.dialogType = 'new'
-						dialogStore.openDialog()
+						itemDialogStore.dialogType = 'new'
+						itemDialogStore.openDialog()
 						setSettingsMenuAnchor(null)
 					}}
 				>
@@ -83,6 +87,17 @@ const TopBar = () => {
 						<AddIcon fontSize='small' />
 					</ListItemIcon>
 					Add new
+				</MenuItem>
+				<MenuItem
+					onClick={() => {
+						searchDialogStore.openDialog()
+						setSettingsMenuAnchor(null)
+					}}
+				>
+					<ListItemIcon>
+						<SearchIcon fontSize='small' />
+					</ListItemIcon>
+					Search
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
@@ -157,6 +172,7 @@ const TopBar = () => {
 					<PageButton key={page.value} page={page} />
 				))}
 			</Box>
+			<SearchDialog />
 		</Box>
 	)
 }

@@ -3,7 +3,7 @@ import FirebaseStore from './FirebaseStore'
 import ListStore, { Page } from './ListStore'
 import RootStore from './RootStore'
 
-export default class DialogStore {
+export default class ItemDialogStore {
 	private _firebaseStore = {} as FirebaseStore
 	private _listStore = {} as ListStore
 	private _dialogItem = {
@@ -20,8 +20,8 @@ export default class DialogStore {
 	}
 
 	init(rootStore: RootStore) {
-		this._listStore = rootStore.listStore
 		this._firebaseStore = rootStore.firebaseStore
+		this._listStore = rootStore.listStore
 	}
 
 	get dialogItem() {

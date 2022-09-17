@@ -15,11 +15,11 @@ import {
 import firebaseApp from 'firebaseApp'
 import RootStore from './RootStore'
 import ListStore, { Page } from './ListStore'
-import DialogStore from './DialogStore'
+import ItemDialogStore from './ItemDialogStore'
 
 export default class FirebaseStore {
 	private _listStore = {} as ListStore
-	private _dialogStore = {} as DialogStore
+	private _itemDialogStore = {} as ItemDialogStore
 	private _googleAuthProvider = new GoogleAuthProvider()
 	private _db = getFirestore(firebaseApp)
 	private _listRef: DocumentReference<DocumentData> | null = null
@@ -31,7 +31,7 @@ export default class FirebaseStore {
 
 	init(rootStore: RootStore) {
 		this._listStore = rootStore.listStore
-		this._dialogStore = rootStore.dialogStore
+		this._itemDialogStore = rootStore.itemDialogStore
 	}
 
 	get user() {
@@ -67,7 +67,7 @@ export default class FirebaseStore {
 		}
 	}
 
-	private async saveToDb() {
+	private async savePageToDb() {
 		if (!this._listRef) return
 		await setDoc(
 			this._listRef,
@@ -78,26 +78,26 @@ export default class FirebaseStore {
 
 	addNewItem() {
 		this._listStore.items.push({
-			name: this._dialogStore.dialogItem.name,
-			progress: this._dialogStore.dialogItem.progress,
+			name: this._itemDialogStore.dialogItem.name,
+			progress: this._itemDialogStore.dialogItem.progress,
 		})
 		this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
-		this.saveToDb()
+		this.savePageToDb()
 	}
 
 	edit() {
 		if (this._listStore.editableItemIndex === null) return
 		this._listStore.items[this._listStore.editableItemIndex] = {
-			name: this._dialogStore.dialogItem.name,
-			progress: this._dialogStore.dialogItem.progress,
+			name: this._itemDialogStore.dialogItem.name,
+			progress: this._itemDialogStore.dialogItem.progress,
 		}
 		this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
-		this.saveToDb()
+		this.savePageToDb()
 	}
 
 	delete(index: number) {
 		this._listStore.items.splice(index, 1)
-		this.saveToDb()
+		this.savePageToDb()
 	}
 
 	async sendTo(index: number, page: Page) {
@@ -108,7 +108,7 @@ export default class FirebaseStore {
 			this._listStore.rankList[page] = [this._listStore.items[index]]
 		} else {
 			targetList.push(this._listStore.items[index])
-			this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
+			targetList.sort((a, b) => a.name.localeCompare(b.name))
 		}
 
 		this.delete(index)

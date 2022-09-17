@@ -21,7 +21,7 @@ import Item from 'models/Item'
 import { Page } from 'stores/ListStore'
 
 const ListItem = ({ index, item }: { index: number; item: Item }) => {
-	const { listStore, firebaseStore, dialogStore } = useStoreContext()
+	const { listStore, firebaseStore, itemDialogStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<{
 		mouseX: number
@@ -41,13 +41,13 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 	}
 
 	const onEdit = (item: Item, index: number) => {
-		dialogStore.dialogType = 'edit'
-		dialogStore.dialogItem = {
+		itemDialogStore.dialogType = 'edit'
+		itemDialogStore.dialogItem = {
 			index,
 			...item,
 		}
 		listStore.editableItemIndex = index
-		dialogStore.openDialog()
+		itemDialogStore.openDialog()
 		setContextMenu(null)
 	}
 
