@@ -3,7 +3,7 @@ import RootStore from './RootStore'
 import FirebaseStore from './FirebaseStore'
 import Item from 'models/Item'
 
-interface RankList {
+export interface RankList {
 	rankS?: Item[]
 	rankA?: Item[]
 	rankB?: Item[]
@@ -85,7 +85,7 @@ export default class ListStore {
 
 	private _isLoading = false
 	private _rankList: RankList = {}
-	private _editableItemIndex: number | null = null
+	private _editableItemIndex = 0
 
 	private _selectedListIndex = 0
 	private _selectedPage: Page = 'rankS'

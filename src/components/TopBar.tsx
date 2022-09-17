@@ -14,7 +14,6 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'stores/ListStore'
-import SearchDialog from './SearchDialog'
 
 const TopBar = () => {
 	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =
@@ -172,7 +171,6 @@ const TopBar = () => {
 					<PageButton key={page.value} page={page} />
 				))}
 			</Box>
-			<SearchDialog />
 		</Box>
 	)
 }

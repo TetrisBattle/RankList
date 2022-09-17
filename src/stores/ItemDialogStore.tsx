@@ -68,7 +68,6 @@ export default class ItemDialogStore {
 			name: '',
 			progress: '',
 		}
-		this._listStore.editableItemIndex = null
 	}
 
 	itemExists(newItemName: string): {

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import {
 	Box,
@@ -27,13 +27,7 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 		mouseX: number
 		mouseY: number
 	} | null>(null)
-	const [editableItemIndex, setEditableItemIndex] = useState<number | null>(
-		null
-	)
-
-	useEffect(() => {
-		listStore.editableItemIndex = editableItemIndex
-	}, [listStore, editableItemIndex])
+	const [openSendToMenu, setOpenSendToMenu] = useState(false)
 
 	const onCopy = (item: Item) => {
 		navigator.clipboard.writeText(`${item.name} chapter ${item.progress}`)
@@ -57,8 +51,7 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 	}
 
 	const onSendTo = (page: Page) => {
-		if (editableItemIndex === null) return
-		firebaseStore.sendTo(editableItemIndex, page)
+		firebaseStore.sendTo(listStore.editableItemIndex, page)
 		setContextMenu(null)
 	}
 
@@ -103,7 +96,10 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 
 			<Menu
 				open={!!contextMenu}
-				onClose={() => setContextMenu(null)}
+				onClose={() => {
+					setContextMenu(null)
+					setOpenSendToMenu(false)
+				}}
 				anchorReference='anchorPosition'
 				anchorPosition={
 					contextMenu
@@ -136,13 +132,14 @@ const ListItem = ({ index, item }: { index: number; item: Item }) => {
 				<Divider />
 				<MenuItem
 					onClick={() => {
-						setEditableItemIndex(editableItemIndex === null ? index : null)
+						listStore.editableItemIndex = index
+						setOpenSendToMenu(!openSendToMenu)
 					}}
 				>
 					<ListItemText>Send to</ListItemText>
-					{editableItemIndex === null ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+					{!openSendToMenu ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 				</MenuItem>
-				<Collapse in={editableItemIndex !== null}>
+				<Collapse in={openSendToMenu}>
 					<List
 						disablePadding
 						dense

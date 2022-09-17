@@ -1,36 +1,43 @@
+import { useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
+import { getAuth, onAuthStateChanged } from 'firebase/auth'
+import { onSnapshot } from 'firebase/firestore'
 import { Backdrop, Box, Button, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from 'components/TopBar'
 import ItemList from 'components/ItemList'
 import ItemDialog from 'components/ItemDialog'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { useEffect } from 'react'
-import { onSnapshot } from 'firebase/firestore'
+import SearchDialog from 'components/SearchDialog'
 
 const App = () => {
 	const { appStore, firebaseStore, listStore } = useStoreContext()
 
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			firebaseStore.user = user?.email
-			firebaseStore.setupListRef()
+			if (user && user.email) {
+				firebaseStore.user = user.email
+				firebaseStore.setupListRef()
+			}
 		})
 		return () => unsubUser()
 	}, [firebaseStore, listStore])
 
 	useEffect(() => {
-		if (!firebaseStore.listRef) return
+		if (firebaseStore.user === 'Guest') return
 
 		appStore.isLoading = true
 		const unsubList = onSnapshot(firebaseStore.listRef, (doc) => {
-			if (!doc.data() === undefined) return
-			listStore.rankList = doc.data() ?? []
+			listStore.rankList = doc.data() ?? {}
 			appStore.isLoading = false
 		})
 
 		return () => unsubList()
-	}, [appStore, listStore, firebaseStore.listRef, listStore.selectedListIndex])
+	}, [
+		appStore,
+		listStore,
+		firebaseStore,
+		firebaseStore.listRef,
+	])
 
 	const LoginButton = () => (
 		<Button
@@ -73,9 +80,10 @@ const App = () => {
 					marginInline: 'auto',
 				}}
 			>
-				{!firebaseStore.user ? <LoginButton /> : <RankList />}
+				{firebaseStore.user === 'Guest' ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
+			<SearchDialog />
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
 				<CircularProgress />
 			</Backdrop>

@@ -7,14 +7,13 @@ import {
 } from 'firebase/auth'
 import {
 	doc,
-	DocumentData,
 	DocumentReference,
 	getFirestore,
 	setDoc,
 } from 'firebase/firestore'
 import firebaseApp from 'firebaseApp'
 import RootStore from './RootStore'
-import ListStore, { Page } from './ListStore'
+import ListStore, { Page, RankList } from './ListStore'
 import ItemDialogStore from './ItemDialogStore'
 
 export default class FirebaseStore {
@@ -22,8 +21,8 @@ export default class FirebaseStore {
 	private _itemDialogStore = {} as ItemDialogStore
 	private _googleAuthProvider = new GoogleAuthProvider()
 	private _db = getFirestore(firebaseApp)
-	private _listRef: DocumentReference<DocumentData> | null = null
-	private _user: string | null | undefined = null
+	private _user = 'Guest'
+	private _listRef: DocumentReference<RankList> = doc(this._db, 'error/doc')
 
 	constructor() {
 		makeAutoObservable(this)
@@ -55,20 +54,15 @@ export default class FirebaseStore {
 	}
 
 	setupListRef() {
-		if (this.user) {
-			this._listRef = doc(
-				this._db,
-				`users/${this.user}/lists/${
-					this._listStore.listOptions[this._listStore.selectedListIndex]
-				}`
-			)
-		} else {
-			this._listRef = null
-		}
+		this._listRef = doc(
+			this._db,
+			`users/${this.user}/lists/${
+				this._listStore.listOptions[this._listStore.selectedListIndex]
+			}`
+		)
 	}
 
 	private async savePageToDb() {
-		if (!this._listRef) return
 		await setDoc(
 			this._listRef,
 			{ [this._listStore.selectedPage]: this._listStore.items },
@@ -86,7 +80,6 @@ export default class FirebaseStore {
 	}
 
 	edit() {
-		if (this._listStore.editableItemIndex === null) return
 		this._listStore.items[this._listStore.editableItemIndex] = {
 			name: this._itemDialogStore.dialogItem.name,
 			progress: this._itemDialogStore.dialogItem.progress,
@@ -101,8 +94,6 @@ export default class FirebaseStore {
 	}
 
 	async sendTo(index: number, page: Page) {
-		if (!this._listRef) return
-
 		const targetList = this._listStore.rankList[page]
 		if (!targetList) {
 			this._listStore.rankList[page] = [this._listStore.items[index]]
