@@ -13,16 +13,16 @@ import {
 } from 'firebase/firestore'
 import firebaseApp from 'firebaseApp'
 import RootStore from './RootStore'
-import ListStore, { Page, RankList } from './ListStore'
-import ItemDialogStore from './ItemDialogStore'
+import ListStore from './ListStore'
+import { PageId, ListDto } from 'interfaces/Ranklist'
+import Item from 'models/Item'
 
 export default class FirebaseStore {
 	private _listStore = {} as ListStore
-	private _itemDialogStore = {} as ItemDialogStore
 	private _googleAuthProvider = new GoogleAuthProvider()
 	private _db = getFirestore(firebaseApp)
 	private _user = 'Guest'
-	private _listRef: DocumentReference<RankList> = doc(this._db, 'error/doc')
+	private _listRef: DocumentReference<ListDto> = doc(this._db, 'error/doc')
 
 	constructor() {
 		makeAutoObservable(this)
@@ -30,7 +30,6 @@ export default class FirebaseStore {
 
 	init(rootStore: RootStore) {
 		this._listStore = rootStore.listStore
-		this._itemDialogStore = rootStore.itemDialogStore
 	}
 
 	get user() {
@@ -56,53 +55,53 @@ export default class FirebaseStore {
 	setupListRef() {
 		this._listRef = doc(
 			this._db,
-			`users/${this.user}/lists/${
-				this._listStore.listOptions[this._listStore.selectedListIndex]
-			}`
+			`users/${this.user}/lists/${this._listStore.selectedList}`
 		)
 	}
 
-	private async savePageToDb() {
-		await setDoc(
-			this._listRef,
-			{ [this._listStore.selectedPage]: this._listStore.items },
-			{ merge: true }
+	private async savePageToDb(pageId: PageId, items: Item[]) {
+		await setDoc(this._listRef, { [pageId]: items }, { merge: true })
+	}
+
+	addNewItem(item: Item) {
+		this._listStore.selectedPageItems.push(item)
+		this._listStore.selectedPageItems.sort((a, b) =>
+			a.name.localeCompare(b.name)
+		)
+		this.savePageToDb(
+			this._listStore.selectedPage,
+			this._listStore.selectedPageItems
 		)
 	}
 
-	addNewItem() {
-		this._listStore.items.push({
-			name: this._itemDialogStore.dialogItem.name,
-			progress: this._itemDialogStore.dialogItem.progress,
-		})
-		this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
-		this.savePageToDb()
+	edit(prevItemIndex: number, item: Item) {
+		this._listStore.selectedPageItems[prevItemIndex] = item
+		this._listStore.selectedPageItems.sort((a, b) =>
+			a.name.localeCompare(b.name)
+		)
+		this.savePageToDb(
+			this._listStore.selectedPage,
+			this._listStore.selectedPageItems
+		)
 	}
 
-	edit() {
-		this._listStore.items[this._listStore.editableItemIndex] = {
-			name: this._itemDialogStore.dialogItem.name,
-			progress: this._itemDialogStore.dialogItem.progress,
-		}
-		this._listStore.items.sort((a, b) => a.name.localeCompare(b.name))
-		this.savePageToDb()
+	delete(itemIndex: number) {
+		this._listStore.selectedPageItems.splice(itemIndex, 1)
+		this.savePageToDb(
+			this._listStore.selectedPage,
+			this._listStore.selectedPageItems
+		)
 	}
 
-	delete(index: number) {
-		this._listStore.items.splice(index, 1)
-		this.savePageToDb()
-	}
+	sendTo(selectedItemIndex: number, pageId: PageId) {
+		const targetPage = this._listStore.rankList.find((page) => page.id === pageId)
+		const targetPageItems = targetPage?.list ?? []
 
-	async sendTo(index: number, page: Page) {
-		const targetList = this._listStore.rankList[page]
-		if (!targetList) {
-			this._listStore.rankList[page] = [this._listStore.items[index]]
-		} else {
-			targetList.push(this._listStore.items[index])
-			targetList.sort((a, b) => a.name.localeCompare(b.name))
-		}
-
-		this.delete(index)
-		await setDoc(this._listRef, this._listStore.rankList, { merge: true })
+		targetPageItems.push(this._listStore.selectedPageItems[selectedItemIndex])
+		this._listStore.selectedPageItems.sort((a, b) =>
+			a.name.localeCompare(b.name)
+		)
+		this.savePageToDb(pageId, targetPageItems)
+		this.delete(selectedItemIndex)
 	}
 }

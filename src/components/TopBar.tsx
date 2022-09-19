@@ -13,7 +13,7 @@ import { observer } from 'mobx-react-lite'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
-import { Page } from 'stores/ListStore'
+import { Page } from 'interfaces/Ranklist'
 
 const TopBar = () => {
 	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =
@@ -24,40 +24,36 @@ const TopBar = () => {
 
 	useEffect(() => {}, [listStore.selectedPage])
 
-	const PageButton = ({
-		page,
-	}: {
-		page: { value: Page; displayName: string }
-	}) => {
+	const PageButton = (page: Page) => {
 		return (
 			<Button
-				onClick={() => (listStore.selectedPage = page.value)}
+				onClick={() => (listStore.selectedPage = page.id)}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.selectedPage === page.value
+						listStore.selectedPage === page.id
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
 			>
-				{page.displayName}
+				{page.label}
 			</Button>
 		)
 	}
 
-	const ListMenu = () => {
+	const ItemMenu = () => {
 		return (
 			<Menu
 				anchorEl={listMenuAnchor}
 				open={!!listMenuAnchor}
 				onClose={() => setListMenuAnchor(null)}
 			>
-				{listStore.listOptions.map((option, index) => (
+				{listStore.listOptions.map((option) => (
 					<MenuItem
 						key={option}
-						selected={index === listStore.selectedListIndex}
+						selected={option === listStore.selectedList}
 						onClick={() => {
-							listStore.selectedListIndex = index
+							listStore.selectedList = option
 							setListMenuAnchor(null)
 						}}
 					>
@@ -149,11 +145,13 @@ const TopBar = () => {
 						{listStore.selectedList}
 					</Typography>
 				</Box>
-				<ListMenu />
+				<ItemMenu />
 				<Box sx={{ display: 'flex', flex: 3 }}>
-					{listStore.pageOptions.extraPages.map((page) => (
-						<PageButton key={page.value} page={page} />
-					))}
+					{listStore.rankList.map((page) => {
+						if (page.id.substring(0, 4) !== 'rank')
+							return <PageButton key={page.id} {...page} />
+						else return null
+					})}
 					<Button
 						onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
 						sx={{
@@ -167,9 +165,11 @@ const TopBar = () => {
 				</Box>
 			</Box>
 			<Box sx={{ display: 'flex', width: 1 }}>
-				{listStore.pageOptions.rankPages.map((page) => (
-					<PageButton key={page.value} page={page} />
-				))}
+				{listStore.rankList.map((page) => {
+					if (page.id.substring(0, 4) === 'rank')
+						return <PageButton key={page.id} {...page} />
+					else return null
+				})}
 			</Box>
 		</Box>
 	)

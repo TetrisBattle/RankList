@@ -9,30 +9,16 @@ import {
 	TextField,
 } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
-import { Page } from 'stores/ListStore'
 
 const ItemDialog = () => {
 	const { listStore, searchDialogStore } = useStoreContext()
-	const options: { page: string; name: string }[] = []
+	const options: { pageLabel: string; name: string }[] = []
 
-	for (const key in listStore.rankList) {
-		const page = key as Page
-		const list = listStore.rankList[page]
-
-		let pageDisplayName = 'Page '
-		for (const key in listStore.pageOptions) {
-			const pageType = key as 'rankPages' | 'extraPages'
-			// eslint-disable-next-line no-loop-func
-			listStore.pageOptions[pageType].forEach((option) => {
-				if (option.value === page)
-					pageDisplayName = pageDisplayName + option.displayName
-			})
-		}
-
-		list?.forEach((item) => {
-			options.push({ page: pageDisplayName, name: item.name })
+	listStore.rankList.forEach((page) => {
+		page.list.forEach((item) => {
+			options.push({ pageLabel: page.label, name: item.name })
 		})
-	}
+	})
 
 	return (
 		<>
@@ -45,7 +31,7 @@ const ItemDialog = () => {
 					<Autocomplete
 						autoComplete
 						options={options}
-						groupBy={(option) => option.page}
+						groupBy={(option) => option.pageLabel}
 						getOptionLabel={(option) => option.name}
 						renderInput={(params) => <TextField {...params} color={'info'} />}
 						noOptionsText={'Not found'}

@@ -11,31 +11,32 @@ import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
 	const { itemDialogStore } = useStoreContext()
-	const dialogTitle = itemDialogStore.dialogType === 'new' ? 'New' : 'Edit'
 
 	return (
 		<Dialog
 			open={itemDialogStore.dialogOpen}
 			onClose={() => itemDialogStore.closeDialog()}
 		>
-			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
+			<DialogTitle sx={{ textAlign: 'center' }}>
+				{itemDialogStore.dialogType}
+			</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
-					value={itemDialogStore.dialogItem.name}
+					value={itemDialogStore.item.name}
 					onChange={(e) => {
-						itemDialogStore.dialogItemName = e.target.value
+						itemDialogStore.name = e.target.value
 					}}
 					label={'Name'}
 					color={'info'}
 					size={'small'}
-					error={!!itemDialogStore.dialogErrorText}
-					helperText={itemDialogStore.dialogErrorText}
+					error={!!itemDialogStore.errorText}
+					helperText={itemDialogStore.errorText}
 					sx={{ mt: 1 }}
 				/>
 				<TextField
-					value={itemDialogStore.dialogItem.progress}
+					value={itemDialogStore.item.progress}
 					onChange={(e) => {
-						itemDialogStore.dialogItemProgress = e.target.value
+						itemDialogStore.progress = e.target.value
 					}}
 					label={'Chapter'}
 					color={'info'}

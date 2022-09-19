@@ -5,7 +5,7 @@ import { onSnapshot } from 'firebase/firestore'
 import { Backdrop, Box, Button, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from 'components/TopBar'
-import ItemList from 'components/ItemList'
+import PageList from 'components/PageList'
 import ItemDialog from 'components/ItemDialog'
 import SearchDialog from 'components/SearchDialog'
 
@@ -27,17 +27,13 @@ const App = () => {
 
 		appStore.isLoading = true
 		const unsubList = onSnapshot(firebaseStore.listRef, (doc) => {
-			listStore.rankList = doc.data() ?? {}
+			const dto = doc.data()
+			if (dto) listStore.setupRankListFromDto(dto)
 			appStore.isLoading = false
 		})
 
 		return () => unsubList()
-	}, [
-		appStore,
-		listStore,
-		firebaseStore,
-		firebaseStore.listRef,
-	])
+	}, [appStore, listStore, firebaseStore, firebaseStore.listRef])
 
 	const LoginButton = () => (
 		<Button
@@ -57,7 +53,7 @@ const App = () => {
 	const RankList = () => (
 		<>
 			<TopBar />
-			<ItemList />
+			<PageList />
 			{listStore.isLoading && (
 				<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
 					<CircularProgress />

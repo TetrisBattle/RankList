@@ -1,94 +1,61 @@
 import { makeAutoObservable } from 'mobx'
 import RootStore from './RootStore'
 import FirebaseStore from './FirebaseStore'
-import Item from 'models/Item'
-
-export interface RankList {
-	rankS?: Item[]
-	rankA?: Item[]
-	rankB?: Item[]
-	rankC?: Item[]
-	rankD?: Item[]
-	rankE?: Item[]
-	rankF?: Item[]
-	special?: Item[]
-	unknown?: Item[]
-}
-
-export type Page =
-	| 'rankS'
-	| 'rankA'
-	| 'rankB'
-	| 'rankC'
-	| 'rankD'
-	| 'rankE'
-	| 'rankF'
-	| 'special'
-	| 'unknown'
-
-interface PageOptions {
-	rankPages: {
-		value: Page
-		displayName: string
-	}[]
-	extraPages: {
-		value: Page
-		displayName: string
-	}[]
-}
+import { PageId, Page, ListDto } from 'interfaces/Ranklist'
 
 export default class ListStore {
 	private _firebaseStore = {} as FirebaseStore
-	private _listOptions = ['MangaList', 'Series', 'Movies']
-	private _pageOptions: PageOptions = {
-		rankPages: [
-			{
-				value: 'rankS',
-				displayName: 'S',
-			},
-			{
-				value: 'rankA',
-				displayName: 'A',
-			},
-			{
-				value: 'rankB',
-				displayName: 'B',
-			},
-			{
-				value: 'rankC',
-				displayName: 'C',
-			},
-			{
-				value: 'rankD',
-				displayName: 'D',
-			},
-			{
-				value: 'rankE',
-				displayName: 'E',
-			},
-			{
-				value: 'rankF',
-				displayName: 'F',
-			},
-		],
-		extraPages: [
-			{
-				value: 'special',
-				displayName: 'X',
-			},
-			{
-				value: 'unknown',
-				displayName: '?',
-			},
-		],
-	}
-
 	private _isLoading = false
-	private _rankList: RankList = {}
-	private _editableItemIndex = 0
-
-	private _selectedListIndex = 0
-	private _selectedPage: Page = 'rankS'
+	private _listOptions = ['MangaList', 'Series', 'Movies']
+	private _rankList: Page[] = [
+		{
+			id: 'rankS',
+			label: 'S',
+			list: [],
+		},
+		{
+			id: 'rankA',
+			label: 'A',
+			list: [],
+		},
+		{
+			id: 'rankB',
+			label: 'B',
+			list: [],
+		},
+		{
+			id: 'rankC',
+			label: 'C',
+			list: [],
+		},
+		{
+			id: 'rankD',
+			label: 'D',
+			list: [],
+		},
+		{
+			id: 'rankE',
+			label: 'E',
+			list: [],
+		},
+		{
+			id: 'rankF',
+			label: 'F',
+			list: [],
+		},
+		{
+			id: 'special',
+			label: 'X',
+			list: [],
+		},
+		{
+			id: 'unknown',
+			label: '?',
+			list: [],
+		},
+	]
+	private _selectedList = 'MangaList'
+	private _selectedPageId: PageId = 'rankS'
 
 	constructor() {
 		makeAutoObservable(this)
@@ -102,12 +69,12 @@ export default class ListStore {
 		return this._rankList
 	}
 
-	get listOptions() {
-		return this._listOptions
+	set rankList(value) {
+		this._rankList = value
 	}
 
-	get pageOptions() {
-		return this._pageOptions
+	get listOptions() {
+		return this._listOptions
 	}
 
 	get isLoading() {
@@ -118,40 +85,31 @@ export default class ListStore {
 		this._isLoading = value
 	}
 
-	set rankList(value: RankList) {
-		this._rankList = value
+	get selectedList() {
+		return this._selectedList
 	}
 
-	get items() {
-		return this._rankList[this.selectedPage] ?? []
-	}
-
-	get selectedListIndex() {
-		return this._selectedListIndex
-	}
-
-	set selectedListIndex(value) {
-		this._selectedListIndex = value
+	set selectedList(value) {
+		this._selectedList = value
 		this._firebaseStore.setupListRef()
 	}
 
-	get selectedList() {
-		return this._listOptions[this._selectedListIndex]
-	}
-
 	get selectedPage() {
-		return this._selectedPage
+		return this._selectedPageId
 	}
 
 	set selectedPage(value) {
-		this._selectedPage = value
+		this._selectedPageId = value
 	}
 
-	get editableItemIndex() {
-		return this._editableItemIndex
+	get selectedPageItems() {
+		const page = this._rankList.find((page) => page.id === this._selectedPageId)
+		return page?.list ?? []
 	}
 
-	set editableItemIndex(value) {
-		this._editableItemIndex = value
+	setupRankListFromDto(dto: ListDto) {
+		this._rankList.forEach((page) => {
+			page.list = dto[page.id] ?? []
+		})
 	}
 }

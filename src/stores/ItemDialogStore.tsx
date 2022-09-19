@@ -1,19 +1,16 @@
 import { makeAutoObservable } from 'mobx'
 import FirebaseStore from './FirebaseStore'
-import ListStore, { Page } from './ListStore'
+import ListStore from './ListStore'
 import RootStore from './RootStore'
 
 export default class ItemDialogStore {
 	private _firebaseStore = {} as FirebaseStore
 	private _listStore = {} as ListStore
-	private _dialogItem = {
-		index: 0,
-		name: '',
-		progress: '',
-	}
+	private _item = { name: '', progress: '' }
+	private _prevItemIndex = 0
 	private _dialogOpen = false
 	private _dialogType = 'new'
-	private _dialogErrorText: string | null = null
+	private _errorText = ''
 
 	constructor() {
 		makeAutoObservable(this)
@@ -24,20 +21,24 @@ export default class ItemDialogStore {
 		this._listStore = rootStore.listStore
 	}
 
-	get dialogItem() {
-		return this._dialogItem
+	get item() {
+		return this._item
 	}
 
-	set dialogItem(value) {
-		this._dialogItem = value
+	set item(value) {
+		this._item = value
 	}
 
-	set dialogItemName(value: string) {
-		this._dialogItem.name = value
+	set name(value: string) {
+		this._item.name = value
 	}
 
-	set dialogItemProgress(value: string) {
-		this._dialogItem.progress = value
+	set progress(value: string) {
+		this._item.progress = value
+	}
+
+	set prevItemIndex(value: number) {
+		this._prevItemIndex = value
 	}
 
 	get dialogOpen() {
@@ -52,8 +53,8 @@ export default class ItemDialogStore {
 		this._dialogType = value
 	}
 
-	get dialogErrorText() {
-		return this._dialogErrorText
+	get errorText() {
+		return this._errorText
 	}
 
 	openDialog() {
@@ -62,70 +63,50 @@ export default class ItemDialogStore {
 
 	closeDialog() {
 		this._dialogOpen = false
-		this._dialogErrorText = null
-		this._dialogItem = {
-			index: 0,
+		this._errorText = ''
+		this._item = {
 			name: '',
 			progress: '',
 		}
 	}
 
-	itemExists(newItemName: string): {
-		page: string
-		pos: number
-	} | null {
-		for (const key in this._listStore.rankList) {
-			let existingItem: {
-				page: string
-				pos: number
-			} | null = null
-			const rank = key as Page
-			this._listStore.rankList[rank]?.forEach((item, index) => {
-				if (item.name === newItemName) {
-					existingItem = {
-						page: rank,
-						pos: index,
-					}
-					return
-				}
-			})
-			if (existingItem) return existingItem
-		}
-		return null
-	}
+	itemExists(ignorePage?: string) {
+		let exists = false
 
-	setupDialogError(existingItem: { page: string; pos: number }) {
-		const rankPage = this._listStore.pageOptions.rankPages.find(
-			(page) => page.value === existingItem.page
-		)
-		this._dialogErrorText = `Item already exists in page ${
-			rankPage?.displayName
-		} at number ${existingItem.pos + 1}`
+		this._listStore.rankList.every((page) => {
+			if (page.id === ignorePage) return true
+
+			const x = page.list.findIndex((item) => item.name === this._item.name)
+			if (x === -1) return true
+
+			exists = true
+			this._errorText = `Item already exists in page ${page.label} at number ${
+				x + 1
+			}`
+			return false
+		})
+
+		return exists
 	}
 
 	dialogSave() {
-		if (!this.dialogItem.name) {
-			this._dialogErrorText = "Name can't be empty"
+		if (!this._item.name) {
+			this._errorText = "Name can't be empty"
 			return
 		}
 
-		if (this.dialogType === 'new') {
-			const existingItem = this.itemExists(this.dialogItem.name)
-			if (existingItem) {
-				this.setupDialogError(existingItem)
-				return
-			}
-			this._firebaseStore.addNewItem()
-		} else if (this.dialogType === 'edit') {
-			if (this._listStore.editableItemIndex === null) return
-			const selectedItem =
-				this._listStore.items[this._listStore.editableItemIndex]
-			const existingItem = this.itemExists(this.dialogItem.name)
-			if (selectedItem.name !== this.dialogItem.name && existingItem) {
-				this.setupDialogError(existingItem)
-				return
-			}
-			this._firebaseStore.edit()
+		let exists = this.itemExists(
+			this._dialogType === 'new' ? undefined : this._listStore.selectedPage
+		)
+		if (exists) return
+
+		if (this._dialogType === 'new') {
+			this._firebaseStore.addNewItem({
+				name: this._item.name,
+				progress: this._item.progress,
+			})
+		} else if (this._dialogType === 'edit') {
+			this._firebaseStore.edit(this._prevItemIndex, this._item)
 		}
 
 		this.closeDialog()
