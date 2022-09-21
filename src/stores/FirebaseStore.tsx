@@ -14,8 +14,7 @@ import {
 import firebaseApp from 'firebaseApp'
 import RootStore from './RootStore'
 import ListStore from './ListStore'
-import { PageId, ListDto } from 'interfaces/Ranklist'
-import Item from 'models/Item'
+import { PageId, ListDto, Item } from 'types'
 
 export default class FirebaseStore {
 	private _listStore = {} as ListStore
@@ -74,15 +73,14 @@ export default class FirebaseStore {
 		)
 	}
 
-	edit(prevItemIndex: number, item: Item) {
-		this._listStore.selectedPageItems[prevItemIndex] = item
-		this._listStore.selectedPageItems.sort((a, b) =>
-			a.name.localeCompare(b.name)
+	edit(targetPageId: PageId, prevItemIndex: number, item: Item) {
+		const page = this._listStore.rankList.find(
+			(page) => page.id === targetPageId
 		)
-		this.savePageToDb(
-			this._listStore.selectedPage,
-			this._listStore.selectedPageItems
-		)
+		if (!page) return
+		page.list[prevItemIndex] = item
+		page.list.sort((a, b) => a.name.localeCompare(b.name))
+		this.savePageToDb(targetPageId, page.list)
 	}
 
 	delete(itemIndex: number) {
@@ -94,7 +92,9 @@ export default class FirebaseStore {
 	}
 
 	sendTo(selectedItemIndex: number, pageId: PageId) {
-		const targetPage = this._listStore.rankList.find((page) => page.id === pageId)
+		const targetPage = this._listStore.rankList.find(
+			(page) => page.id === pageId
+		)
 		const targetPageItems = targetPage?.list ?? []
 
 		targetPageItems.push(this._listStore.selectedPageItems[selectedItemIndex])

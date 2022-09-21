@@ -2,8 +2,8 @@ import { useState, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, List, ListItemText } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
-import Item from 'models/Item'
 import ItemContextMenu from './ItemContextMenu'
+import { Item } from 'types'
 
 const PageItem = ({ index, item }: { index: number; item: Item }) => {
 	const { listStore } = useStoreContext()

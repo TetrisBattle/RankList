@@ -11,15 +11,17 @@ import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
 	const { itemDialogStore } = useStoreContext()
+	const dialogTitle =
+		itemDialogStore.dialogType.charAt(0).toUpperCase() +
+		itemDialogStore.dialogType.slice(1)
 
 	return (
 		<Dialog
 			open={itemDialogStore.dialogOpen}
 			onClose={() => itemDialogStore.closeDialog()}
+			sx={{ '.MuiPaper-root': { minWidth: 360 } }}
 		>
-			<DialogTitle sx={{ textAlign: 'center' }}>
-				{itemDialogStore.dialogType}
-			</DialogTitle>
+			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
 					value={itemDialogStore.item.name}
@@ -45,8 +47,8 @@ const ItemDialog = () => {
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => itemDialogStore.closeDialog()}>Cancel</Button>
 				<Button onClick={() => itemDialogStore.dialogSave()}>Save</Button>
+				<Button onClick={() => itemDialogStore.closeDialog()}>Cancel</Button>
 			</DialogActions>
 		</Dialog>
 	)

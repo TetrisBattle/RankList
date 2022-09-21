@@ -1,3 +1,4 @@
+import { PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
 import FirebaseStore from './FirebaseStore'
 import ListStore from './ListStore'
@@ -8,8 +9,10 @@ export default class ItemDialogStore {
 	private _listStore = {} as ListStore
 	private _item = { name: '', progress: '' }
 	private _prevItemIndex = 0
+	private _targetPageId: PageId = 'unknown'
 	private _dialogOpen = false
-	private _dialogType = 'new'
+	private _dialogType: 'new' | 'edit' = 'new'
+	private _showEditFields = false
 	private _errorText = ''
 
 	constructor() {
@@ -39,6 +42,14 @@ export default class ItemDialogStore {
 
 	set prevItemIndex(value: number) {
 		this._prevItemIndex = value
+	}
+
+	get targetPageId() {
+		return this._targetPageId
+	}
+
+	set targetPageId(value) {
+		this._targetPageId = value
 	}
 
 	get dialogOpen() {
@@ -96,7 +107,7 @@ export default class ItemDialogStore {
 		}
 
 		let exists = this.itemExists(
-			this._dialogType === 'new' ? undefined : this._listStore.selectedPage
+			this._dialogType === 'new' ? undefined : this._targetPageId
 		)
 		if (exists) return
 
@@ -105,8 +116,12 @@ export default class ItemDialogStore {
 				name: this._item.name,
 				progress: this._item.progress,
 			})
-		} else if (this._dialogType === 'edit') {
-			this._firebaseStore.edit(this._prevItemIndex, this._item)
+		} else  {
+			this._firebaseStore.edit(
+				this._targetPageId,
+				this._prevItemIndex,
+				this._item
+			)
 		}
 
 		this.closeDialog()

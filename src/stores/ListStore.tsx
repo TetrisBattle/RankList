@@ -1,7 +1,7 @@
 import { makeAutoObservable } from 'mobx'
 import RootStore from './RootStore'
 import FirebaseStore from './FirebaseStore'
-import { PageId, Page, ListDto } from 'interfaces/Ranklist'
+import { PageId, Page, ListDto } from 'types'
 
 export default class ListStore {
 	private _firebaseStore = {} as FirebaseStore

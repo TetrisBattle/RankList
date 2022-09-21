@@ -15,8 +15,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
-import Item from 'models/Item'
-import { PageId } from 'interfaces/Ranklist'
+import { Item, PageId } from 'types'
 
 const ItemContextMenu = ({
 	contextMenu,
@@ -50,6 +49,7 @@ const ItemContextMenu = ({
 		itemDialogStore.dialogType = 'edit'
 		itemDialogStore.item = JSON.parse(JSON.stringify(item))
 		itemDialogStore.prevItemIndex = index
+		itemDialogStore.targetPageId = listStore.selectedPage
 		itemDialogStore.openDialog()
 		setContextMenu(null)
 	}

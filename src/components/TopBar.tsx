@@ -13,7 +13,7 @@ import { observer } from 'mobx-react-lite'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
-import { Page } from 'interfaces/Ranklist'
+import { Page } from 'types'
 
 const TopBar = () => {
 	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =

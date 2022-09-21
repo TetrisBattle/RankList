@@ -1,4 +1,6 @@
-import Item from "models/Item"
+export class Item {
+	constructor(public name = '', public progress = '') {}
+}
 
 export interface ListDto {
 	rankS?: Item[]
