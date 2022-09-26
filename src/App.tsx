@@ -15,12 +15,13 @@ const App = () => {
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
 			if (user && user.email) {
-				firebaseStore.user = user.email
+				if (appStore.devMode) firebaseStore.user = 'dev'
+				else firebaseStore.user = user.email
 				firebaseStore.setupListRef()
 			}
 		})
 		return () => unsubUser()
-	}, [firebaseStore, listStore])
+	}, [appStore, firebaseStore, listStore])
 
 	useEffect(() => {
 		if (firebaseStore.user === 'Guest') return

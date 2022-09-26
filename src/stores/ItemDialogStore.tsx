@@ -12,7 +12,6 @@ export default class ItemDialogStore {
 	private _targetPageId: PageId = 'unknown'
 	private _dialogOpen = false
 	private _dialogType: 'new' | 'edit' = 'new'
-	private _showEditFields = false
 	private _errorText = ''
 
 	constructor() {
@@ -81,12 +80,10 @@ export default class ItemDialogStore {
 		}
 	}
 
-	itemExists(ignorePage?: string) {
+	itemExists() {
 		let exists = false
 
 		this._listStore.rankList.every((page) => {
-			if (page.id === ignorePage) return true
-
 			const x = page.list.findIndex((item) => item.name === this._item.name)
 			if (x === -1) return true
 
@@ -106,17 +103,19 @@ export default class ItemDialogStore {
 			return
 		}
 
-		let exists = this.itemExists(
-			this._dialogType === 'new' ? undefined : this._targetPageId
+		this._item.name = this._item.name.trim()
+		this._item.progress = this._item.progress.trim()
+
+		if (
+			this._item.name !==
+				this._listStore.selectedPageItems[this._prevItemIndex].name &&
+			this.itemExists()
 		)
-		if (exists) return
+			return
 
 		if (this._dialogType === 'new') {
-			this._firebaseStore.addNewItem({
-				name: this._item.name,
-				progress: this._item.progress,
-			})
-		} else  {
+			this._firebaseStore.addNewItem(this._item)
+		} else {
 			this._firebaseStore.edit(
 				this._targetPageId,
 				this._prevItemIndex,
