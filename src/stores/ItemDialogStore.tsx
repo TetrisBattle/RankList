@@ -84,12 +84,14 @@ export default class ItemDialogStore {
 		let exists = false
 
 		this._listStore.rankList.every((page) => {
-			const x = page.list.findIndex((item) => item.name === this._item.name)
-			if (x === -1) return true
+			const foundItemIndex = page.list.findIndex(
+				(item) => item.name.toLowerCase() === this._item.name.toLowerCase()
+			)
+			if (foundItemIndex === -1) return true
 
 			exists = true
 			this._errorText = `Item already exists in page ${page.label} at number ${
-				x + 1
+				foundItemIndex + 1
 			}`
 			return false
 		})
@@ -106,16 +108,19 @@ export default class ItemDialogStore {
 		this._item.name = this._item.name.trim()
 		this._item.progress = this._item.progress.trim()
 
-		if (
-			this._item.name !==
-				this._listStore.selectedPageItems[this._prevItemIndex].name &&
-			this.itemExists()
-		)
-			return
-
 		if (this._dialogType === 'new') {
+			if (this.itemExists()) return
 			this._firebaseStore.addNewItem(this._item)
 		} else {
+			if (
+				this._item.name.toLowerCase() !==
+					this._listStore.selectedPageItems[
+						this._prevItemIndex
+					].name.toLowerCase() &&
+				this.itemExists()
+			) {
+				return
+			}
 			this._firebaseStore.edit(
 				this._targetPageId,
 				this._prevItemIndex,
