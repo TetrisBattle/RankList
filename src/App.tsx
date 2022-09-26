@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { onSnapshot } from 'firebase/firestore'
@@ -11,6 +11,8 @@ import SearchDialog from 'components/SearchDialog'
 
 const App = () => {
 	const { appStore, firebaseStore, listStore } = useStoreContext()
+	const topBarRef = useRef<HTMLElement>()
+	const topBarHeight = topBarRef.current?.clientHeight ?? 0
 
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
@@ -53,7 +55,8 @@ const App = () => {
 
 	const RankList = () => (
 		<>
-			<TopBar />
+			<TopBar topBarRef={topBarRef} />
+			<Box sx={{ mt: topBarHeight/8 }} />
 			<PageList />
 			{listStore.isLoading && (
 				<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>

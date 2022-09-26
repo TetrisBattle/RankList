@@ -15,7 +15,7 @@ import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
 
-const TopBar = () => {
+const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement | undefined> }) => {
 	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =
 		useStoreContext()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
@@ -111,7 +111,15 @@ const TopBar = () => {
 
 	return (
 		<Box
+			ref={topBarRef}
 			sx={{
+				position: 'fixed',
+				top: 0,
+				width: 1,
+				maxWidth: (theme) => theme.breakpoints.values.md,
+				zIndex: 1,
+				bgcolor: (theme) => theme.palette.background.default,
+				pb: .5,
 				'& .MuiButton-root': {
 					flex: 1,
 					minWidth: 30,
