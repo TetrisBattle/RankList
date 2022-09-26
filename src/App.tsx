@@ -64,13 +64,7 @@ const App = () => {
 	)
 
 	return (
-		<Box
-			sx={(theme) => ({
-				bgcolor: theme.palette.background.default,
-				minHeight: '100vh',
-				color: theme.palette.text.primary,
-			})}
-		>
+		<>
 			<Box
 				sx={{
 					maxWidth: (theme) => theme.breakpoints.values.md,
@@ -84,7 +78,7 @@ const App = () => {
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
 				<CircularProgress />
 			</Backdrop>
-		</Box>
+		</>
 	)
 }
 
