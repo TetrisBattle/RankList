@@ -33,6 +33,7 @@ const ItemDialog = () => {
 					size={'small'}
 					error={!!itemDialogStore.errorText}
 					helperText={itemDialogStore.errorText}
+					autoComplete='off'
 					sx={{ mt: 1 }}
 				/>
 				<TextField
@@ -43,6 +44,7 @@ const ItemDialog = () => {
 					label={'Chapter'}
 					color={'info'}
 					size={'small'}
+					autoComplete='off'
 					sx={{ mt: 2 }}
 				/>
 			</DialogContent>

@@ -16,11 +16,16 @@ const App = () => {
 
 	useEffect(() => {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			if (user && user.email) {
-				if (appStore.devMode) firebaseStore.user = 'dev'
-				else firebaseStore.user = user.email
-				firebaseStore.setupListRef()
+			if (!user || !user.email) {
+				firebaseStore.user = 'Guest'
+				listStore.resetRankList()
+				return
 			}
+
+			if (appStore.devMode) firebaseStore.user = 'dev'
+			else firebaseStore.user = user.email
+
+			firebaseStore.setupListRef()
 		})
 		return () => unsubUser()
 	}, [appStore, firebaseStore, listStore])
@@ -31,7 +36,7 @@ const App = () => {
 		appStore.isLoading = true
 		const unsubList = onSnapshot(firebaseStore.listRef, (doc) => {
 			const dto = doc.data()
-			if (dto) listStore.setupRankListFromDto(dto)
+			listStore.setupRankListFromDto(dto)
 			appStore.isLoading = false
 		})
 
@@ -56,7 +61,7 @@ const App = () => {
 	const RankList = () => (
 		<>
 			<TopBar topBarRef={topBarRef} />
-			<Box sx={{ mt: topBarHeight/8 }} />
+			<Box sx={{ mt: topBarHeight / 8 }} />
 			<PageList />
 			{listStore.isLoading && (
 				<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>

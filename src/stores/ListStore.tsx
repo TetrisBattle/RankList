@@ -7,7 +7,7 @@ export default class ListStore {
 	private _firebaseStore = {} as FirebaseStore
 	private _isLoading = false
 	private _listOptions = ['MangaList', 'Series', 'Movies']
-	private _rankList: Page[] = [
+	private _emptyRankList: Page[] = [
 		{
 			id: 'rankS',
 			label: 'S',
@@ -54,6 +54,7 @@ export default class ListStore {
 			list: [],
 		},
 	]
+	private _rankList: Page[] = JSON.parse(JSON.stringify(this._emptyRankList))
 	private _selectedList = 'MangaList'
 	private _selectedPageId: PageId = 'rankS'
 
@@ -67,10 +68,6 @@ export default class ListStore {
 
 	get rankList() {
 		return this._rankList
-	}
-
-	set rankList(value) {
-		this._rankList = value
 	}
 
 	get listOptions() {
@@ -107,9 +104,18 @@ export default class ListStore {
 		return page?.list ?? []
 	}
 
-	setupRankListFromDto(dto: ListDto) {
-		this._rankList.forEach((page) => {
-			page.list = dto[page.id] ?? []
-		})
+	resetRankList() {
+		this._rankList = JSON.parse(JSON.stringify(this._emptyRankList))
+	}
+
+	setupRankListFromDto(dto: ListDto | undefined) {
+		if (dto) {
+			this._rankList.forEach((page) => {
+				page.list = dto[page.id] ?? []
+			})
+		} else {
+			console.log('do this')
+			this.resetRankList()
+		}
 	}
 }

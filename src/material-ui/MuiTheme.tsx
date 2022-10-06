@@ -20,7 +20,7 @@ const MuiTheme = (isDarkTheme: boolean) => {
 		breakpoints: {
 			values: {
 				xs: 0,
-				sm: 680,
+				sm: 600,
 				md: 900,
 				lg: 1200,
 				xl: 1536,
@@ -82,15 +82,6 @@ const MuiTheme = (isDarkTheme: boolean) => {
 			MuiButton: {
 				defaultProps: {
 					variant: 'contained',
-				},
-			},
-			MuiTextField: {
-				styleOverrides: {
-					root: {
-						'& input:-webkit-autofill': {
-							webkitBoxShadow: '0 0 0 100px rgba(0, 0, 0, 0.8) inset',
-						},
-					},
 				},
 			},
 			MuiMenuItem: {
