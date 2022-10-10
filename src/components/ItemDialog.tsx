@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import {
 	Button,
@@ -11,9 +12,16 @@ import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
 	const { itemDialogStore } = useStoreContext()
+	const inputRef = useRef<HTMLInputElement | null>(null)
 	const dialogTitle =
 		itemDialogStore.dialogType.charAt(0).toUpperCase() +
 		itemDialogStore.dialogType.slice(1)
+
+	useEffect(() => {
+		if (itemDialogStore.dialogOpen) {
+			setTimeout(() => inputRef.current?.focus(), 100)
+		}
+	}, [itemDialogStore.dialogOpen])
 
 	return (
 		<Dialog
@@ -28,12 +36,18 @@ const ItemDialog = () => {
 					onChange={(e) => {
 						itemDialogStore.name = e.target.value
 					}}
+					onKeyPress={(e) => {
+						if (e.key === 'Enter') {
+							itemDialogStore.dialogSave()
+						}
+					}}
 					label={'Name'}
 					color={'info'}
 					size={'small'}
 					error={!!itemDialogStore.errorText}
 					helperText={itemDialogStore.errorText}
 					autoComplete='off'
+					inputRef={inputRef}
 					sx={{ mt: 1 }}
 				/>
 				<TextField
@@ -41,7 +55,12 @@ const ItemDialog = () => {
 					onChange={(e) => {
 						itemDialogStore.progress = e.target.value
 					}}
-					label={'Chapter'}
+					onKeyPress={(e) => {
+						if (e.key === 'Enter') {
+							itemDialogStore.dialogSave()
+						}
+					}}
+					label={'Progress'}
 					color={'info'}
 					size={'small'}
 					autoComplete='off'
