@@ -12,16 +12,21 @@ import { useStoreContext } from 'stores/StoreContext'
 
 const ItemDialog = () => {
 	const { itemDialogStore } = useStoreContext()
-	const inputRef = useRef<HTMLInputElement | null>(null)
+	const nameInputRef = useRef<HTMLInputElement | null>(null)
+	const progressInputRef = useRef<HTMLInputElement | null>(null)
 	const dialogTitle =
 		itemDialogStore.dialogType.charAt(0).toUpperCase() +
 		itemDialogStore.dialogType.slice(1)
 
 	useEffect(() => {
-		if (itemDialogStore.dialogOpen) {
-			setTimeout(() => inputRef.current?.focus(), 100)
-		}
-	}, [itemDialogStore.dialogOpen])
+		if (!itemDialogStore.dialogOpen) return
+
+		console.log(itemDialogStore.dialogType)
+
+		if (itemDialogStore.dialogType === 'edit') {
+			setTimeout(() => progressInputRef.current?.focus(), 100)
+		} else setTimeout(() => nameInputRef.current?.focus(), 100)
+	}, [itemDialogStore.dialogOpen, itemDialogStore.dialogType])
 
 	return (
 		<Dialog
@@ -47,7 +52,7 @@ const ItemDialog = () => {
 					error={!!itemDialogStore.errorText}
 					helperText={itemDialogStore.errorText}
 					autoComplete='off'
-					inputRef={inputRef}
+					inputRef={nameInputRef}
 					sx={{ mt: 1 }}
 				/>
 				<TextField
@@ -60,10 +65,12 @@ const ItemDialog = () => {
 							itemDialogStore.dialogSave()
 						}
 					}}
+					onFocus={(e) => e.target.select()}
 					label={'Progress'}
 					color={'info'}
 					size={'small'}
 					autoComplete='off'
+					inputRef={progressInputRef}
 					sx={{ mt: 2 }}
 				/>
 			</DialogContent>
