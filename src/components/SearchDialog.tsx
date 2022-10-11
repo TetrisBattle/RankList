@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import {
 	Autocomplete,
@@ -53,7 +53,15 @@ const ItemDialog = () => {
 						options={options}
 						value={searchResult}
 						onChange={(e, value) => setSearchResult(value)}
-						renderInput={(params) => <TextField {...params} color={'info'} />}
+						renderInput={(params) => (
+							<TextField
+								{...params}
+								label={
+									searchResult ? `Page: ${searchResult.pageLabel}` : 'Search'
+								}
+								color={'info'}
+							/>
+						)}
 						groupBy={(option) => option.pageId}
 						getOptionLabel={(option) => option.item.name}
 						noOptionsText={'Not found'}
@@ -61,7 +69,19 @@ const ItemDialog = () => {
 							option.item.name === value.item.name
 						}
 						autoComplete
+						size='small'
+						sx={{ mt: 1 }}
 					/>
+					{searchResult && (
+						<TextField
+							label='Progress'
+							value={searchResult.item.progress}
+							disabled
+							fullWidth
+							size='small'
+							sx={{ mt: 2 }}
+						/>
+					)}
 				</DialogContent>
 				<DialogActions>
 					<Button
@@ -70,7 +90,9 @@ const ItemDialog = () => {
 							if (!searchResult) return
 							itemDialogStore.targetPageId = searchResult.pageId
 							itemDialogStore.prevItemIndex = searchResult.itemIndex
-							itemDialogStore.item = JSON.parse(JSON.stringify(searchResult.item))
+							itemDialogStore.item = JSON.parse(
+								JSON.stringify(searchResult.item)
+							)
 							onClose()
 							itemDialogStore.dialogType = 'edit'
 							itemDialogStore.openDialog()

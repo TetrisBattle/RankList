@@ -21,8 +21,6 @@ const ItemDialog = () => {
 	useEffect(() => {
 		if (!itemDialogStore.dialogOpen) return
 
-		console.log(itemDialogStore.dialogType)
-
 		if (itemDialogStore.dialogType === 'edit') {
 			setTimeout(() => progressInputRef.current?.focus(), 100)
 		} else setTimeout(() => nameInputRef.current?.focus(), 100)
