@@ -9,6 +9,7 @@ import {
 	Menu,
 	MenuItem,
 } from '@mui/material'
+import SearchIcon from '@mui/icons-material/Search'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -40,8 +41,17 @@ const ItemContextMenu = ({
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openSendToMenu, setOpenSendToMenu] = useState(false)
 
+	const onGoogleSearch = (item: Item) => {
+		let googleSearch = 'https://google.com/search?q='
+		googleSearch += item.progress
+			? `${item.name} chapter ${item.progress}`
+			: `read ${item.name}`
+		window.open(googleSearch, '_blank')
+		setContextMenu(null)
+	}
+
 	const onCopy = (item: Item) => {
-		navigator.clipboard.writeText(`${item.name} chapter ${item.progress}`)
+		navigator.clipboard.writeText(item.name)
 		setContextMenu(null)
 	}
 
@@ -82,6 +92,14 @@ const ItemContextMenu = ({
 				horizontal: 'center',
 			}}
 		>
+			{listStore.selectedList === 'MangaList' && (
+				<MenuItem onClick={() => onGoogleSearch(item)}>
+					<ListItemIcon>
+						<SearchIcon fontSize='small' />
+					</ListItemIcon>
+					<ListItemText>Google Search</ListItemText>
+				</MenuItem>
+			)}
 			<MenuItem onClick={() => onCopy(item)}>
 				<ListItemIcon>
 					<ContentCopyIcon fontSize='small' />

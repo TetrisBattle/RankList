@@ -37,6 +37,7 @@ const PageItem = ({ index, item }: { index: number; item: Item }) => {
 					bgcolor: (theme) => theme.palette.secondary.main,
 					mt: 0,
 				},
+				userSelect: 'none',
 			}}
 		>
 			<ListItemText primary={index + 1} sx={{ flex: 1, textAlign: 'center' }} />
