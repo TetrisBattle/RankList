@@ -91,17 +91,15 @@ export default class FirebaseStore {
 		)
 	}
 
-	sendTo(selectedItemIndex: number, pageId: PageId) {
+	sendTo(targetPageId: PageId, selectedItemIndex: number) {
 		const targetPage = this._listStore.rankList.find(
-			(page) => page.id === pageId
+			(page) => page.id === targetPageId
 		)
 		const targetPageItems = targetPage?.list ?? []
 
 		targetPageItems.push(this._listStore.selectedPageItems[selectedItemIndex])
-		this._listStore.selectedPageItems.sort((a, b) =>
-			a.name.localeCompare(b.name)
-		)
-		this.savePageToDb(pageId, targetPageItems)
+		targetPageItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.savePageToDb(targetPageId, targetPageItems)
 		this.delete(selectedItemIndex)
 	}
 }

@@ -59,8 +59,8 @@ const ItemContextMenu = ({
 		setContextMenu(null)
 	}
 
-	const onSendTo = (pageId: PageId) => {
-		firebaseStore.sendTo(selectedItemIndex, pageId)
+	const onSendTo = (targetPageId: PageId) => {
+		firebaseStore.sendTo(targetPageId, selectedItemIndex)
 		setContextMenu(null)
 	}
 
