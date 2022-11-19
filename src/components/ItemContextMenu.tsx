@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import {
 	Collapse,
 	Divider,
@@ -40,6 +40,25 @@ const ItemContextMenu = ({
 	const { firebaseStore, listStore, itemDialogStore } = useStoreContext()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openSendToMenu, setOpenSendToMenu] = useState(false)
+	const [anchorPosition, serAnchorPosition] = useState<
+		| {
+				top: number
+				left: number
+		  }
+		| undefined
+	>()
+
+	useLayoutEffect(() => {
+		if (!contextMenu) {
+			serAnchorPosition(undefined)
+			return
+		}
+
+		serAnchorPosition({
+			top: openSendToMenu ? contextMenu.mouseY - 324 : contextMenu.mouseY,
+			left: contextMenu.mouseX,
+		})
+	}, [contextMenu, openSendToMenu])
 
 	const onGoogleSearch = (item: Item) => {
 		let googleSearch = 'https://google.com/search?q='
@@ -82,11 +101,7 @@ const ItemContextMenu = ({
 				setOpenSendToMenu(false)
 			}}
 			anchorReference='anchorPosition'
-			anchorPosition={
-				contextMenu
-					? { top: contextMenu.mouseY, left: contextMenu.mouseX }
-					: undefined
-			}
+			anchorPosition={anchorPosition}
 			transformOrigin={{
 				vertical: 'bottom',
 				horizontal: 'center',
@@ -118,11 +133,13 @@ const ItemContextMenu = ({
 				</ListItemIcon>
 				<ListItemText>Delete</ListItemText>
 			</MenuItem>
+
 			<Divider />
+
 			<MenuItem
 				onClick={() => {
 					setSelectedItemIndex(index)
-					setOpenSendToMenu(!openSendToMenu)
+					setOpenSendToMenu((currentValue) => !currentValue)
 				}}
 			>
 				<ListItemText>Send to</ListItemText>
