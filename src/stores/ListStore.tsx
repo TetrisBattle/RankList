@@ -122,29 +122,17 @@ export default class ListStore {
 	}
 
 	private savePageToDb(pageId: PageId, items: Item[]) {
-		this.firebase.savePageToDb(
-			this._userId,
-			this._selectedList,
-			pageId,
-			items
-		)
+		this.firebase.savePageToDb(this._userId, this._selectedList, pageId, items)
 	}
 
 	addNewItem(item: Item) {
 		this.selectedPageItems.push(item)
-		this.selectedPageItems.sort((a, b) =>
-			a.name.localeCompare(b.name)
-		)
-		this.savePageToDb(
-			this._selectedPageId,
-			this.selectedPageItems
-		)
+		this.selectedPageItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.savePageToDb(this._selectedPageId, this.selectedPageItems)
 	}
 
 	edit(targetPageId: PageId, prevItemIndex: number, item: Item) {
-		const page = this._rankList.find(
-			(page) => page.id === targetPageId
-		)
+		const page = this._rankList.find((page) => page.id === targetPageId)
 		if (!page) return
 		page.list[prevItemIndex] = item
 		page.list.sort((a, b) => a.name.localeCompare(b.name))
@@ -154,16 +142,11 @@ export default class ListStore {
 
 	delete(itemIndex: number) {
 		this.selectedPageItems.splice(itemIndex, 1)
-		this.savePageToDb(
-			this._selectedPageId,
-			this.selectedPageItems
-		)
+		this.savePageToDb(this._selectedPageId, this.selectedPageItems)
 	}
 
 	sendTo(targetPageId: PageId, selectedItemIndex: number) {
-		const targetPage = this._rankList.find(
-			(page) => page.id === targetPageId
-		)
+		const targetPage = this._rankList.find((page) => page.id === targetPageId)
 		const targetPageItems = targetPage?.list ?? []
 
 		targetPageItems.push(this.selectedPageItems[selectedItemIndex])

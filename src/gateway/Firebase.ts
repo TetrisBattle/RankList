@@ -53,7 +53,11 @@ export default class Firebase {
 		return () => unsubUser()
 	}
 
-	onDataChange(userId: string, list: ListOption, callback: (dto: ListDto) => void) {
+	onDataChange(
+		userId: string,
+		list: ListOption,
+		callback: (dto: ListDto) => void
+	) {
 		const listRef = this.getListRef(userId, list)
 		const unsubList = onSnapshot(listRef, (doc) => {
 			const dto = doc.data() as ListDto

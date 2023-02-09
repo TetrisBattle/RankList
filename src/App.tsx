@@ -5,7 +5,6 @@ import { useStoreContext } from 'stores/StoreContext'
 import TopBar from 'components/TopBar'
 import PageList from 'components/PageList'
 import ItemDialog from 'components/ItemDialog'
-import SearchDialog from 'components/SearchDialog'
 import Firebase from 'gateway/Firebase'
 
 const App = () => {
@@ -31,21 +30,11 @@ const App = () => {
 		if (listStore.userId === 'Guest') return
 		appStore.isLoading = true
 
-		firebase.onDataChange(
-			listStore.userId,
-			listStore.selectedList,
-			(dto) => {
-				listStore.setupRankListFromDto(dto)
-				appStore.isLoading = false
-			}
-		)
-	}, [
-		firebase,
-		appStore,
-		listStore,
-		listStore.userId,
-		listStore.selectedList,
-	])
+		firebase.onDataChange(listStore.userId, listStore.selectedList, (dto) => {
+			listStore.setupRankListFromDto(dto)
+			appStore.isLoading = false
+		})
+	}, [firebase, appStore, listStore, listStore.userId, listStore.selectedList])
 
 	const LoginButton = () => (
 		<Button
@@ -86,7 +75,6 @@ const App = () => {
 				{listStore.userId === 'Guest' ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
-			<SearchDialog />
 			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
 				<CircularProgress />
 			</Backdrop>

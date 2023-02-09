@@ -19,8 +19,14 @@ interface SearchOption {
 	item: Item
 }
 
-const ItemDialog = () => {
-	const { listStore, itemDialogStore, searchDialogStore } = useStoreContext()
+const SearchDialog = ({
+	open,
+	setOpen,
+}: {
+	open: boolean
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}) => {
+	const { listStore, itemDialogStore } = useStoreContext()
 	const options: SearchOption[] = []
 	const [searchResult, setSearchResult] = useState<SearchOption | null>(null)
 
@@ -37,13 +43,13 @@ const ItemDialog = () => {
 
 	const onClose = () => {
 		setSearchResult(null)
-		searchDialogStore.closeDialog()
+		setOpen(false)
 	}
 
 	return (
 		<>
 			<Dialog
-				open={searchDialogStore.dialogOpen}
+				open={open}
 				onClose={onClose}
 				sx={{ '.MuiPaper-root': { minWidth: 360 } }}
 			>
@@ -100,13 +106,11 @@ const ItemDialog = () => {
 					>
 						Edit
 					</Button>
-					<Button onClick={() => searchDialogStore.closeDialog()}>
-						Cancel
-					</Button>
+					<Button onClick={() => setOpen(false)}>Cancel</Button>
 				</DialogActions>
 			</Dialog>
 		</>
 	)
 }
 
-export default observer(ItemDialog)
+export default observer(SearchDialog)

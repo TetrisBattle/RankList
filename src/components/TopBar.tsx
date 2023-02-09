@@ -15,11 +15,16 @@ import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
+import SearchDialog from './SearchDialog'
 
-const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement | undefined> }) => {
+const TopBar = ({
+	topBarRef,
+}: {
+	topBarRef: React.MutableRefObject<HTMLElement | undefined>
+}) => {
 	const firebase = new Firebase()
-	const { listStore, itemDialogStore, searchDialogStore } =
-		useStoreContext()
+	const { listStore, itemDialogStore } = useStoreContext()
+	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
@@ -87,7 +92,7 @@ const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement |
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						searchDialogStore.openDialog()
+						setSearchDialogOpen(true)
 						setSettingsMenuAnchor(null)
 					}}
 				>
@@ -112,76 +117,79 @@ const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement |
 	}
 
 	return (
-		<Box
-			ref={topBarRef}
-			sx={{
-				position: 'fixed',
-				top: 0,
-				width: 1,
-				maxWidth: (theme) => theme.breakpoints.values.md,
-				zIndex: 1,
-				bgcolor: (theme) => theme.palette.background.default,
-				pb: .5,
-				'& .MuiButton-root': {
-					flex: 1,
-					minWidth: 30,
-					fontSize: 20,
-					fontWeight: 600,
-					p: 0.25,
-				},
-			}}
-		>
-			<Box sx={{ display: 'flex' }}>
-				<Box
-					onClick={(e) => setListMenuAnchor(e.currentTarget)}
-					sx={{
-						flex: 4,
-						display: 'flex',
-						alignItems: 'center',
-						':hover': {
-							cursor: 'pointer',
-							color: (theme) => theme.palette.primary.light,
-						},
-					}}
-				>
-					<Typography
+		<>
+			<Box
+				ref={topBarRef}
+				sx={{
+					position: 'fixed',
+					top: 0,
+					width: 1,
+					maxWidth: (theme) => theme.breakpoints.values.md,
+					zIndex: 1,
+					bgcolor: (theme) => theme.palette.background.default,
+					pb: 0.5,
+					'& .MuiButton-root': {
+						flex: 1,
+						minWidth: 30,
+						fontSize: 20,
+						fontWeight: 600,
+						p: 0.25,
+					},
+				}}
+			>
+				<Box sx={{ display: 'flex' }}>
+					<Box
+						onClick={(e) => setListMenuAnchor(e.currentTarget)}
 						sx={{
-							px: 1,
-							fontSize: 22,
-							color: (theme) =>
-								listMenuAnchor ? theme.palette.primary.light : 'inherit',
+							flex: 4,
+							display: 'flex',
+							alignItems: 'center',
+							':hover': {
+								cursor: 'pointer',
+								color: (theme) => theme.palette.primary.light,
+							},
 						}}
 					>
-						{listStore.selectedList}
-					</Typography>
+						<Typography
+							sx={{
+								px: 1,
+								fontSize: 22,
+								color: (theme) =>
+									listMenuAnchor ? theme.palette.primary.light : 'inherit',
+							}}
+						>
+							{listStore.selectedList}
+						</Typography>
+					</Box>
+					<ItemMenu />
+					<Box sx={{ display: 'flex', flex: 3 }}>
+						{listStore.rankList.map((page) => {
+							if (page.id.substring(0, 4) !== 'rank')
+								return <PageButton key={page.id} {...page} />
+							else return null
+						})}
+						<Button
+							onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
+							sx={{
+								borderRadius: 0,
+								bgcolor: (theme) => theme.palette.background.default,
+							}}
+						>
+							<SettingsIcon fontSize='small' />
+						</Button>
+						<SettingsMenu />
+					</Box>
 				</Box>
-				<ItemMenu />
-				<Box sx={{ display: 'flex', flex: 3 }}>
+				<Box sx={{ display: 'flex', width: 1 }}>
 					{listStore.rankList.map((page) => {
-						if (page.id.substring(0, 4) !== 'rank')
+						if (page.id.substring(0, 4) === 'rank')
 							return <PageButton key={page.id} {...page} />
 						else return null
 					})}
-					<Button
-						onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
-						sx={{
-							borderRadius: 0,
-							bgcolor: (theme) => theme.palette.background.default,
-						}}
-					>
-						<SettingsIcon fontSize='small' />
-					</Button>
-					<SettingsMenu />
 				</Box>
 			</Box>
-			<Box sx={{ display: 'flex', width: 1 }}>
-				{listStore.rankList.map((page) => {
-					if (page.id.substring(0, 4) === 'rank')
-						return <PageButton key={page.id} {...page} />
-					else return null
-				})}
-			</Box>
-		</Box>
+			<SearchDialog open={seachDialogOpen} setOpen={setSearchDialogOpen} />
+		</>
 	)
 }
 

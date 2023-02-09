@@ -118,11 +118,7 @@ export default class ItemDialogStore {
 			) {
 				return
 			}
-			this._listStore.edit(
-				this._targetPageId,
-				this._prevItemIndex,
-				this._item
-			)
+			this._listStore.edit(this._targetPageId, this._prevItemIndex, this._item)
 		}
 
 		this.closeDialog()
