@@ -22,5 +22,5 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-/src/firebase-config.ts
+/src/gateway/firebase-config.ts
 .firebase

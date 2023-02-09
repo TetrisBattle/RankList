@@ -14,9 +14,11 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
+import Firebase from 'gateway/Firebase'
 
 const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement | undefined> }) => {
-	const { firebaseStore, listStore, itemDialogStore, searchDialogStore } =
+	const firebase = new Firebase()
+	const { listStore, itemDialogStore, searchDialogStore } =
 		useStoreContext()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
@@ -96,7 +98,7 @@ const TopBar = ({ topBarRef }: { topBarRef: React.MutableRefObject<HTMLElement |
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						firebaseStore.logout()
+						firebase.logout()
 						setSettingsMenuAnchor(null)
 					}}
 				>

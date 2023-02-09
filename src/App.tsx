@@ -1,51 +1,55 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { onSnapshot } from 'firebase/firestore'
 import { Backdrop, Box, Button, CircularProgress } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 import TopBar from 'components/TopBar'
 import PageList from 'components/PageList'
 import ItemDialog from 'components/ItemDialog'
 import SearchDialog from 'components/SearchDialog'
+import Firebase from 'gateway/Firebase'
 
 const App = () => {
-	const { appStore, firebaseStore, listStore } = useStoreContext()
+	const firebase = useMemo(() => new Firebase(), [])
+	const { appStore, listStore } = useStoreContext()
 	const topBarRef = useRef<HTMLElement>()
 	const topBarHeight = topBarRef.current?.clientHeight ?? 0
 
 	useEffect(() => {
-		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			if (!user || !user.email) {
-				firebaseStore.user = 'Guest'
+		firebase.onAuthChange((user) => {
+			if (!user?.email) {
+				listStore.userId = 'Guest'
 				listStore.resetRankList()
 				return
 			}
 
-			if (appStore.devMode) firebaseStore.user = 'dev'
-			else firebaseStore.user = user.email
-
-			firebaseStore.setupListRef()
+			if (appStore.devMode) listStore.userId = 'dev'
+			else listStore.userId = user.email
 		})
-		return () => unsubUser()
-	}, [appStore, firebaseStore, listStore])
+	}, [firebase, appStore, listStore])
 
 	useEffect(() => {
-		if (firebaseStore.user === 'Guest') return
-
+		if (listStore.userId === 'Guest') return
 		appStore.isLoading = true
-		const unsubList = onSnapshot(firebaseStore.listRef, (doc) => {
-			const dto = doc.data()
-			listStore.setupRankListFromDto(dto)
-			appStore.isLoading = false
-		})
 
-		return () => unsubList()
-	}, [appStore, listStore, firebaseStore, firebaseStore.listRef])
+		firebase.onDataChange(
+			listStore.userId,
+			listStore.selectedList,
+			(dto) => {
+				listStore.setupRankListFromDto(dto)
+				appStore.isLoading = false
+			}
+		)
+	}, [
+		firebase,
+		appStore,
+		listStore,
+		listStore.userId,
+		listStore.selectedList,
+	])
 
 	const LoginButton = () => (
 		<Button
-			onClick={() => firebaseStore.login()}
+			onClick={() => firebase.login()}
 			sx={{
 				position: 'absolute',
 				top: '50%',
@@ -79,7 +83,7 @@ const App = () => {
 					marginInline: 'auto',
 				}}
 			>
-				{firebaseStore.user === 'Guest' ? <LoginButton /> : <RankList />}
+				{listStore.userId === 'Guest' ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
 			<SearchDialog />

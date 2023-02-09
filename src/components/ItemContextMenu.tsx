@@ -37,7 +37,7 @@ const ItemContextMenu = ({
 	index: number
 	item: Item
 }) => {
-	const { firebaseStore, listStore, itemDialogStore } = useStoreContext()
+	const { listStore, itemDialogStore } = useStoreContext()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openSendToMenu, setOpenSendToMenu] = useState(false)
 	const [anchorPosition, serAnchorPosition] = useState<
@@ -84,12 +84,12 @@ const ItemContextMenu = ({
 	}
 
 	const onDelete = (index: number) => {
-		firebaseStore.delete(index)
+		listStore.delete(index)
 		setContextMenu(null)
 	}
 
 	const onSendTo = (targetPageId: PageId) => {
-		firebaseStore.sendTo(targetPageId, selectedItemIndex)
+		listStore.sendTo(targetPageId, selectedItemIndex)
 		setContextMenu(null)
 	}
 

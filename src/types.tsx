@@ -2,7 +2,9 @@ export class Item {
 	constructor(public name = '', public progress = '') {}
 }
 
-export interface ListDto {
+export type ListOption = 'MangaList' | 'Series' | 'Movies'
+
+export type ListDto = {
 	rankS?: Item[]
 	rankA?: Item[]
 	rankB?: Item[]
@@ -15,17 +17,17 @@ export interface ListDto {
 }
 
 export type PageId =
-| 'rankS'
-| 'rankA'
-| 'rankB'
-| 'rankC'
-| 'rankD'
-| 'rankE'
-| 'rankF'
-| 'special'
-| 'unknown'
+	| 'rankS'
+	| 'rankA'
+	| 'rankB'
+	| 'rankC'
+	| 'rankD'
+	| 'rankE'
+	| 'rankF'
+	| 'special'
+	| 'unknown'
 
-export interface Page {
+export type Page = {
 	id: PageId
 	label: string
 	list: Item[]

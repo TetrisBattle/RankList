@@ -1,11 +1,9 @@
 import { PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
-import FirebaseStore from './FirebaseStore'
 import ListStore from './ListStore'
 import RootStore from './RootStore'
 
 export default class ItemDialogStore {
-	private _firebaseStore = {} as FirebaseStore
 	private _listStore = {} as ListStore
 	private _item = { name: '', progress: '' }
 	private _prevItemIndex = 0
@@ -19,7 +17,6 @@ export default class ItemDialogStore {
 	}
 
 	init(rootStore: RootStore) {
-		this._firebaseStore = rootStore.firebaseStore
 		this._listStore = rootStore.listStore
 	}
 
@@ -110,7 +107,7 @@ export default class ItemDialogStore {
 
 		if (this._dialogType === 'new') {
 			if (this.itemExists()) return
-			this._firebaseStore.addNewItem(this._item)
+			this._listStore.addNewItem(this._item)
 		} else {
 			if (
 				this._item.name.toLowerCase() !==
@@ -121,7 +118,7 @@ export default class ItemDialogStore {
 			) {
 				return
 			}
-			this._firebaseStore.edit(
+			this._listStore.edit(
 				this._targetPageId,
 				this._prevItemIndex,
 				this._item

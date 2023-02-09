@@ -1,12 +1,12 @@
+import Firebase from 'gateway/Firebase'
 import { makeAutoObservable } from 'mobx'
-import RootStore from './RootStore'
-import FirebaseStore from './FirebaseStore'
-import { PageId, Page, ListDto } from 'types'
+import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
 export default class ListStore {
-	private _firebaseStore = {} as FirebaseStore
+	private firebase = new Firebase()
+	private _userId = 'Guest'
 	private _isLoading = false
-	private _listOptions = ['MangaList', 'Series', 'Movies']
+	private _listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
 	private _emptyRankList: Page[] = [
 		{
 			id: 'rankS',
@@ -55,15 +55,19 @@ export default class ListStore {
 		},
 	]
 	private _rankList: Page[] = JSON.parse(JSON.stringify(this._emptyRankList))
-	private _selectedList = 'MangaList'
+	private _selectedList: ListOption = 'MangaList'
 	private _selectedPageId: PageId = 'rankS'
 
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	init(rootStore: RootStore) {
-		this._firebaseStore = rootStore.firebaseStore
+	get userId() {
+		return this._userId
+	}
+
+	set userId(value) {
+		this._userId = value
 	}
 
 	get rankList() {
@@ -88,7 +92,6 @@ export default class ListStore {
 
 	set selectedList(value) {
 		this._selectedList = value
-		this._firebaseStore.setupListRef()
 	}
 
 	get selectedPage() {
@@ -114,8 +117,58 @@ export default class ListStore {
 				page.list = dto[page.id] ?? []
 			})
 		} else {
-			console.log('do this')
 			this.resetRankList()
 		}
+	}
+
+	private savePageToDb(pageId: PageId, items: Item[]) {
+		this.firebase.savePageToDb(
+			this._userId,
+			this._selectedList,
+			pageId,
+			items
+		)
+	}
+
+	addNewItem(item: Item) {
+		this.selectedPageItems.push(item)
+		this.selectedPageItems.sort((a, b) =>
+			a.name.localeCompare(b.name)
+		)
+		this.savePageToDb(
+			this._selectedPageId,
+			this.selectedPageItems
+		)
+	}
+
+	edit(targetPageId: PageId, prevItemIndex: number, item: Item) {
+		const page = this._rankList.find(
+			(page) => page.id === targetPageId
+		)
+		if (!page) return
+		page.list[prevItemIndex] = item
+		page.list.sort((a, b) => a.name.localeCompare(b.name))
+
+		this.savePageToDb(targetPageId, page.list)
+	}
+
+	delete(itemIndex: number) {
+		this.selectedPageItems.splice(itemIndex, 1)
+		this.savePageToDb(
+			this._selectedPageId,
+			this.selectedPageItems
+		)
+	}
+
+	sendTo(targetPageId: PageId, selectedItemIndex: number) {
+		const targetPage = this._rankList.find(
+			(page) => page.id === targetPageId
+		)
+		const targetPageItems = targetPage?.list ?? []
+
+		targetPageItems.push(this.selectedPageItems[selectedItemIndex])
+		targetPageItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.savePageToDb(targetPageId, targetPageItems)
+		this.delete(selectedItemIndex)
 	}
 }
