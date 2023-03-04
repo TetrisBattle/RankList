@@ -12,20 +12,19 @@ import {
 import { useStoreContext } from 'stores/StoreContext'
 import { Item, PageId } from 'types'
 
-interface SearchOption {
+type SearchDialogProps = {
+	open: boolean
+	setOpen: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+type SearchOption = {
 	pageId: PageId
 	pageLabel: String
 	itemIndex: number
 	item: Item
 }
 
-function SearchDialog({
-	open,
-	setOpen,
-}: {
-	open: boolean
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}) {
+function SearchDialog({ open, setOpen }: SearchDialogProps) {
 	const { listStore, itemDialogStore } = useStoreContext()
 	const options: SearchOption[] = []
 	const [searchResult, setSearchResult] = useState<SearchOption | null>(null)

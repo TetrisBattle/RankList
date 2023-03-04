@@ -18,25 +18,24 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
 import { Item, PageId } from 'types'
 
+type ContextMenu = {
+	mouseX: number
+	mouseY: number
+} | null
+
+type ItemContextMenuProps = {
+	contextMenu: ContextMenu
+	setContextMenu: React.Dispatch<React.SetStateAction<ContextMenu>>
+	index: number
+	item: Item
+}
+
 function ItemContextMenu({
 	contextMenu,
 	setContextMenu,
 	index,
 	item,
-}: {
-	contextMenu: {
-		mouseX: number
-		mouseY: number
-	} | null
-	setContextMenu: React.Dispatch<
-		React.SetStateAction<{
-			mouseX: number
-			mouseY: number
-		} | null>
-	>
-	index: number
-	item: Item
-}) {
+}: ItemContextMenuProps) {
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openSendToMenu, setOpenSendToMenu] = useState(false)

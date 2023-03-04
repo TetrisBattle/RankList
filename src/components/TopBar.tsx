@@ -17,11 +17,11 @@ import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
 import SearchDialog from './SearchDialog'
 
-function TopBar({
-	topBarRef,
-}: {
+type TopBarProps = {
 	topBarRef: React.MutableRefObject<HTMLElement | undefined>
-}) {
+}
+
+function TopBar({ topBarRef }: TopBarProps) {
 	const firebase = new Firebase()
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)

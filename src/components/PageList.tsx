@@ -5,7 +5,12 @@ import { useStoreContext } from 'stores/StoreContext'
 import ItemContextMenu from './ItemContextMenu'
 import { Item } from 'types'
 
-function PageItem({ index, item }: { index: number; item: Item }) {
+type PageItemProps = {
+	index: number
+	item: Item
+}
+
+function PageItem({ index, item }: PageItemProps) {
 	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<{
@@ -13,7 +18,7 @@ function PageItem({ index, item }: { index: number; item: Item }) {
 		mouseY: number
 	} | null>(null)
 
-	const handleContextMenu = (event: React.MouseEvent) => {
+	function handleContextMenu(event: React.MouseEvent) {
 		event.preventDefault()
 		setContextMenu(
 			contextMenu
