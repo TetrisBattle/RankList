@@ -18,7 +18,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStoreContext } from 'stores/StoreContext'
 import { Item, PageId } from 'types'
 
-const ItemContextMenu = ({
+function ItemContextMenu({
 	contextMenu,
 	setContextMenu,
 	index,
@@ -36,7 +36,7 @@ const ItemContextMenu = ({
 	>
 	index: number
 	item: Item
-}) => {
+}) {
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openSendToMenu, setOpenSendToMenu] = useState(false)
@@ -60,7 +60,7 @@ const ItemContextMenu = ({
 		})
 	}, [contextMenu, openSendToMenu])
 
-	const onGoogleSearch = (item: Item) => {
+	function onGoogleSearch(item: Item) {
 		let googleSearch = 'https://google.com/search?q='
 		googleSearch += item.progress
 			? `${item.name} chapter ${item.progress}`
@@ -69,12 +69,12 @@ const ItemContextMenu = ({
 		setContextMenu(null)
 	}
 
-	const onCopy = (item: Item) => {
+	function onCopy(item: Item) {
 		navigator.clipboard.writeText(item.name)
 		setContextMenu(null)
 	}
 
-	const onEdit = (item: Item, index: number) => {
+	function onEdit(item: Item, index: number) {
 		itemDialogStore.dialogType = 'edit'
 		itemDialogStore.item = JSON.parse(JSON.stringify(item))
 		itemDialogStore.prevItemIndex = index
@@ -83,12 +83,12 @@ const ItemContextMenu = ({
 		setContextMenu(null)
 	}
 
-	const onDelete = (index: number) => {
+	function onDelete(index: number) {
 		listStore.delete(index)
 		setContextMenu(null)
 	}
 
-	const onSendTo = (targetPageId: PageId) => {
+	function onSendTo(targetPageId: PageId) {
 		listStore.sendTo(targetPageId, selectedItemIndex)
 		setContextMenu(null)
 	}

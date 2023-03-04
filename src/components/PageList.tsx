@@ -5,7 +5,7 @@ import { useStoreContext } from 'stores/StoreContext'
 import ItemContextMenu from './ItemContextMenu'
 import { Item } from 'types'
 
-const PageItem = ({ index, item }: { index: number; item: Item }) => {
+function PageItem({ index, item }: { index: number; item: Item }) {
 	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<{
@@ -62,7 +62,7 @@ const PageItem = ({ index, item }: { index: number; item: Item }) => {
 	)
 }
 
-const PageList = () => {
+function PageList() {
 	const { listStore } = useStoreContext()
 
 	return (

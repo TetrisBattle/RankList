@@ -7,7 +7,7 @@ import PageList from 'components/PageList'
 import ItemDialog from 'components/ItemDialog'
 import Firebase from 'gateway/Firebase'
 
-const App = () => {
+function App() {
 	const firebase = useMemo(() => new Firebase(), [])
 	const { appStore, listStore } = useStoreContext()
 	const topBarRef = useRef<HTMLElement>()
@@ -36,33 +36,37 @@ const App = () => {
 		})
 	}, [firebase, appStore, listStore, listStore.userId, listStore.selectedList])
 
-	const LoginButton = () => (
-		<Button
-			onClick={() => firebase.login()}
-			sx={{
-				position: 'absolute',
-				top: '50%',
-				left: '50%',
-				transform: 'translate(-50%, -50%)',
-				fontWeight: 600,
-			}}
-		>
-			Log in with Google
-		</Button>
-	)
+	function LoginButton() {
+		return (
+			<Button
+				onClick={() => firebase.login()}
+				sx={{
+					position: 'absolute',
+					top: '50%',
+					left: '50%',
+					transform: 'translate(-50%, -50%)',
+					fontWeight: 600,
+				}}
+			>
+				Log in with Google
+			</Button>
+		)
+	}
 
-	const RankList = () => (
-		<>
-			<TopBar topBarRef={topBarRef} />
-			<Box sx={{ mt: topBarHeight / 8 }} />
-			<PageList />
-			{listStore.isLoading && (
-				<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-					<CircularProgress />
-				</Box>
-			)}
-		</>
-	)
+	function RankList() {
+		return (
+			<>
+				<TopBar topBarRef={topBarRef} />
+				<Box sx={{ mt: topBarHeight / 8 }} />
+				<PageList />
+				{listStore.isLoading && (
+					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+						<CircularProgress />
+					</Box>
+				)}
+			</>
+		)
+	}
 
 	return (
 		<>

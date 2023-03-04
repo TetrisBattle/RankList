@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
 
-const ItemDialog = () => {
+function ItemDialog() {
 	const { itemDialogStore } = useStoreContext()
 	const nameInputRef = useRef<HTMLInputElement | null>(null)
 	const progressInputRef = useRef<HTMLInputElement | null>(null)

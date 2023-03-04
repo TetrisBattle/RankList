@@ -17,11 +17,11 @@ import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
 import SearchDialog from './SearchDialog'
 
-const TopBar = ({
+function TopBar({
 	topBarRef,
 }: {
 	topBarRef: React.MutableRefObject<HTMLElement | undefined>
-}) => {
+}) {
 	const firebase = new Firebase()
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
@@ -31,7 +31,7 @@ const TopBar = ({
 
 	useEffect(() => {}, [listStore.selectedPage])
 
-	const PageButton = (page: Page) => {
+	function PageButton(page: Page) {
 		return (
 			<Button
 				onClick={() => (listStore.selectedPage = page.id)}
@@ -48,7 +48,7 @@ const TopBar = ({
 		)
 	}
 
-	const ItemMenu = () => {
+	function ItemMenu() {
 		return (
 			<Menu
 				anchorEl={listMenuAnchor}
@@ -71,7 +71,7 @@ const TopBar = ({
 		)
 	}
 
-	const SettingsMenu = () => {
+	function SettingsMenu() {
 		return (
 			<Menu
 				anchorEl={settingsMenuAnchor}

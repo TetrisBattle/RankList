@@ -19,13 +19,13 @@ interface SearchOption {
 	item: Item
 }
 
-const SearchDialog = ({
+function SearchDialog({
 	open,
 	setOpen,
 }: {
 	open: boolean
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
-}) => {
+}) {
 	const { listStore, itemDialogStore } = useStoreContext()
 	const options: SearchOption[] = []
 	const [searchResult, setSearchResult] = useState<SearchOption | null>(null)
@@ -41,7 +41,7 @@ const SearchDialog = ({
 		})
 	})
 
-	const onClose = () => {
+	function onClose() {
 		setSearchResult(null)
 		setOpen(false)
 	}
