@@ -1,11 +1,11 @@
-import { PageId } from 'types'
+import { Item, PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
 import ListStore from './ListStore'
 import RootStore from './RootStore'
 
 export default class ItemDialogStore {
 	private _listStore = {} as ListStore
-	private _item = { name: '', progress: '' }
+	private _item: Item = { name: '', progress: '' }
 	private _prevItemIndex = 0
 	private _targetPageId: PageId = 'unknown'
 	private _dialogOpen = false
@@ -77,50 +77,49 @@ export default class ItemDialogStore {
 		}
 	}
 
-	itemExists() {
+	private itemExists(itemName: string) {
 		let exists = false
 
-		this._listStore.rankList.every((page) => {
+		this._listStore.rankList.forEach((page) => {
 			const foundItemIndex = page.list.findIndex(
-				(item) => item.name.toLowerCase() === this._item.name.toLowerCase()
+				(item) => item.name.toLowerCase() === itemName.toLowerCase()
 			)
-			if (foundItemIndex === -1) return true
+			if (foundItemIndex === -1) return
 
 			exists = true
 			this._errorText = `Item already exists in page ${page.label} at number ${
 				foundItemIndex + 1
 			}`
-			return false
 		})
 
 		return exists
 	}
 
 	dialogSave() {
-		if (!this._item.name) {
+		const item ={
+			name: this._item.name.trim(),
+			progress: this._item.progress.trim()
+		}
+		if (!item.name) {
 			this._errorText = "Name can't be empty"
 			return
 		}
 
-		this._item.name = this._item.name.trim()
-		this._item.progress = this._item.progress.trim()
+		if (this.itemExists(item.name)) return
 
 		if (this._dialogType === 'new') {
-			if (this.itemExists()) return
-			this._listStore.addNewItem(this._item)
-		} else {
-			if (
-				this._item.name.toLowerCase() !==
-					this._listStore.selectedPageItems[
-						this._prevItemIndex
-					].name.toLowerCase() &&
-				this.itemExists()
-			) {
-				return
+			this._listStore.addNewItem(item)
+		} else if (this._dialogType === 'edit') {
+			const prevItem = this._listStore.selectedPageItems[this._prevItemIndex]
+			const isEdited = item.name.toLowerCase() !== prevItem.name.toLowerCase()
+			if (isEdited) {
+				this._listStore.edit(
+					this._targetPageId,
+					this._prevItemIndex,
+					item
+				)
 			}
-			this._listStore.edit(this._targetPageId, this._prevItemIndex, this._item)
 		}
-
 		this.closeDialog()
 	}
 }

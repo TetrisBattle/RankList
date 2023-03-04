@@ -7,58 +7,12 @@ export default class ListStore {
 	private _userId = 'Guest'
 	private _isLoading = false
 	private _listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
-	private _emptyRankList: Page[] = [
-		{
-			id: 'rankS',
-			label: 'S',
-			list: [],
-		},
-		{
-			id: 'rankA',
-			label: 'A',
-			list: [],
-		},
-		{
-			id: 'rankB',
-			label: 'B',
-			list: [],
-		},
-		{
-			id: 'rankC',
-			label: 'C',
-			list: [],
-		},
-		{
-			id: 'rankD',
-			label: 'D',
-			list: [],
-		},
-		{
-			id: 'rankE',
-			label: 'E',
-			list: [],
-		},
-		{
-			id: 'rankF',
-			label: 'F',
-			list: [],
-		},
-		{
-			id: 'special',
-			label: 'X',
-			list: [],
-		},
-		{
-			id: 'unknown',
-			label: '?',
-			list: [],
-		},
-	]
-	private _rankList: Page[] = JSON.parse(JSON.stringify(this._emptyRankList))
+	private _rankList: Page[] = []
 	private _selectedList: ListOption = 'MangaList'
 	private _selectedPageId: PageId = 'rankS'
 
 	constructor() {
+		this.resetRankList()
 		makeAutoObservable(this)
 	}
 
@@ -70,20 +24,20 @@ export default class ListStore {
 		this._userId = value
 	}
 
-	get rankList() {
-		return this._rankList
-	}
-
-	get listOptions() {
-		return this._listOptions
-	}
-
 	get isLoading() {
 		return this._isLoading
 	}
 
 	set isLoading(value) {
 		this._isLoading = value
+	}
+
+	get listOptions() {
+		return this._listOptions
+	}
+
+	get rankList() {
+		return this._rankList
 	}
 
 	get selectedList() {
@@ -108,17 +62,65 @@ export default class ListStore {
 	}
 
 	resetRankList() {
-		this._rankList = JSON.parse(JSON.stringify(this._emptyRankList))
+		const emptyRankList: Page[] = [
+			{
+				id: 'rankS',
+				label: 'S',
+				list: [],
+			},
+			{
+				id: 'rankA',
+				label: 'A',
+				list: [],
+			},
+			{
+				id: 'rankB',
+				label: 'B',
+				list: [],
+			},
+			{
+				id: 'rankC',
+				label: 'C',
+				list: [],
+			},
+			{
+				id: 'rankD',
+				label: 'D',
+				list: [],
+			},
+			{
+				id: 'rankE',
+				label: 'E',
+				list: [],
+			},
+			{
+				id: 'rankF',
+				label: 'F',
+				list: [],
+			},
+			{
+				id: 'special',
+				label: 'X',
+				list: [],
+			},
+			{
+				id: 'unknown',
+				label: '?',
+				list: [],
+			},
+		]
+		this._rankList = JSON.parse(JSON.stringify(emptyRankList))
 	}
 
 	setupRankListFromDto(dto: ListDto | undefined) {
-		if (dto) {
-			this._rankList.forEach((page) => {
-				page.list = dto[page.id] ?? []
-			})
-		} else {
+		if (!dto) {
 			this.resetRankList()
+			return
 		}
+
+		this._rankList.forEach((page) => {
+			page.list = dto[page.id] ?? []
+		})
 	}
 
 	private savePageToDb(pageId: PageId, items: Item[]) {
@@ -136,7 +138,6 @@ export default class ListStore {
 		if (!page) return
 		page.list[prevItemIndex] = item
 		page.list.sort((a, b) => a.name.localeCompare(b.name))
-
 		this.savePageToDb(targetPageId, page.list)
 	}
 
