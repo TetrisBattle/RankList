@@ -93,13 +93,13 @@ function SearchDialog({ open, setOpen }: SearchDialogProps) {
 						disabled={!searchResult}
 						onClick={() => {
 							if (!searchResult) return
-							itemDialogStore.targetPageId = searchResult.pageId
-							itemDialogStore.prevItemIndex = searchResult.itemIndex
-							itemDialogStore.item = JSON.parse(
-								JSON.stringify(searchResult.item)
+							itemDialogStore.setTargetPageId(searchResult.pageId)
+							itemDialogStore.setPrevItemIndex(searchResult.itemIndex)
+							itemDialogStore.setItem(
+								JSON.parse(JSON.stringify(searchResult.item))
 							)
 							onClose()
-							itemDialogStore.dialogType = 'edit'
+							itemDialogStore.setDialogType('edit')
 							itemDialogStore.openDialog()
 						}}
 					>

@@ -4,60 +4,42 @@ import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
 export default class ListStore {
 	private firebase = new Firebase()
-	private _userId = 'Guest'
-	private _isLoading = false
-	private _listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
-	private _rankList: Page[] = []
-	private _selectedList: ListOption = 'MangaList'
-	private _selectedPageId: PageId = 'rankS'
+	userId = 'Guest'
+	isLoading = false
+	listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
+	rankList: Page[] = []
+	selectedList: ListOption = 'MangaList'
+	selectedPageId: PageId = 'rankS'
 
 	constructor() {
 		this.resetRankList()
 		makeAutoObservable(this)
 	}
 
-	get userId() {
-		return this._userId
+	setUserId(userId: string) {
+		this.userId = userId
 	}
 
-	set userId(value) {
-		this._userId = value
+	// this is unused at the moment
+	setIsLoading(isLoading: boolean) {
+		this.isLoading = isLoading
 	}
 
-	get isLoading() {
-		return this._isLoading
+	setSelectedList(selectedList: ListOption) {
+		this.setSelectedList(selectedList)
 	}
 
-	set isLoading(value) {
-		this._isLoading = value
+	setSelectedPageId(value: PageId) {
+		this.selectedPageId = value
 	}
 
-	get listOptions() {
-		return this._listOptions
-	}
-
-	get rankList() {
-		return this._rankList
-	}
-
-	get selectedList() {
-		return this._selectedList
-	}
-
-	set selectedList(value) {
-		this._selectedList = value
-	}
-
-	get selectedPage() {
-		return this._selectedPageId
-	}
-
-	set selectedPage(value) {
-		this._selectedPageId = value
+	getPageItems(pageId: PageId) {
+		const page = this.rankList.find((page) => page.id === pageId)
+		return page?.list ?? []
 	}
 
 	get selectedPageItems() {
-		const page = this._rankList.find((page) => page.id === this._selectedPageId)
+		const page = this.rankList.find((page) => page.id === this.selectedPageId)
 		return page?.list ?? []
 	}
 
@@ -109,7 +91,7 @@ export default class ListStore {
 				list: [],
 			},
 		]
-		this._rankList = JSON.parse(JSON.stringify(emptyRankList))
+		this.rankList = JSON.parse(JSON.stringify(emptyRankList))
 	}
 
 	setupRankListFromDto(dto: ListDto | undefined) {
@@ -118,23 +100,23 @@ export default class ListStore {
 			return
 		}
 
-		this._rankList.forEach((page) => {
+		this.rankList.forEach((page) => {
 			page.list = dto[page.id] ?? []
 		})
 	}
 
 	private savePageToDb(pageId: PageId, items: Item[]) {
-		this.firebase.savePageToDb(this._userId, this._selectedList, pageId, items)
+		this.firebase.savePageToDb(this.userId, this.selectedList, pageId, items)
 	}
 
 	addNewItem(item: Item) {
 		this.selectedPageItems.push(item)
 		this.selectedPageItems.sort((a, b) => a.name.localeCompare(b.name))
-		this.savePageToDb(this._selectedPageId, this.selectedPageItems)
+		this.savePageToDb(this.selectedPageId, this.selectedPageItems)
 	}
 
 	edit(targetPageId: PageId, prevItemIndex: number, item: Item) {
-		const page = this._rankList.find((page) => page.id === targetPageId)
+		const page = this.rankList.find((page) => page.id === targetPageId)
 		if (!page) return
 		page.list[prevItemIndex] = item
 		page.list.sort((a, b) => a.name.localeCompare(b.name))
@@ -143,11 +125,11 @@ export default class ListStore {
 
 	delete(itemIndex: number) {
 		this.selectedPageItems.splice(itemIndex, 1)
-		this.savePageToDb(this._selectedPageId, this.selectedPageItems)
+		this.savePageToDb(this.selectedPageId, this.selectedPageItems)
 	}
 
 	sendTo(targetPageId: PageId, selectedItemIndex: number) {
-		const targetPage = this._rankList.find((page) => page.id === targetPageId)
+		const targetPage = this.rankList.find((page) => page.id === targetPageId)
 		const targetPageItems = targetPage?.list ?? []
 
 		targetPageItems.push(this.selectedPageItems[selectedItemIndex])

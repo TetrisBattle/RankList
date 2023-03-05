@@ -16,23 +16,23 @@ function App() {
 	useEffect(() => {
 		firebase.onAuthChange((user) => {
 			if (!user?.email) {
-				listStore.userId = 'Guest'
+				listStore.setUserId('Guest')
 				listStore.resetRankList()
 				return
 			}
 
-			if (appStore.devMode) listStore.userId = 'dev'
-			else listStore.userId = user.email
+			if (appStore.devMode) listStore.setUserId('dev')
+			else listStore.setUserId(user.email)
 		})
 	}, [firebase, appStore, listStore])
 
 	useEffect(() => {
 		if (listStore.userId === 'Guest') return
-		appStore.isLoading = true
+		appStore.setIsLoading(true)
 
 		firebase.onDataChange(listStore.userId, listStore.selectedList, (dto) => {
 			listStore.setupRankListFromDto(dto)
-			appStore.isLoading = false
+			appStore.setIsLoading(false)
 		})
 	}, [firebase, appStore, listStore, listStore.userId, listStore.selectedList])
 

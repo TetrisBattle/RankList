@@ -3,75 +3,46 @@ import { makeAutoObservable } from 'mobx'
 import ListStore from './ListStore'
 import RootStore from './RootStore'
 
-export default class ItemDialogStore {
-	private _listStore = {} as ListStore
-	private _item: Item = { name: '', progress: '' }
-	private _prevItemIndex = 0
-	private _targetPageId: PageId = 'unknown'
-	private _dialogOpen = false
-	private _dialogType: 'new' | 'edit' = 'new'
-	private _errorText = ''
+type DialogType = 'new' | 'edit'
 
-	constructor() {
+export default class ItemDialogStore {
+	private listStore: ListStore
+	item: Item = new Item()
+	private prevItemIndex = 0
+	targetPageId: PageId = 'unknown'
+	dialogOpen = false
+	dialogType: DialogType = 'new'
+	errorText = ''
+
+	constructor(rootStore: RootStore) {
+		this.listStore = rootStore.listStore
 		makeAutoObservable(this)
 	}
 
-	init(rootStore: RootStore) {
-		this._listStore = rootStore.listStore
+	setItem(item: Item) {
+		this.item = item
 	}
 
-	get item() {
-		return this._item
+	setPrevItemIndex(prevItemIndex: number) {
+		this.prevItemIndex = prevItemIndex
 	}
 
-	set item(value) {
-		this._item = value
+	setTargetPageId(targetPageId: PageId) {
+		this.targetPageId = targetPageId
 	}
 
-	set name(value: string) {
-		this._item.name = value
-	}
-
-	set progress(value: string) {
-		this._item.progress = value
-	}
-
-	set prevItemIndex(value: number) {
-		this._prevItemIndex = value
-	}
-
-	get targetPageId() {
-		return this._targetPageId
-	}
-
-	set targetPageId(value) {
-		this._targetPageId = value
-	}
-
-	get dialogOpen() {
-		return this._dialogOpen
-	}
-
-	get dialogType() {
-		return this._dialogType
-	}
-
-	set dialogType(value) {
-		this._dialogType = value
-	}
-
-	get errorText() {
-		return this._errorText
+	setDialogType(value: DialogType) {
+		this.dialogType = value
 	}
 
 	openDialog() {
-		this._dialogOpen = true
+		this.dialogOpen = true
 	}
 
 	closeDialog() {
-		this._dialogOpen = false
-		this._errorText = ''
-		this._item = {
+		this.dialogOpen = false
+		this.errorText = ''
+		this.item = {
 			name: '',
 			progress: '',
 		}
@@ -80,14 +51,14 @@ export default class ItemDialogStore {
 	private itemExists(itemName: string) {
 		let exists = false
 
-		this._listStore.rankList.forEach((page) => {
+		this.listStore.rankList.forEach((page) => {
 			const foundItemIndex = page.list.findIndex(
 				(item) => item.name.toLowerCase() === itemName.toLowerCase()
 			)
 			if (foundItemIndex === -1) return
 
 			exists = true
-			this._errorText = `Item already exists in page ${page.label} at number ${
+			this.errorText = `Item already exists in page ${page.label} at number ${
 				foundItemIndex + 1
 			}`
 		})
@@ -97,25 +68,25 @@ export default class ItemDialogStore {
 
 	dialogSave() {
 		const item ={
-			name: this._item.name.trim(),
-			progress: this._item.progress.trim()
+			name: this.item.name.trim(),
+			progress: this.item.progress.trim()
 		}
 		if (!item.name) {
-			this._errorText = "Name can't be empty"
+			this.errorText = "Name can't be empty"
 			return
 		}
 
 		if (this.itemExists(item.name)) return
 
-		if (this._dialogType === 'new') {
-			this._listStore.addNewItem(item)
-		} else if (this._dialogType === 'edit') {
-			const prevItem = this._listStore.selectedPageItems[this._prevItemIndex]
+		if (this.dialogType === 'new') {
+			this.listStore.addNewItem(item)
+		} else if (this.dialogType === 'edit') {
+			const prevItem = this.listStore.selectedPageItems[this.prevItemIndex]
 			const isEdited = item.name.toLowerCase() !== prevItem.name.toLowerCase()
 			if (isEdited) {
-				this._listStore.edit(
-					this._targetPageId,
-					this._prevItemIndex,
+				this.listStore.edit(
+					this.targetPageId,
+					this.prevItemIndex,
 					item
 				)
 			}

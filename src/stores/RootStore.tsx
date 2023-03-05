@@ -5,9 +5,5 @@ import ListStore from './ListStore'
 export default class RootStore {
 	appStore = new AppStore()
 	listStore = new ListStore()
-	itemDialogStore = new ItemDialogStore()
-
-	constructor() {
-		this.itemDialogStore.init(this)
-	}
+	itemDialogStore = new ItemDialogStore(this)
 }

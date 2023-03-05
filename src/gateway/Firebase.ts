@@ -36,7 +36,7 @@ export default class Firebase {
 		return doc(this.db, `users/${userId}/lists/${list}`)
 	}
 
-	public async savePageToDb(
+	async savePageToDb(
 		userId: string,
 		list: ListOption,
 		pageId: PageId,

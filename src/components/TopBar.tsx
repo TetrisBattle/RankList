@@ -29,16 +29,16 @@ function TopBar({ topBarRef }: TopBarProps) {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
 
-	useEffect(() => {}, [listStore.selectedPage])
+	useEffect(() => {}, [listStore.selectedPageId])
 
 	function PageButton(page: Page) {
 		return (
 			<Button
-				onClick={() => (listStore.selectedPage = page.id)}
+				onClick={() => (listStore.setSelectedPageId(page.id))}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-						listStore.selectedPage === page.id
+					listStore.selectedPageId === page.id
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
@@ -60,7 +60,7 @@ function TopBar({ topBarRef }: TopBarProps) {
 						key={option}
 						selected={option === listStore.selectedList}
 						onClick={() => {
-							listStore.selectedList = option
+							listStore.setSelectedList(option)
 							setListMenuAnchor(null)
 						}}
 					>
@@ -80,7 +80,7 @@ function TopBar({ topBarRef }: TopBarProps) {
 			>
 				<MenuItem
 					onClick={() => {
-						itemDialogStore.dialogType = 'new'
+						itemDialogStore.setDialogType('new')
 						itemDialogStore.openDialog()
 						setSettingsMenuAnchor(null)
 					}}

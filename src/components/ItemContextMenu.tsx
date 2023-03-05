@@ -74,10 +74,10 @@ function ItemContextMenu({
 	}
 
 	function onEdit(item: Item, index: number) {
-		itemDialogStore.dialogType = 'edit'
-		itemDialogStore.item = JSON.parse(JSON.stringify(item))
-		itemDialogStore.prevItemIndex = index
-		itemDialogStore.targetPageId = listStore.selectedPage
+		itemDialogStore.setDialogType('edit')
+		itemDialogStore.setItem(JSON.parse(JSON.stringify(item)))
+		itemDialogStore.setPrevItemIndex(index)
+		itemDialogStore.setTargetPageId(listStore.selectedPageId)
 		itemDialogStore.openDialog()
 		setContextMenu(null)
 	}
@@ -154,7 +154,7 @@ function ItemContextMenu({
 						return (
 							<ListItemButton
 								key={page.id}
-								disabled={page.id === listStore.selectedPage}
+								disabled={page.id === listStore.selectedPageId}
 								onClick={() => onSendTo(page.id)}
 							>
 								<ListItemText primary={page.label} />

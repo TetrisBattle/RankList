@@ -37,7 +37,7 @@ function ItemDialog() {
 				<TextField
 					value={itemDialogStore.item.name}
 					onChange={(e) => {
-						itemDialogStore.name = e.target.value
+						itemDialogStore.setItem({ ...itemDialogStore.item, name: e.target.value})
 					}}
 					onKeyPress={(e) => {
 						if (e.key === 'Enter') {
@@ -56,7 +56,7 @@ function ItemDialog() {
 				<TextField
 					value={itemDialogStore.item.progress}
 					onChange={(e) => {
-						itemDialogStore.progress = e.target.value
+						itemDialogStore.setItem({ ...itemDialogStore.item, progress: e.target.value})
 					}}
 					onKeyPress={(e) => {
 						if (e.key === 'Enter') {
