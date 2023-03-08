@@ -4,7 +4,11 @@ import { ThemeProvider } from '@mui/material/styles'
 import MuiTheme from './MuiTheme'
 import { useStoreContext } from 'stores/StoreContext'
 
-const MuiThemeProvider = ({ children }: { children: React.ReactNode }) => {
+type MuiThemeProviderProps = {
+	children: React.ReactNode
+}
+
+const MuiThemeProvider = ({ children }: MuiThemeProviderProps) => {
 	const {
 		appStore: { isDarkTheme },
 	} = useStoreContext()

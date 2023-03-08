@@ -1,5 +1,6 @@
-export class Item {
-	constructor(public name = '', public progress = '') {}
+export type Item = {
+  name: string;
+  progress: string;
 }
 
 export type ListOption = 'MangaList' | 'Series' | 'Movies'

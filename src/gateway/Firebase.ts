@@ -6,14 +6,7 @@ import {
 	signOut,
 	User,
 } from 'firebase/auth'
-import {
-	doc,
-	DocumentData,
-	DocumentReference,
-	getFirestore,
-	onSnapshot,
-	setDoc,
-} from 'firebase/firestore'
+import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
 import firebaseApp from 'gateway/firebaseApp'
 import { Item, ListDto, ListOption, PageId } from 'types'
 
@@ -29,10 +22,7 @@ export default class Firebase {
 		await signOut(getAuth())
 	}
 
-	private getListRef(
-		userId: string,
-		list: ListOption
-	): DocumentReference<DocumentData> {
+	private getListRef(userId: string, list: ListOption) {
 		return doc(this.db, `users/${userId}/lists/${list}`)
 	}
 
@@ -56,11 +46,11 @@ export default class Firebase {
 	onDataChange(
 		userId: string,
 		list: ListOption,
-		callback: (dto: ListDto) => void
+		callback: (dto: ListDto | undefined) => void
 	) {
 		const listRef = this.getListRef(userId, list)
 		const unsubList = onSnapshot(listRef, (doc) => {
-			const dto = doc.data() as ListDto
+			const dto: ListDto | undefined = doc.data()
 			callback(dto)
 		})
 		return () => unsubList()

@@ -7,7 +7,7 @@ type DialogType = 'new' | 'edit'
 
 export default class ItemDialogStore {
 	private listStore: ListStore
-	item: Item = new Item()
+	item = { name: '', progress: '' }
 	private prevItemIndex = 0
 	targetPageId: PageId = 'unknown'
 	dialogOpen = false
@@ -67,9 +67,9 @@ export default class ItemDialogStore {
 	}
 
 	dialogSave() {
-		const item ={
+		const item = {
 			name: this.item.name.trim(),
-			progress: this.item.progress.trim()
+			progress: this.item.progress.trim(),
 		}
 		if (!item.name) {
 			this.errorText = "Name can't be empty"
@@ -84,11 +84,7 @@ export default class ItemDialogStore {
 			const prevItem = this.listStore.selectedPageItems[this.prevItemIndex]
 			const isEdited = item.name.toLowerCase() !== prevItem.name.toLowerCase()
 			if (isEdited) {
-				this.listStore.edit(
-					this.targetPageId,
-					this.prevItemIndex,
-					item
-				)
+				this.listStore.edit(this.targetPageId, this.prevItemIndex, item)
 			}
 		}
 		this.closeDialog()
