@@ -81,7 +81,7 @@ function TopBar({ topBarRef }: TopBarProps) {
 				<MenuItem
 					onClick={() => {
 						itemDialogStore.setDialogType('new')
-						itemDialogStore.openDialog()
+						itemDialogStore.setDialogOpen(true)
 						setSettingsMenuAnchor(null)
 					}}
 				>

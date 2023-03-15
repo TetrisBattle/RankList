@@ -7,8 +7,8 @@ type DialogType = 'new' | 'edit'
 
 export default class ItemDialogStore {
 	private listStore: ListStore
+	private selectedItemIndex = 0
 	item = { name: '', progress: '' }
-	private prevItemIndex = 0
 	targetPageId: PageId = 'unknown'
 	dialogOpen = false
 	dialogType: DialogType = 'new'
@@ -23,8 +23,8 @@ export default class ItemDialogStore {
 		this.item = item
 	}
 
-	setPrevItemIndex(prevItemIndex: number) {
-		this.prevItemIndex = prevItemIndex
+	setSelectedItemIndex(selectedItemIndex: number) {
+		this.selectedItemIndex = selectedItemIndex
 	}
 
 	setTargetPageId(targetPageId: PageId) {
@@ -35,17 +35,12 @@ export default class ItemDialogStore {
 		this.dialogType = value
 	}
 
-	openDialog() {
-		this.dialogOpen = true
+	setErrorText(value: string) {
+		this.errorText = value
 	}
 
-	closeDialog() {
-		this.dialogOpen = false
-		this.errorText = ''
-		this.item = {
-			name: '',
-			progress: '',
-		}
+	setDialogOpen(dialogOpen: boolean) {
+		this.dialogOpen = dialogOpen
 	}
 
 	private itemExists(itemName: string) {
@@ -81,12 +76,12 @@ export default class ItemDialogStore {
 		if (this.dialogType === 'new') {
 			this.listStore.addNewItem(item)
 		} else if (this.dialogType === 'edit') {
-			const prevItem = this.listStore.selectedPageItems[this.prevItemIndex]
+			const prevItem = this.listStore.selectedPageItems[this.selectedItemIndex]
 			const isEdited = item.name.toLowerCase() !== prevItem.name.toLowerCase()
 			if (isEdited) {
-				this.listStore.edit(this.targetPageId, this.prevItemIndex, item)
+				this.listStore.edit(this.targetPageId, this.selectedItemIndex, item)
 			}
 		}
-		this.closeDialog()
+		this.dialogOpen = false
 	}
 }

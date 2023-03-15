@@ -76,9 +76,9 @@ function ItemContextMenu({
 	function onEdit(item: Item, index: number) {
 		itemDialogStore.setDialogType('edit')
 		itemDialogStore.setItem(JSON.parse(JSON.stringify(item)))
-		itemDialogStore.setPrevItemIndex(index)
+		itemDialogStore.setSelectedItemIndex(index)
 		itemDialogStore.setTargetPageId(listStore.selectedPageId)
-		itemDialogStore.openDialog()
+		itemDialogStore.setDialogOpen(true)
 		setContextMenu(null)
 	}
 

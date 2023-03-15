@@ -9,27 +9,36 @@ import {
 	TextField,
 } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
+import firstLetterToUpperCase from 'utils/firstLetterToUpperCase'
 
 function ItemDialog() {
 	const { itemDialogStore } = useStoreContext()
 	const nameInputRef = useRef<HTMLInputElement | null>(null)
 	const progressInputRef = useRef<HTMLInputElement | null>(null)
-	const dialogTitle =
-		itemDialogStore.dialogType.charAt(0).toUpperCase() +
-		itemDialogStore.dialogType.slice(1)
+	const dialogTitle = firstLetterToUpperCase(itemDialogStore.dialogType)
 
 	useEffect(() => {
 		if (!itemDialogStore.dialogOpen) return
 
-		if (itemDialogStore.dialogType === 'edit') {
+		if (itemDialogStore.dialogType === 'new') {
+			setTimeout(() => nameInputRef.current?.focus(), 100)
+		} else if (itemDialogStore.dialogType === 'edit') {
 			setTimeout(() => progressInputRef.current?.focus(), 100)
-		} else setTimeout(() => nameInputRef.current?.focus(), 100)
-	}, [itemDialogStore.dialogOpen, itemDialogStore.dialogType])
+		}
+
+		return () => {
+			itemDialogStore.setItem({
+				name: '',
+				progress: '',
+			})
+			itemDialogStore.setErrorText('')
+		}
+	}, [itemDialogStore, itemDialogStore.dialogOpen])
 
 	return (
 		<Dialog
 			open={itemDialogStore.dialogOpen}
-			onClose={() => itemDialogStore.closeDialog()}
+			onClose={() => itemDialogStore.setDialogOpen(false)}
 			sx={{ '.MuiPaper-root': { minWidth: 360 } }}
 		>
 			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
@@ -37,7 +46,10 @@ function ItemDialog() {
 				<TextField
 					value={itemDialogStore.item.name}
 					onChange={(e) => {
-						itemDialogStore.setItem({ ...itemDialogStore.item, name: e.target.value})
+						itemDialogStore.setItem({
+							...itemDialogStore.item,
+							name: e.target.value,
+						})
 					}}
 					onKeyPress={(e) => {
 						if (e.key === 'Enter') {
@@ -56,7 +68,10 @@ function ItemDialog() {
 				<TextField
 					value={itemDialogStore.item.progress}
 					onChange={(e) => {
-						itemDialogStore.setItem({ ...itemDialogStore.item, progress: e.target.value})
+						itemDialogStore.setItem({
+							...itemDialogStore.item,
+							progress: e.target.value,
+						})
 					}}
 					onKeyPress={(e) => {
 						if (e.key === 'Enter') {
@@ -74,7 +89,7 @@ function ItemDialog() {
 			</DialogContent>
 			<DialogActions>
 				<Button onClick={() => itemDialogStore.dialogSave()}>Save</Button>
-				<Button onClick={() => itemDialogStore.closeDialog()}>Cancel</Button>
+				<Button onClick={() => itemDialogStore.setDialogOpen(false)}>Cancel</Button>
 			</DialogActions>
 		</Dialog>
 	)
