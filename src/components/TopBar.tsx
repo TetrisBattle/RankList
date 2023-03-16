@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
 	Box,
 	Button,
@@ -6,10 +6,11 @@ import {
 	Menu,
 	MenuItem,
 	Typography,
+	useTheme,
 } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
-import { observer } from 'mobx-react-lite'
+import { useObserver } from 'mobx-react-lite'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
@@ -31,19 +32,20 @@ function TopBar({ topBarRef }: TopBarProps) {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
 
-	// eslint-disable-next-line @typescript-eslint/no-empty-function
-	useEffect(() => {}, [listStore.selectedPageId])
-
 	function PageButton(page: Page) {
+		const theme = useTheme()
+		const bgcolor = useObserver(() =>
+			listStore.selectedPageId === page.id
+				? theme.palette.primary.main
+				: theme.palette.background.default
+		)
+
 		return (
 			<Button
 				onClick={() => listStore.setSelectedPageId(page.id)}
 				sx={{
 					borderRadius: 0,
-					bgcolor: (theme) =>
-						listStore.selectedPageId === page.id
-							? theme.palette.primary.main
-							: theme.palette.background.default,
+					bgcolor: bgcolor,
 				}}
 			>
 				{page.label}
@@ -204,4 +206,4 @@ function TopBar({ topBarRef }: TopBarProps) {
 	)
 }
 
-export default observer(TopBar)
+export default TopBar
