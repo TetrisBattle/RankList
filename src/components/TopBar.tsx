@@ -17,7 +17,7 @@ import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
 import SearchDialog from './SearchDialog'
 
-type TopBarProps = {
+interface TopBarProps {
 	topBarRef: React.MutableRefObject<HTMLElement | undefined>
 }
 

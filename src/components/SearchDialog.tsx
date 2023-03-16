@@ -12,12 +12,12 @@ import {
 import { useStoreContext } from 'stores/StoreContext'
 import { Item, PageId } from 'types'
 
-type SearchDialogProps = {
+interface SearchDialogProps {
 	open: boolean
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-type SearchOption = {
+interface SearchOption {
 	pageId: PageId
 	pageLabel: string
 	itemIndex: number

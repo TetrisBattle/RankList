@@ -2,10 +2,10 @@ import { useState, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, List, ListItemText } from '@mui/material'
 import { useStoreContext } from 'stores/StoreContext'
-import ItemContextMenu from './ItemContextMenu'
+import ItemContextMenu, { ContextMenu } from './ItemContextMenu'
 import { Item } from 'types'
 
-type PageItemProps = {
+interface PageItemProps {
 	index: number
 	item: Item
 }
@@ -13,10 +13,7 @@ type PageItemProps = {
 function PageItem({ index, item }: PageItemProps) {
 	const { listStore } = useStoreContext()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
-	const [contextMenu, setContextMenu] = useState<{
-		mouseX: number
-		mouseY: number
-	} | null>(null)
+	const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null)
 
 	function handleContextMenu(event: React.MouseEvent) {
 		event.preventDefault()
