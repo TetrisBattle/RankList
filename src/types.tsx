@@ -1,6 +1,6 @@
 export type Item = {
-  name: string;
-  progress: string;
+	name: string
+	progress: string
 }
 
 export type ListOption = 'MangaList' | 'Series' | 'Movies'

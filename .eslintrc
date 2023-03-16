@@ -1,0 +1,17 @@
+{
+	"extends": [
+		"react-app",
+		"react-app/jest",
+		"eslint:recommended",
+		"plugin:react/recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended"
+	],
+	"rules": {
+		"prettier/prettier": 1,
+		"react/react-in-jsx-scope": 0,
+		"no-debugger": 1,
+		"no-console": 1,
+		"@typescript-eslint/no-empty-function": 1
+	}
+}

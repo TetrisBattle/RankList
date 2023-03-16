@@ -53,9 +53,9 @@ export default class ItemDialogStore {
 			if (foundItemIndex === -1) return
 
 			exists = true
-			this.errorText = `Item already exists in page ${page.label} at number ${
-				foundItemIndex + 1
-			}`
+			this.errorText = `Item already exists in page ${
+				page.label
+			} at number ${foundItemIndex + 1}`
 		})
 
 		return exists
@@ -76,10 +76,16 @@ export default class ItemDialogStore {
 		if (this.dialogType === 'new') {
 			this.listStore.addNewItem(item)
 		} else if (this.dialogType === 'edit') {
-			const prevItem = this.listStore.selectedPageItems[this.selectedItemIndex]
-			const isEdited = item.name.toLowerCase() !== prevItem.name.toLowerCase()
+			const prevItem =
+				this.listStore.selectedPageItems[this.selectedItemIndex]
+			const isEdited =
+				item.name.toLowerCase() !== prevItem.name.toLowerCase()
 			if (isEdited) {
-				this.listStore.edit(this.targetPageId, this.selectedItemIndex, item)
+				this.listStore.edit(
+					this.targetPageId,
+					this.selectedItemIndex,
+					item
+				)
 			}
 		}
 		this.dialogOpen = false

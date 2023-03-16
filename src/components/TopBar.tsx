@@ -25,20 +25,23 @@ function TopBar({ topBarRef }: TopBarProps) {
 	const firebase = new Firebase()
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
-	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(null)
+	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
+		null
+	)
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
 
+	// eslint-disable-next-line @typescript-eslint/no-empty-function
 	useEffect(() => {}, [listStore.selectedPageId])
 
 	function PageButton(page: Page) {
 		return (
 			<Button
-				onClick={() => (listStore.setSelectedPageId(page.id))}
+				onClick={() => listStore.setSelectedPageId(page.id)}
 				sx={{
 					borderRadius: 0,
 					bgcolor: (theme) =>
-					listStore.selectedPageId === page.id
+						listStore.selectedPageId === page.id
 							? theme.palette.primary.main
 							: theme.palette.background.default,
 				}}
@@ -155,7 +158,9 @@ function TopBar({ topBarRef }: TopBarProps) {
 								px: 1,
 								fontSize: 22,
 								color: (theme) =>
-									listMenuAnchor ? theme.palette.primary.light : 'inherit',
+									listMenuAnchor
+										? theme.palette.primary.light
+										: 'inherit',
 							}}
 						>
 							{listStore.selectedList}
@@ -169,10 +174,13 @@ function TopBar({ topBarRef }: TopBarProps) {
 							else return null
 						})}
 						<Button
-							onClick={(e) => setSettingsMenuAnchor(e.currentTarget)}
+							onClick={(e) =>
+								setSettingsMenuAnchor(e.currentTarget)
+							}
 							sx={{
 								borderRadius: 0,
-								bgcolor: (theme) => theme.palette.background.default,
+								bgcolor: (theme) =>
+									theme.palette.background.default,
 							}}
 						>
 							<SettingsIcon fontSize='small' />
@@ -188,7 +196,10 @@ function TopBar({ topBarRef }: TopBarProps) {
 					})}
 				</Box>
 			</Box>
-			<SearchDialog open={seachDialogOpen} setOpen={setSearchDialogOpen} />
+			<SearchDialog
+				open={seachDialogOpen}
+				setOpen={setSearchDialogOpen}
+			/>
 		</>
 	)
 }

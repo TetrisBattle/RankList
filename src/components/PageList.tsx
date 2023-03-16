@@ -45,11 +45,17 @@ function PageItem({ index, item }: PageItemProps) {
 				userSelect: 'none',
 			}}
 		>
-			<ListItemText primary={index + 1} sx={{ flex: 1, textAlign: 'center' }} />
+			<ListItemText
+				primary={index + 1}
+				sx={{ flex: 1, textAlign: 'center' }}
+			/>
 			<ListItemText
 				primary={item.name}
 				ref={itemRef}
-				sx={{ flex: listStore.selectedList !== 'Movies' ? 10 : 8, pl: 1 }}
+				sx={{
+					flex: listStore.selectedList !== 'Movies' ? 10 : 8,
+					pl: 1,
+				}}
 			/>
 			{listStore.selectedList !== 'Movies' && (
 				<ListItemText
@@ -71,9 +77,15 @@ function PageList() {
 	const { listStore } = useStoreContext()
 
 	return (
-		<List sx={{ m: 0, p: 0, '.MuiListItemText-root': { paddingBlock: 0.5 } }}>
+		<List
+			sx={{ m: 0, p: 0, '.MuiListItemText-root': { paddingBlock: 0.5 } }}
+		>
 			{listStore.selectedPageItems.map((item, index) => (
-				<PageItem key={`${index}-${item.name}`} index={index} item={item} />
+				<PageItem
+					key={`${index}-${item.name}`}
+					index={index}
+					item={item}
+				/>
 			))}
 		</List>
 	)

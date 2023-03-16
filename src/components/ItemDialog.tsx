@@ -41,7 +41,9 @@ function ItemDialog() {
 			onClose={() => itemDialogStore.setDialogOpen(false)}
 			sx={{ '.MuiPaper-root': { minWidth: 360 } }}
 		>
-			<DialogTitle sx={{ textAlign: 'center' }}>{dialogTitle}</DialogTitle>
+			<DialogTitle sx={{ textAlign: 'center' }}>
+				{dialogTitle}
+			</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
 					value={itemDialogStore.item.name}
@@ -88,8 +90,12 @@ function ItemDialog() {
 				/>
 			</DialogContent>
 			<DialogActions>
-				<Button onClick={() => itemDialogStore.dialogSave()}>Save</Button>
-				<Button onClick={() => itemDialogStore.setDialogOpen(false)}>Cancel</Button>
+				<Button onClick={() => itemDialogStore.dialogSave()}>
+					Save
+				</Button>
+				<Button onClick={() => itemDialogStore.setDialogOpen(false)}>
+					Cancel
+				</Button>
 			</DialogActions>
 		</Dialog>
 	)

@@ -39,7 +39,9 @@ export default class ListStore {
 	}
 
 	get selectedPageItems() {
-		const page = this.rankList.find((page) => page.id === this.selectedPageId)
+		const page = this.rankList.find(
+			(page) => page.id === this.selectedPageId
+		)
 		return page?.list ?? []
 	}
 
@@ -106,7 +108,12 @@ export default class ListStore {
 	}
 
 	private savePageToDb(pageId: PageId, items: Item[]) {
-		this.firebase.savePageToDb(this.userId, this.selectedList, pageId, items)
+		this.firebase.savePageToDb(
+			this.userId,
+			this.selectedList,
+			pageId,
+			items
+		)
 	}
 
 	addNewItem(item: Item) {
@@ -129,7 +136,9 @@ export default class ListStore {
 	}
 
 	sendTo(targetPageId: PageId, selectedItemIndex: number) {
-		const targetPage = this.rankList.find((page) => page.id === targetPageId)
+		const targetPage = this.rankList.find(
+			(page) => page.id === targetPageId
+		)
 		const targetPageItems = targetPage?.list ?? []
 
 		targetPageItems.push(this.selectedPageItems[selectedItemIndex])

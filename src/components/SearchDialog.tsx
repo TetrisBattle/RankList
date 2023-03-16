@@ -19,7 +19,7 @@ type SearchDialogProps = {
 
 type SearchOption = {
 	pageId: PageId
-	pageLabel: String
+	pageLabel: string
 	itemIndex: number
 	item: Item
 }
@@ -62,7 +62,9 @@ function SearchDialog({ open, setOpen }: SearchDialogProps) {
 							<TextField
 								{...params}
 								label={
-									searchResult ? `Page: ${searchResult.pageLabel}` : 'Search'
+									searchResult
+										? `Page: ${searchResult.pageLabel}`
+										: 'Search'
 								}
 								color={'info'}
 							/>
@@ -94,7 +96,9 @@ function SearchDialog({ open, setOpen }: SearchDialogProps) {
 						onClick={() => {
 							if (!searchResult) return
 							itemDialogStore.setTargetPageId(searchResult.pageId)
-							itemDialogStore.setSelectedItemIndex(searchResult.itemIndex)
+							itemDialogStore.setSelectedItemIndex(
+								searchResult.itemIndex
+							)
 							itemDialogStore.setItem(
 								JSON.parse(JSON.stringify(searchResult.item))
 							)

@@ -30,11 +30,21 @@ function App() {
 		if (listStore.userId === 'Guest') return
 		appStore.setIsLoading(true)
 
-		firebase.onDataChange(listStore.userId, listStore.selectedList, (dto) => {
-			listStore.setupRankListFromDto(dto)
-			appStore.setIsLoading(false)
-		})
-	}, [firebase, appStore, listStore, listStore.userId, listStore.selectedList])
+		firebase.onDataChange(
+			listStore.userId,
+			listStore.selectedList,
+			(dto) => {
+				listStore.setupRankListFromDto(dto)
+				appStore.setIsLoading(false)
+			}
+		)
+	}, [
+		firebase,
+		appStore,
+		listStore,
+		listStore.userId,
+		listStore.selectedList,
+	])
 
 	function LoginButton() {
 		return (
@@ -60,7 +70,13 @@ function App() {
 				<Box sx={{ mt: topBarHeight / 8 }} />
 				<PageList />
 				{listStore.isLoading && (
-					<Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+					<Box
+						sx={{
+							mt: 2,
+							display: 'flex',
+							justifyContent: 'center',
+						}}
+					>
 						<CircularProgress />
 					</Box>
 				)}
