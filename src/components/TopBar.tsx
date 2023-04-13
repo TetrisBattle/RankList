@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import {
 	Box,
 	Button,
@@ -10,19 +10,20 @@ import {
 } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStoreContext } from 'stores/StoreContext'
-import { useObserver } from 'mobx-react-lite'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
 import SearchDialog from './SearchDialog'
+import { observer } from 'mobx-react-lite'
 
 interface TopBarProps {
 	topBarRef: React.MutableRefObject<HTMLElement | undefined>
 }
 
 function TopBar({ topBarRef }: TopBarProps) {
+	const theme = useTheme()
 	const firebase = new Firebase()
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
@@ -32,20 +33,26 @@ function TopBar({ topBarRef }: TopBarProps) {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
 
-	function PageButton(page: Page) {
-		const theme = useTheme()
-		const bgcolor = useObserver(() =>
-			listStore.selectedPageId === page.id
+	const pageButtonBgColor = useCallback(
+		(page: Page) => {
+			return listStore.selectedPageId === page.id
 				? theme.palette.primary.main
 				: theme.palette.background.default
-		)
+		},
+		[
+			listStore.selectedPageId,
+			theme.palette.primary.main,
+			theme.palette.background.default,
+		]
+	)
 
+	function PageButton(page: Page) {
 		return (
 			<Button
 				onClick={() => listStore.setSelectedPageId(page.id)}
 				sx={{
 					borderRadius: 0,
-					bgcolor: bgcolor,
+					bgcolor: pageButtonBgColor(page),
 				}}
 			>
 				{page.label}
@@ -129,9 +136,9 @@ function TopBar({ topBarRef }: TopBarProps) {
 					position: 'fixed',
 					top: 0,
 					width: 1,
-					maxWidth: (theme) => theme.breakpoints.values.md,
+					maxWidth: theme.breakpoints.values.md,
 					zIndex: 1,
-					bgcolor: (theme) => theme.palette.background.default,
+					bgcolor: theme.palette.background.default,
 					pb: 0.5,
 					'& .MuiButton-root': {
 						flex: 1,
@@ -151,7 +158,7 @@ function TopBar({ topBarRef }: TopBarProps) {
 							alignItems: 'center',
 							':hover': {
 								cursor: 'pointer',
-								color: (theme) => theme.palette.primary.light,
+								color: theme.palette.primary.light,
 							},
 						}}
 					>
@@ -159,10 +166,9 @@ function TopBar({ topBarRef }: TopBarProps) {
 							sx={{
 								px: 1,
 								fontSize: 22,
-								color: (theme) =>
-									listMenuAnchor
-										? theme.palette.primary.light
-										: 'inherit',
+								color: listMenuAnchor
+									? theme.palette.primary.light
+									: 'inherit',
 							}}
 						>
 							{listStore.selectedList}
@@ -181,8 +187,7 @@ function TopBar({ topBarRef }: TopBarProps) {
 							}
 							sx={{
 								borderRadius: 0,
-								bgcolor: (theme) =>
-									theme.palette.background.default,
+								bgcolor: theme.palette.background.default,
 							}}
 						>
 							<SettingsIcon fontSize='small' />
@@ -206,4 +211,4 @@ function TopBar({ topBarRef }: TopBarProps) {
 	)
 }
 
-export default TopBar
+export default observer(TopBar)
