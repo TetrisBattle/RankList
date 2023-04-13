@@ -38,7 +38,7 @@ export default function ItemContextMenu({
 }: ItemContextMenuProps) {
 	const { listStore, itemDialogStore } = useStoreContext()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
-	const [openSendToMenu, setOpenSendToMenu] = useState(false)
+	const [openMoveItemMenu, setOpenMoveItemMenu] = useState(false)
 	const [anchorPosition, serAnchorPosition] = useState<
 		| {
 				top: number
@@ -54,10 +54,12 @@ export default function ItemContextMenu({
 		}
 
 		serAnchorPosition({
-			top: openSendToMenu ? contextMenu.mouseY - 324 : contextMenu.mouseY,
+			top: openMoveItemMenu
+				? contextMenu.mouseY - 324
+				: contextMenu.mouseY,
 			left: contextMenu.mouseX,
 		})
-	}, [contextMenu, openSendToMenu])
+	}, [contextMenu, openMoveItemMenu])
 
 	function onGoogleSearch(item: Item) {
 		let googleSearch = 'https://google.com/search?q='
@@ -87,8 +89,8 @@ export default function ItemContextMenu({
 		setContextMenu(null)
 	}
 
-	function onSendTo(targetPageId: PageId) {
-		listStore.sendTo(targetPageId, selectedItemIndex)
+	function onMoveItem(targetPageId: PageId) {
+		listStore.moveItem(targetPageId, selectedItemIndex)
 		setContextMenu(null)
 	}
 
@@ -97,7 +99,7 @@ export default function ItemContextMenu({
 			open={!!contextMenu}
 			onClose={() => {
 				setContextMenu(null)
-				setOpenSendToMenu(false)
+				setOpenMoveItemMenu(false)
 			}}
 			anchorReference='anchorPosition'
 			anchorPosition={anchorPosition}
@@ -138,13 +140,13 @@ export default function ItemContextMenu({
 			<MenuItem
 				onClick={() => {
 					setSelectedItemIndex(index)
-					setOpenSendToMenu((currentValue) => !currentValue)
+					setOpenMoveItemMenu((currentValue) => !currentValue)
 				}}
 			>
-				<ListItemText>Send to</ListItemText>
-				{!openSendToMenu ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+				<ListItemText>Move to</ListItemText>
+				{!openMoveItemMenu ? <ExpandMoreIcon /> : <ExpandLessIcon />}
 			</MenuItem>
-			<Collapse in={openSendToMenu}>
+			<Collapse in={openMoveItemMenu}>
 				<List
 					disablePadding
 					dense
@@ -155,7 +157,7 @@ export default function ItemContextMenu({
 							<ListItemButton
 								key={page.id}
 								disabled={page.id === listStore.selectedPageId}
-								onClick={() => onSendTo(page.id)}
+								onClick={() => onMoveItem(page.id)}
 							>
 								<ListItemText primary={page.label} />
 							</ListItemButton>

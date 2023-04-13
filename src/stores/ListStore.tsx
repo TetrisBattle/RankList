@@ -135,7 +135,7 @@ export default class ListStore {
 		this.savePageToDb(this.selectedPageId, this.selectedPageItems)
 	}
 
-	sendTo(targetPageId: PageId, selectedItemIndex: number) {
+	moveItem(targetPageId: PageId, selectedItemIndex: number) {
 		const targetPage = this.rankList.find(
 			(page) => page.id === targetPageId
 		)
@@ -145,5 +145,26 @@ export default class ListStore {
 		targetPageItems.sort((a, b) => a.name.localeCompare(b.name))
 		this.savePageToDb(targetPageId, targetPageItems)
 		this.delete(selectedItemIndex)
+	}
+
+	moveAllItems(selectedPageId: PageId, targetPageId: PageId) {
+		if (selectedPageId === targetPageId) {
+			throw new Error('Target page is same as selected page')
+		}
+
+		const selectedPage = this.rankList.find(
+			(page) => page.id === selectedPageId
+		)
+		const selectedPageItems = selectedPage?.list ?? []
+
+		const targetPage = this.rankList.find(
+			(page) => page.id === targetPageId
+		)
+		const targetPageItems = targetPage?.list ?? []
+
+		targetPageItems.push(...selectedPageItems)
+		targetPageItems.sort((a, b) => a.name.localeCompare(b.name))
+		this.savePageToDb(targetPageId, targetPageItems)
+		this.savePageToDb(selectedPageId, [])
 	}
 }
