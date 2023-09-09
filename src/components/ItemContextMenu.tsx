@@ -8,14 +8,14 @@ import {
 	ListItemText,
 	Menu,
 	MenuItem,
-} from '@mui/material'
+} from '@thng/react'
 import SearchIcon from '@mui/icons-material/Search'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
-import { useStoreContext } from 'stores/StoreContext'
+import { useStore } from 'hooks/useStore'
 import { Item, PageId } from 'types'
 
 export interface ContextMenu {
@@ -30,13 +30,13 @@ interface ItemContextMenuProps {
 	item: Item
 }
 
-export default function ItemContextMenu({
+export const ItemContextMenu = ({
 	contextMenu,
 	setContextMenu,
 	index,
 	item,
-}: ItemContextMenuProps) {
-	const { listStore, itemDialogStore } = useStoreContext()
+}: ItemContextMenuProps) => {
+	const { listStore, itemDialogStore } = useStore()
 	const [selectedItemIndex, setSelectedItemIndex] = useState(0)
 	const [openMoveItemMenu, setOpenMoveItemMenu] = useState(false)
 	const [anchorPosition, serAnchorPosition] = useState<

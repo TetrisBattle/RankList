@@ -1,56 +1,24 @@
 {
-  "name": "client-app",
-  "version": "0.1.0",
+  "name": "ranklist",
   "private": true,
-  "dependencies": {
-    "@emotion/react": "^11.9.3",
-    "@emotion/styled": "^11.9.3",
-    "@mui/icons-material": "^5.8.4",
-    "@mui/material": "^5.8.4",
-    "@types/node": "^16.7.13",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "firebase": "^9.9.4",
-    "mobx": "^6.6.0",
-    "mobx-react-lite": "^3.4.0",
-    "react": "^18.1.0",
-    "react-dom": "^18.1.0",
-    "react-draggable": "^4.4.5",
-    "react-router-dom": "^6.3.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.4.2"
-  },
-  "devDependencies": {
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.2.0",
-    "@testing-library/user-event": "^14.2.0",
-    "@types/jest": "^27.5.1",
-    "eslint-config-prettier": "^8.7.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "web-vitals": "^2.1.4"
+  "version": "0.0.0",
+  "eslintConfig": {
+    "extends": "@thng"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+  "dependencies": {
+    "@mui/icons-material": "^5.14.8",
+    "@thng/react": "^1.0.0",
+    "firebase": "^10.3.1",
+    "mobx": "^6.10.2",
+    "mobx-react-lite": "^4.0.4"
   },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@thng/dev": "^1.0.0"
   }
 }

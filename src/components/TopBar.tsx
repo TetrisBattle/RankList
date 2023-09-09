@@ -7,25 +7,25 @@ import {
 	MenuItem,
 	Typography,
 	useTheme,
-} from '@mui/material'
+} from '@thng/react'
 import SettingsIcon from '@mui/icons-material/Settings'
-import { useStoreContext } from 'stores/StoreContext'
+import { useStore } from 'hooks/useStore'
 import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
 import Firebase from 'gateway/Firebase'
-import SearchDialog from './SearchDialog'
+import { SearchDialog } from './SearchDialog'
 import { observer } from 'mobx-react-lite'
 
 interface TopBarProps {
 	topBarRef: React.MutableRefObject<HTMLElement | undefined>
 }
 
-function TopBar({ topBarRef }: TopBarProps) {
+export const TopBar = observer(({ topBarRef }: TopBarProps) => {
 	const theme = useTheme()
 	const firebase = new Firebase()
-	const { listStore, itemDialogStore } = useStoreContext()
+	const { listStore, itemDialogStore } = useStore()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
 		null
@@ -209,6 +209,4 @@ function TopBar({ topBarRef }: TopBarProps) {
 			/>
 		</>
 	)
-}
-
-export default observer(TopBar)
+})

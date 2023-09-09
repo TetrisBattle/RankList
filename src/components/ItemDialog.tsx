@@ -7,12 +7,12 @@ import {
 	DialogContent,
 	DialogTitle,
 	TextField,
-} from '@mui/material'
-import { useStoreContext } from 'stores/StoreContext'
+} from '@thng/react'
+import { useStore } from 'hooks/useStore'
 import firstLetterToUpperCase from 'utils/firstLetterToUpperCase'
 
-function ItemDialog() {
-	const { itemDialogStore } = useStoreContext()
+export const ItemDialog = observer(() => {
+	const { itemDialogStore } = useStore()
 	const nameInputRef = useRef<HTMLInputElement | null>(null)
 	const progressInputRef = useRef<HTMLInputElement | null>(null)
 	const dialogTitle = firstLetterToUpperCase(itemDialogStore.dialogType)
@@ -99,6 +99,4 @@ function ItemDialog() {
 			</DialogActions>
 		</Dialog>
 	)
-}
-
-export default observer(ItemDialog)
+})

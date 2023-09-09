@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Box, List, ListItemText } from '@mui/material'
-import { useStoreContext } from 'stores/StoreContext'
-import ItemContextMenu, { ContextMenu } from './ItemContextMenu'
+import { Box, List, ListItemText } from '@thng/react'
+import { useStore } from 'hooks/useStore'
+import { ContextMenu, ItemContextMenu } from './ItemContextMenu'
 import { Item } from 'types'
 
 interface PageItemProps {
@@ -10,8 +10,8 @@ interface PageItemProps {
 	item: Item
 }
 
-function PageItem({ index, item }: PageItemProps) {
-	const { listStore } = useStoreContext()
+export const PageItem = ({ index, item }: PageItemProps) => {
+	const { listStore } = useStore()
 	const itemRef: React.MutableRefObject<HTMLElement | null> = useRef(null)
 	const [contextMenu, setContextMenu] = useState<ContextMenu | null>(null)
 
@@ -70,8 +70,8 @@ function PageItem({ index, item }: PageItemProps) {
 	)
 }
 
-function PageList() {
-	const { listStore } = useStoreContext()
+export const PageList = observer(() => {
+	const { listStore } = useStore()
 
 	return (
 		<List
@@ -86,6 +86,4 @@ function PageList() {
 			))}
 		</List>
 	)
-}
-
-export default observer(PageList)
+})

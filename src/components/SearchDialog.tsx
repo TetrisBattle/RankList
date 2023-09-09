@@ -8,8 +8,8 @@ import {
 	DialogContent,
 	DialogTitle,
 	TextField,
-} from '@mui/material'
-import { useStoreContext } from 'stores/StoreContext'
+} from '@thng/react'
+import { useStore } from 'hooks/useStore'
 import { Item, PageId } from 'types'
 
 interface SearchDialogProps {
@@ -24,8 +24,8 @@ interface SearchOption {
 	item: Item
 }
 
-function SearchDialog({ open, setOpen }: SearchDialogProps) {
-	const { listStore, itemDialogStore } = useStoreContext()
+export const SearchDialog = observer(({ open, setOpen }: SearchDialogProps) => {
+	const { listStore, itemDialogStore } = useStore()
 	const options: SearchOption[] = []
 	const [searchResult, setSearchResult] = useState<SearchOption | null>(null)
 
@@ -57,7 +57,7 @@ function SearchDialog({ open, setOpen }: SearchDialogProps) {
 					<Autocomplete
 						options={options}
 						value={searchResult}
-						onChange={(e, value) => setSearchResult(value)}
+						onChange={(_e, value) => setSearchResult(value)}
 						renderInput={(params) => (
 							<TextField
 								{...params}
@@ -114,6 +114,4 @@ function SearchDialog({ open, setOpen }: SearchDialogProps) {
 			</Dialog>
 		</>
 	)
-}
-
-export default observer(SearchDialog)
+})

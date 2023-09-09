@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Backdrop, Box, Button, CircularProgress } from '@mui/material'
-import { useStoreContext } from 'stores/StoreContext'
-import TopBar from 'components/TopBar'
-import PageList from 'components/PageList'
-import ItemDialog from 'components/ItemDialog'
+import { Backdrop, Box, Button, CircularProgress } from '@thng/react'
+import { useStore } from 'hooks/useStore'
+import { TopBar } from 'components/TopBar'
+import { PageList } from 'components/PageList'
+import { ItemDialog } from 'components/ItemDialog'
 import Firebase from 'gateway/Firebase'
 
-function App() {
+export const App = observer(() => {
 	const firebase = useMemo(() => new Firebase(), [])
-	const { appStore, listStore } = useStoreContext()
+	const { appStore, listStore } = useStore()
 	const topBarRef = useRef<HTMLElement>()
 	const topBarHeight = topBarRef.current?.clientHeight ?? 0
 
@@ -100,6 +100,4 @@ function App() {
 			</Backdrop>
 		</>
 	)
-}
-
-export default observer(App)
+})
