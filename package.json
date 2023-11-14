@@ -13,12 +13,14 @@
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.8",
-    "@thng/react": "^1.0.0",
+    "@thng/react": "^1.0.4",
     "firebase": "^10.3.1",
     "mobx": "^6.10.2",
-    "mobx-react-lite": "^4.0.4"
+    "mobx-react-lite": "^4.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@thng/dev": "^1.0.0"
+    "@thng/dev": "^1.0.1"
   }
 }
