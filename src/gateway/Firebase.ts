@@ -40,7 +40,7 @@ export default class Firebase {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
 			callback(user)
 		})
-		return () => unsubUser()
+		return unsubUser
 	}
 
 	onDataChange(
@@ -53,6 +53,6 @@ export default class Firebase {
 			const dto: ListDto | undefined = doc.data()
 			callback(dto)
 		})
-		return () => unsubList()
+		return unsubList
 	}
 }

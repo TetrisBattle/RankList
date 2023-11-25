@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Backdrop, Box, Button, CircularProgress } from '@thng/react'
 import { useStore } from 'hooks/useStore'
@@ -6,81 +6,57 @@ import { TopBar } from 'components/TopBar'
 import { PageList } from 'components/PageList'
 import { ItemDialog } from 'components/ItemDialog'
 import Firebase from 'gateway/Firebase'
+import { useAuth } from 'hooks/useAuth'
 
-export const App = observer(() => {
+function LoginButton() {
 	const firebase = useMemo(() => new Firebase(), [])
-	const { appStore, listStore } = useStore()
+
+	return (
+		<Button
+			onClick={() => firebase.login()}
+			sx={{
+				position: 'absolute',
+				top: '50%',
+				left: '50%',
+				transform: 'translate(-50%, -50%)',
+				fontWeight: 600,
+			}}
+		>
+			Log in with Google
+		</Button>
+	)
+}
+
+const RankList = observer(() => {
+	const { listStore } = useStore()
 	const topBarRef = useRef<HTMLElement>()
 	const topBarHeight = topBarRef.current?.clientHeight ?? 0
 
-	useEffect(() => {
-		firebase.onAuthChange((user) => {
-			if (!user?.email) {
-				listStore.setUserId('Guest')
-				listStore.resetRankList()
-				return
-			}
-			listStore.setUserId(user.email)
-		})
-	}, [firebase, appStore, listStore])
+	return (
+		<>
+			<TopBar topBarRef={topBarRef} />
+			<Box sx={{ mt: topBarHeight / 8 }} />
+			<PageList />
+			{listStore.isLoading && (
+				<Box
+					sx={{
+						mt: 2,
+						display: 'flex',
+						justifyContent: 'center',
+					}}
+				>
+					<CircularProgress />
+				</Box>
+			)}
+		</>
+	)
+})
 
-	useEffect(() => {
-		if (listStore.userId === 'Guest') return
-		appStore.setIsLoading(true)
+export const App = observer(() => {
+	const { appStore, listStore } = useStore()
 
-		firebase.onDataChange(
-			listStore.userId,
-			listStore.selectedList,
-			(dto) => {
-				listStore.setupRankListFromDto(dto)
-				appStore.setIsLoading(false)
-			}
-		)
-	}, [
-		firebase,
-		appStore,
-		listStore,
-		listStore.userId,
-		listStore.selectedList,
-	])
-
-	function LoginButton() {
-		return (
-			<Button
-				onClick={() => firebase.login()}
-				sx={{
-					position: 'absolute',
-					top: '50%',
-					left: '50%',
-					transform: 'translate(-50%, -50%)',
-					fontWeight: 600,
-				}}
-			>
-				Log in with Google
-			</Button>
-		)
-	}
-
-	function RankList() {
-		return (
-			<>
-				<TopBar topBarRef={topBarRef} />
-				<Box sx={{ mt: topBarHeight / 8 }} />
-				<PageList />
-				{listStore.isLoading && (
-					<Box
-						sx={{
-							mt: 2,
-							display: 'flex',
-							justifyContent: 'center',
-						}}
-					>
-						<CircularProgress />
-					</Box>
-				)}
-			</>
-		)
-	}
+	const initialized = useAuth()
+	if (!initialized) return <div></div>
 
 	return (
 		<>
