@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Button } from '@thng/react'
 import { useStore } from 'hooks/useStore'
@@ -27,19 +27,6 @@ function LoginButton() {
 	)
 }
 
-const RankList = observer(() => {
-	const topBarRef = useRef<HTMLElement>()
-	const topBarHeight = topBarRef.current?.clientHeight ?? 0
-
-	return (
-		<>
-			<TopBar topBarRef={topBarRef} />
-			<Box sx={{ mt: topBarHeight / 8 }} />
-			<PageList />
-		</>
-	)
-})
-
 export const App = observer(() => {
 	const { listStore } = useStore()
 	const initialized = useAuth()
@@ -53,7 +40,14 @@ export const App = observer(() => {
 					marginInline: 'auto',
 				}}
 			>
-				{listStore.userId === 'Guest' ? <LoginButton /> : <RankList />}
+				{listStore.userId === 'Guest' ? (
+					<LoginButton />
+				) : (
+					<>
+						<TopBar />
+						<PageList />
+					</>
+				)}
 			</Box>
 			<ItemDialog />
 		</>

@@ -18,11 +18,7 @@ import Firebase from 'gateway/Firebase'
 import { SearchDialog } from './SearchDialog'
 import { observer } from 'mobx-react-lite'
 
-interface TopBarProps {
-	topBarRef: React.MutableRefObject<HTMLElement | undefined>
-}
-
-export const TopBar = observer(({ topBarRef }: TopBarProps) => {
+export const TopBar = observer(() => {
 	const theme = useTheme()
 	const firebase = new Firebase()
 	const { listStore, itemDialogStore } = useStore()
@@ -131,13 +127,9 @@ export const TopBar = observer(({ topBarRef }: TopBarProps) => {
 	return (
 		<>
 			<Box
-				ref={topBarRef}
 				sx={{
-					position: 'fixed',
-					top: 0,
 					width: 1,
 					maxWidth: theme.breakpoints.values.md,
-					zIndex: 1,
 					bgcolor: theme.palette.background.default,
 					pb: 0.5,
 					'& .MuiButton-root': {
