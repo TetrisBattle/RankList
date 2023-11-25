@@ -5,7 +5,6 @@ import { PageId, Page, ListDto, ListOption, Item } from 'types'
 export default class ListStore {
 	private firebase = new Firebase()
 	userId = 'Guest'
-	isLoading = false
 	listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
 	rankList: Page[] = []
 	selectedList: ListOption = 'MangaList'
@@ -20,13 +19,8 @@ export default class ListStore {
 		this.userId = userId
 	}
 
-	// this is unused at the moment
-	setIsLoading(isLoading: boolean) {
-		this.isLoading = isLoading
-	}
-
 	setSelectedList(selectedList: ListOption) {
-		this.setSelectedList(selectedList)
+		this.selectedList = selectedList
 	}
 
 	setSelectedPageId(value: PageId) {

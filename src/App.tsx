@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Backdrop, Box, Button, CircularProgress } from '@thng/react'
+import { Box, Button } from '@thng/react'
 import { useStore } from 'hooks/useStore'
 import { TopBar } from 'components/TopBar'
 import { PageList } from 'components/PageList'
@@ -28,7 +28,6 @@ function LoginButton() {
 }
 
 const RankList = observer(() => {
-	const { listStore } = useStore()
 	const topBarRef = useRef<HTMLElement>()
 	const topBarHeight = topBarRef.current?.clientHeight ?? 0
 
@@ -37,24 +36,12 @@ const RankList = observer(() => {
 			<TopBar topBarRef={topBarRef} />
 			<Box sx={{ mt: topBarHeight / 8 }} />
 			<PageList />
-			{listStore.isLoading && (
-				<Box
-					sx={{
-						mt: 2,
-						display: 'flex',
-						justifyContent: 'center',
-					}}
-				>
-					<CircularProgress />
-				</Box>
-			)}
 		</>
 	)
 })
 
 export const App = observer(() => {
-	const { appStore, listStore } = useStore()
-
+	const { listStore } = useStore()
 	const initialized = useAuth()
 	if (!initialized) return <div></div>
 
@@ -69,9 +56,6 @@ export const App = observer(() => {
 				{listStore.userId === 'Guest' ? <LoginButton /> : <RankList />}
 			</Box>
 			<ItemDialog />
-			<Backdrop open={appStore.isLoading} sx={{ zIndex: 99 }}>
-				<CircularProgress />
-			</Backdrop>
 		</>
 	)
 })
