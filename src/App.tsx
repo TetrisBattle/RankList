@@ -20,9 +20,7 @@ export const App = observer(() => {
 				listStore.resetRankList()
 				return
 			}
-
-			if (appStore.devMode) listStore.setUserId('dev')
-			else listStore.setUserId(user.email)
+			listStore.setUserId(user.email)
 		})
 	}, [firebase, appStore, listStore])
 
