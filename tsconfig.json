@@ -2,7 +2,6 @@
 	"extends": "@thng/react/tsconfig.json",
 	"compilerOptions": {
 		"baseUrl": "src",
-		"types": ["vitest/importMeta"]
 	},
 	"include": ["src"],
 	"references": [{ "path": "./tsconfig.node.json" }]

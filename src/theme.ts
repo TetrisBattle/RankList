@@ -10,6 +10,9 @@ export const theme: ThemeOptions = {
 		secondary: {
 			main: '#003549',
 		},
+		background: {
+			default: 'black',
+		},
 	},
 	components: {
 		MuiMenuItem: {
