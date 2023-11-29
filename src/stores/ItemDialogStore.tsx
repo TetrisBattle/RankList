@@ -47,6 +47,13 @@ export default class ItemDialogStore {
 		let exists = false
 
 		this.listStore.rankList.forEach((page) => {
+			if (
+				this.dialogType === 'edit' &&
+				page.id === this.listStore.selectedPageId
+			) {
+				return
+			}
+
 			const foundItemIndex = page.list.findIndex(
 				(item) => item.name.toLowerCase() === itemName.toLowerCase()
 			)
@@ -79,7 +86,8 @@ export default class ItemDialogStore {
 			const prevItem =
 				this.listStore.selectedPageItems[this.selectedItemIndex]
 			const isEdited =
-				item.name.toLowerCase() !== prevItem.name.toLowerCase()
+				item.name.toLowerCase() !== prevItem.name.toLowerCase() ||
+				item.progress !== prevItem.progress
 			if (isEdited) {
 				this.listStore.edit(
 					this.targetPageId,
