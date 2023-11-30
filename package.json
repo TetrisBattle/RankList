@@ -9,7 +9,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.8",
@@ -21,6 +22,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@thng/dev": "^1.1.0"
+    "@thng/dev": "^1.1.0",
+    "vitest": "^0.34.6"
   }
 }

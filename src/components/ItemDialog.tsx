@@ -9,7 +9,7 @@ import {
 	TextField,
 } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import firstLetterToUpperCase from 'utils/firstLetterToUpperCase'
+import { firstLetterToUpperCase } from 'utils/firstLetterToUpperCase'
 
 export const ItemDialog = observer(() => {
 	const { itemDialogStore } = useStore()

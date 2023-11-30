@@ -7,10 +7,10 @@ import {
 	User,
 } from 'firebase/auth'
 import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
-import firebaseApp from 'gateway/firebaseApp'
+import { firebaseApp } from 'gateway/firebaseApp'
 import { Item, ListDto, ListOption, PageId } from 'types'
 
-export default class Firebase {
+export class Firebase {
 	private googleAuthProvider = new GoogleAuthProvider()
 	private db = getFirestore(firebaseApp)
 

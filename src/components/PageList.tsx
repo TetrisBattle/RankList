@@ -5,7 +5,7 @@ import { useStore } from 'hooks/useStore'
 import { ContextMenu, ItemContextMenu } from './ItemContextMenu'
 import { Item } from 'types'
 
-interface PageItemProps {
+type PageItemProps = {
 	index: number
 	item: Item
 }

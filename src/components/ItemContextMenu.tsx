@@ -18,12 +18,12 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import { useStore } from 'hooks/useStore'
 import { Item, PageId } from 'types'
 
-export interface ContextMenu {
+export type ContextMenu = {
 	mouseX: number
 	mouseY: number
 }
 
-interface ItemContextMenuProps {
+type ItemContextMenuProps = {
 	contextMenu: ContextMenu | null
 	setContextMenu: React.Dispatch<React.SetStateAction<ContextMenu | null>>
 	index: number

@@ -1,8 +1,8 @@
-import Firebase from 'gateway/Firebase'
+import { Firebase } from 'gateway/Firebase'
 import { makeAutoObservable } from 'mobx'
 import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
-export default class ListStore {
+export class ListStore {
 	private firebase = new Firebase()
 	userId = 'Guest'
 	listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']

@@ -1,11 +1,11 @@
 import { Item, PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
-import ListStore from './ListStore'
-import RootStore from './RootStore'
+import { ListStore } from './ListStore'
+import { RootStore } from './RootStore'
 
 type DialogType = 'new' | 'edit'
 
-export default class ItemDialogStore {
+export class ItemDialogStore {
 	private listStore: ListStore
 	private selectedItemIndex = 0
 	item = { name: '', progress: '' }

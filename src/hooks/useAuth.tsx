@@ -1,4 +1,4 @@
-import Firebase from 'gateway/Firebase'
+import { Firebase } from 'gateway/Firebase'
 import { useEffect, useMemo, useState } from 'react'
 import { useStore } from './useStore'
 

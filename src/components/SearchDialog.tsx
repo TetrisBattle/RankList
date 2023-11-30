@@ -12,12 +12,12 @@ import {
 import { useStore } from 'hooks/useStore'
 import { Item, PageId } from 'types'
 
-interface SearchDialogProps {
+type SearchDialogProps = {
 	open: boolean
 	setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-interface SearchOption {
+type SearchOption = {
 	pageId: PageId
 	pageLabel: string
 	itemIndex: number

@@ -5,7 +5,7 @@ import { useStore } from 'hooks/useStore'
 import { TopBar } from 'components/TopBar'
 import { PageList } from 'components/PageList'
 import { ItemDialog } from 'components/ItemDialog'
-import Firebase from 'gateway/Firebase'
+import { Firebase } from 'gateway/Firebase'
 import { useAuth } from 'hooks/useAuth'
 
 function LoginButton() {
