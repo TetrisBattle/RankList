@@ -14,14 +14,12 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Page } from 'types'
-import { Firebase } from 'gateway/Firebase'
 import { SearchDialog } from './SearchDialog'
 import { observer } from 'mobx-react-lite'
 
 export const TopBar = observer(() => {
 	const theme = useTheme()
-	const firebase = new Firebase()
-	const { listStore, itemDialogStore } = useStore()
+	const { firebase, listStore, itemDialogStore } = useStore()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
 		null

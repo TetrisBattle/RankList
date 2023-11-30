@@ -1,16 +1,15 @@
-import { Firebase } from 'gateway/Firebase'
+import { Firebase } from 'database/Firebase'
 import { makeAutoObservable } from 'mobx'
 import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
 export class ListStore {
-	private firebase = new Firebase()
 	userId = 'Guest'
 	listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
 	rankList: Page[] = []
 	selectedList: ListOption = 'MangaList'
 	selectedPageId: PageId = 'rankS'
 
-	constructor() {
+	constructor(private firebase: Firebase) {
 		this.resetRankList()
 		makeAutoObservable(this)
 	}

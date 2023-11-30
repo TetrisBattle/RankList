@@ -1,15 +1,13 @@
-import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Box, Button } from '@thng/react'
 import { useStore } from 'hooks/useStore'
 import { TopBar } from 'components/TopBar'
 import { PageList } from 'components/PageList'
 import { ItemDialog } from 'components/ItemDialog'
-import { Firebase } from 'gateway/Firebase'
 import { useAuth } from 'hooks/useAuth'
 
 function LoginButton() {
-	const firebase = useMemo(() => new Firebase(), [])
+	const { firebase } = useStore()
 
 	return (
 		<Button

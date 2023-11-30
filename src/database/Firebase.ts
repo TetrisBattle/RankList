@@ -7,12 +7,12 @@ import {
 	User,
 } from 'firebase/auth'
 import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
-import { firebaseApp } from 'gateway/firebaseApp'
+import { firebaseApp } from 'database/firebaseApp'
 import { Item, ListDto, ListOption, PageId } from 'types'
 
 export class Firebase {
 	private googleAuthProvider = new GoogleAuthProvider()
-	private db = getFirestore(firebaseApp)
+	private firestore = getFirestore(firebaseApp)
 
 	async login() {
 		await signInWithPopup(getAuth(), this.googleAuthProvider)
@@ -23,7 +23,7 @@ export class Firebase {
 	}
 
 	private getListRef(userId: string, list: ListOption) {
-		return doc(this.db, `users/${userId}/lists/${list}`)
+		return doc(this.firestore, `users/${userId}/lists/${list}`)
 	}
 
 	async savePageToDb(
@@ -32,7 +32,7 @@ export class Firebase {
 		pageId: PageId,
 		items: Item[]
 	) {
-		const listRef = doc(this.db, `users/${userId}/lists/${list}`)
+		const listRef = doc(this.firestore, `users/${userId}/lists/${list}`)
 		await setDoc(listRef, { [pageId]: items }, { merge: true })
 	}
 

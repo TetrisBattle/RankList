@@ -1,10 +1,8 @@
-import { Firebase } from 'gateway/Firebase'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useStore } from './useStore'
 
 export const useAuth = () => {
-	const firebase = useMemo(() => new Firebase(), [])
-	const { appStore, listStore } = useStore()
+	const { firebase, appStore, listStore } = useStore()
 	const [initialized, setInitialized] = useState<boolean>(false)
 
 	useEffect(() => {
