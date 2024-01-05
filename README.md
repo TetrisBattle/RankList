@@ -2,4 +2,4 @@
 
 Lists to rank movies, series, etc.
 
-The site is hosted at [Ranklist](https://ranklist-c95ac.firebaseapp.com/)
+The website is hosted at [ranklist.vercel.app](https://ranklist.vercel.app/)
