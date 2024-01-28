@@ -1,4 +1,4 @@
-import { FirebaseStore } from 'database/Firebase'
+import { FirebaseStore } from 'stores/FirebaseStore'
 import { makeAutoObservable } from 'mobx'
 import { PageId, Page, ListDto, ListOption, Item } from 'types'
 

@@ -9,17 +9,17 @@ import { moviesData } from 'backup/moviesData'
 import { seriesData } from 'backup/seriesData'
 import { mangasData } from 'backup/mangasData'
 export const App = observer(() => {
-	const { firebase, listStore } = useStore()
+	const { FirebaseStore, listStore } = useStore()
 
 	useEffect(() => {
-		const unsub = firebase.onAuthChange()
+		const unsub = FirebaseStore.onAuthChange()
 		return () => unsub()
-	}, [firebase])
+	}, [FirebaseStore])
 
 	function postDatas() {
-		firebase.postDatas('mangas', mangasData)
-		firebase.postDatas('movies', moviesData)
-		firebase.postDatas('series', seriesData)
+		FirebaseStore.postDatas('mangas', mangasData)
+		FirebaseStore.postDatas('movies', moviesData)
+		FirebaseStore.postDatas('series', seriesData)
 	}
 
 	return (
@@ -30,7 +30,7 @@ export const App = observer(() => {
 					marginInline: 'auto',
 				}}
 			>
-				{firebase.currentUser ? (
+				{FirebaseStore.currentUser ? (
 					<>
 						<TopBar />
 						<Button
@@ -45,7 +45,7 @@ export const App = observer(() => {
 					</>
 				) : (
 					<Button
-						onClick={() => firebase.login()}
+						onClick={() => FirebaseStore.login()}
 						sx={{
 							position: 'absolute',
 							top: '50%',

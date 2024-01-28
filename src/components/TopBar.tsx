@@ -19,7 +19,7 @@ import { observer } from 'mobx-react-lite'
 
 export const TopBar = observer(() => {
 	const theme = useTheme()
-	const { firebase, listStore, itemDialogStore } = useStore()
+	const { FirebaseStore, listStore, itemDialogStore } = useStore()
 	const [seachDialogOpen, setSearchDialogOpen] = useState(false)
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
 		null
@@ -109,7 +109,7 @@ export const TopBar = observer(() => {
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						firebase.logout()
+						FirebaseStore.logout()
 						setSettingsMenuAnchor(null)
 					}}
 				>

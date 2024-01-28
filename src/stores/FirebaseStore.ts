@@ -15,7 +15,7 @@ import {
 	setDoc,
 	Timestamp,
 } from 'firebase/firestore'
-import { firebaseApp } from 'database/firebaseApp'
+import { firebaseApp } from 'firebaseApp'
 import { Item, ListOption, PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
 

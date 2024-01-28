@@ -1,4 +1,4 @@
-import { Data } from 'database/Firebase'
+import { Data } from 'stores/FirebaseStore'
 import { Timestamp } from 'firebase/firestore'
 
 export const seriesData: Data[] = [
