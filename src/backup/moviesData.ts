@@ -1,7 +1,7 @@
-import { Data } from 'stores/FirebaseStore'
+import { ItemDto } from 'stores/FirebaseStore'
 import { Timestamp } from 'firebase/firestore'
 
-export const moviesData: Data[] = [
+export const moviesData: ItemDto[] = [
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
 		rank: 'S',

@@ -12,16 +12,20 @@ import {
 	doc,
 	getDoc,
 	getFirestore,
+	QueryDocumentSnapshot,
 	setDoc,
+	SnapshotOptions,
 	Timestamp,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
-import { Item, ListOption, PageId } from 'types'
 import { makeAutoObservable } from 'mobx'
+import { Item } from './itemStore/Item'
 
-type Table = 'users' | 'mangas' | 'movies' | 'series' | 'temp'
-type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | 'unknown'
-export type Data = {
+type Table = 'users' | 'mangas' | 'movies' | 'series'
+
+export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | 'unknown'
+
+export type ItemDto = {
 	userId: string
 	rank: Rank
 	name: string
@@ -44,6 +48,21 @@ export class FirebaseStore {
 		this.currentUser = user
 	}
 
+	private get itemConverter() {
+		return {
+			toFirestore: (item: Item): ItemDto => {
+				return item.convertToDto()
+			},
+			fromFirestore: (
+				snapshot: QueryDocumentSnapshot<ItemDto, ItemDto>,
+				options?: SnapshotOptions
+			): Item => {
+				const itemDto = snapshot.data(options)
+				return Item.convertFromDto(snapshot.id, itemDto)
+			},
+		}
+	}
+
 	async login() {
 		await signInWithPopup(this.auth, this.googleAuthProvider)
 
@@ -60,30 +79,22 @@ export class FirebaseStore {
 		await signOut(this.auth)
 	}
 
-	private putDoc = async (table: Table, entry: string, data: Data) => {
-		const docRef = doc(this.db, table, entry)
-		await setDoc(docRef, data, { merge: true })
+	private putDoc = async (table: Table, entry: string, item: Item) => {
+		const docRef = doc(this.db, table, entry).withConverter(
+			this.itemConverter
+		)
+		await setDoc(docRef, item, { merge: true })
 	}
 
 	// temp = async () => {
 	// 	this.putDoc('temp', 'data', { three: 'three' })
 	// }
 
-	postDatas = async (table: Table, datas: Data[]) => {
-		datas.forEach(async (data) => {
+	postDatas = async (table: Table, itemDtos: ItemDto[]) => {
+		itemDtos.forEach(async (itemDto) => {
 			const tableRef = collection(this.db, table)
-			await addDoc(tableRef, data)
+			await addDoc(tableRef, itemDto)
 		})
-	}
-
-	async savePageToDb(
-		userId: string,
-		list: ListOption,
-		pageId: PageId,
-		items: Item[]
-	) {
-		const listRef = doc(this.db, `users/${userId}/lists/${list}`)
-		await setDoc(listRef, { [pageId]: items }, { merge: true })
 	}
 
 	onAuthChange() {
