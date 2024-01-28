@@ -1,15 +1,15 @@
-import { Firebase } from 'database/Firebase'
+import { FirebaseStore } from 'database/Firebase'
 import { makeAutoObservable } from 'mobx'
 import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
 export class ListStore {
-	userId = 'Guest'
+	userId: string | null = null
 	listOptions: ListOption[] = ['MangaList', 'Series', 'Movies']
 	rankList: Page[] = []
 	selectedList: ListOption = 'MangaList'
 	selectedPageId: PageId = 'rankS'
 
-	constructor(private firebase: Firebase) {
+	constructor(private firebase: FirebaseStore) {
 		this.resetRankList()
 		makeAutoObservable(this)
 	}
@@ -102,7 +102,7 @@ export class ListStore {
 
 	private savePageToDb(pageId: PageId, items: Item[]) {
 		this.firebase.savePageToDb(
-			this.userId,
+			'this.userId',
 			this.selectedList,
 			pageId,
 			items

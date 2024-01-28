@@ -4,31 +4,23 @@ import { useStore } from 'hooks/useStore'
 import { TopBar } from 'components/TopBar'
 import { PageList } from 'components/PageList'
 import { ItemDialog } from 'components/ItemDialog'
-import { useAuth } from 'hooks/useAuth'
-
-function LoginButton() {
-	const { firebase } = useStore()
-
-	return (
-		<Button
-			onClick={() => firebase.login()}
-			sx={{
-				position: 'absolute',
-				top: '50%',
-				left: '50%',
-				transform: 'translate(-50%, -50%)',
-				fontWeight: 600,
-			}}
-		>
-			Log in with Google
-		</Button>
-	)
-}
-
+import { useEffect } from 'react'
+import { moviesData } from 'backup/moviesData'
+import { seriesData } from 'backup/seriesData'
+import { mangasData } from 'backup/mangasData'
 export const App = observer(() => {
-	const { listStore } = useStore()
-	const initialized = useAuth()
-	if (!initialized) return <div></div>
+	const { firebase, listStore } = useStore()
+
+	useEffect(() => {
+		const unsub = firebase.onAuthChange()
+		return () => unsub()
+	}, [firebase])
+
+	function postDatas() {
+		firebase.postDatas('mangas', mangasData)
+		firebase.postDatas('movies', moviesData)
+		firebase.postDatas('series', seriesData)
+	}
 
 	return (
 		<>
@@ -38,13 +30,32 @@ export const App = observer(() => {
 					marginInline: 'auto',
 				}}
 			>
-				{listStore.userId === 'Guest' ? (
-					<LoginButton />
-				) : (
+				{firebase.currentUser ? (
 					<>
 						<TopBar />
+						<Button
+							onClick={() => {
+								// firebase.temp()
+								// postDatas()
+							}}
+						>
+							Temp
+						</Button>
 						<PageList />
 					</>
+				) : (
+					<Button
+						onClick={() => firebase.login()}
+						sx={{
+							position: 'absolute',
+							top: '50%',
+							left: '50%',
+							transform: 'translate(-50%, -50%)',
+							fontWeight: 600,
+						}}
+					>
+						Log in with Google
+					</Button>
 				)}
 			</Box>
 			<ItemDialog />

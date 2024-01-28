@@ -6,24 +6,74 @@ import {
 	signOut,
 	User,
 } from 'firebase/auth'
-import { doc, getFirestore, onSnapshot, setDoc } from 'firebase/firestore'
+import {
+	addDoc,
+	collection,
+	doc,
+	getDoc,
+	getFirestore,
+	setDoc,
+	Timestamp,
+} from 'firebase/firestore'
 import { firebaseApp } from 'database/firebaseApp'
-import { Item, ListDto, ListOption, PageId } from 'types'
+import { Item, ListOption, PageId } from 'types'
+import { makeAutoObservable } from 'mobx'
 
-export class Firebase {
+type Table = 'users' | 'mangas' | 'movies' | 'series' | 'temp'
+type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | 'unknown'
+export type Data = {
+	userId: string
+	rank: Rank
+	name: string
+	progress: string
+	created: Timestamp
+	updated: Timestamp | null
+}
+
+export class FirebaseStore {
 	private googleAuthProvider = new GoogleAuthProvider()
-	private firestore = getFirestore(firebaseApp)
+	private db = getFirestore(firebaseApp)
+	private auth = getAuth()
+	currentUser: User | null = null
+
+	constructor() {
+		makeAutoObservable(this)
+	}
+
+	setCurrentUser(user: User | null) {
+		this.currentUser = user
+	}
 
 	async login() {
-		await signInWithPopup(getAuth(), this.googleAuthProvider)
+		await signInWithPopup(this.auth, this.googleAuthProvider)
+
+		if (!this.currentUser) return
+
+		const userRef = doc(this.db, 'users', this.currentUser.uid)
+		const userData = (await getDoc(userRef)).data()
+		if (userData) return
+
+		await setDoc(userRef, { email: this.currentUser.email })
 	}
 
 	async logout() {
-		await signOut(getAuth())
+		await signOut(this.auth)
 	}
 
-	private getListRef(userId: string, list: ListOption) {
-		return doc(this.firestore, `users/${userId}/lists/${list}`)
+	private putDoc = async (table: Table, entry: string, data: Data) => {
+		const docRef = doc(this.db, table, entry)
+		await setDoc(docRef, data, { merge: true })
+	}
+
+	// temp = async () => {
+	// 	this.putDoc('temp', 'data', { three: 'three' })
+	// }
+
+	postDatas = async (table: Table, datas: Data[]) => {
+		datas.forEach(async (data) => {
+			const tableRef = collection(this.db, table)
+			await addDoc(tableRef, data)
+		})
 	}
 
 	async savePageToDb(
@@ -32,27 +82,14 @@ export class Firebase {
 		pageId: PageId,
 		items: Item[]
 	) {
-		const listRef = doc(this.firestore, `users/${userId}/lists/${list}`)
+		const listRef = doc(this.db, `users/${userId}/lists/${list}`)
 		await setDoc(listRef, { [pageId]: items }, { merge: true })
 	}
 
-	onAuthChange(callback: (user: User | null) => void) {
+	onAuthChange() {
 		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			callback(user)
+			this.setCurrentUser(user)
 		})
 		return unsubUser
-	}
-
-	onDataChange(
-		userId: string,
-		list: ListOption,
-		callback: (dto: ListDto | undefined) => void
-	) {
-		const listRef = this.getListRef(userId, list)
-		const unsubList = onSnapshot(listRef, (doc) => {
-			const dto: ListDto | undefined = doc.data()
-			callback(dto)
-		})
-		return unsubList
 	}
 }
