@@ -1,13 +1,11 @@
 import { observer } from 'mobx-react-lite'
 import { Box, Button } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import { TopBar } from 'components/TopBar'
-import { PageList } from 'components/PageList'
 import { ItemDialog } from 'components/ItemDialog'
 import { useEffect } from 'react'
-import { moviesData } from 'backup/moviesData'
-import { seriesData } from 'backup/seriesData'
-import { mangasData } from 'backup/mangasData'
+import { TopBar } from 'features/topBar/TopBar'
+import { PageItems } from 'features/pageItems/PageItems'
+
 export const App = observer(() => {
 	const { firebaseStore, itemStore } = useStore()
 
@@ -20,12 +18,6 @@ export const App = observer(() => {
 		authChangeListener()
 	}, [firebaseStore, itemStore])
 
-	function writeDatas() {
-		firebaseStore.writeDatas('mangas', mangasData)
-		firebaseStore.writeDatas('movies', moviesData)
-		firebaseStore.writeDatas('series', seriesData)
-	}
-
 	return (
 		<>
 			<Box
@@ -37,15 +29,7 @@ export const App = observer(() => {
 				{firebaseStore.currentUser ? (
 					<>
 						<TopBar />
-						<Button
-							onClick={() => {
-								// firebase.temp()
-								// writeDatas()
-							}}
-						>
-							Temp
-						</Button>
-						<PageList />
+						<PageItems />
 					</>
 				) : (
 					<Button

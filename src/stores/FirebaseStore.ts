@@ -98,10 +98,11 @@ export class FirebaseStore {
 		const tableRef = collection(this.db, table)
 		const q = query(tableRef, where('userId', '==', this.currentUser?.uid))
 		const snapshot = await getDocs(q)
-		return snapshot.docs.map((doc) => {
+		const items = snapshot.docs.map((doc) => {
 			const ItemDto = doc.data() as ItemDto
 			return Item.convertFromDto(doc.id, ItemDto)
 		}) as Item[]
+		return items.sort((a, b) => a.name.localeCompare(b.name))
 	}
 
 	writeData = async (table: Table, item: Item) => {

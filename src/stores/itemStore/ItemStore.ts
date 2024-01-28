@@ -1,6 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { AppStore } from 'stores/AppStore'
-import { FirebaseStore } from 'stores/FirebaseStore'
+import { FirebaseStore, Table } from 'stores/FirebaseStore'
 import { Item } from './Item'
 
 export class ItemStore {
@@ -17,15 +17,26 @@ export class ItemStore {
 		this.items = items
 	}
 
+	fetch = async (table: Table) => {
+		this.setItems(await this.db.getDatas(table))
+	}
+
 	add = async (item: Item) => {
 		this.items.push(item)
+		this.items.sort((a, b) => a.name.localeCompare(b.name))
 		this.db.writeData(this.appStore.selectedList, item)
 	}
 
 	edit = async (item: Item) => {
 		const index = this.items.findIndex((i) => i.id === item.id)
 		if (index === -1) return
+
+		const nameHasChanged = this.items[index].name === item.name
 		this.items[index] = item
+		if (nameHasChanged) {
+			this.items.sort((a, b) => a.name.localeCompare(b.name))
+		}
+
 		this.db.writeData(this.appStore.selectedList, item)
 	}
 
