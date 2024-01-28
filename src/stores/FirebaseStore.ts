@@ -9,19 +9,23 @@ import {
 import {
 	addDoc,
 	collection,
+	deleteDoc,
 	doc,
 	getDoc,
+	getDocs,
 	getFirestore,
+	query,
 	QueryDocumentSnapshot,
 	setDoc,
 	SnapshotOptions,
 	Timestamp,
+	where,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
 import { makeAutoObservable } from 'mobx'
 import { Item } from './itemStore/Item'
 
-type Table = 'users' | 'mangas' | 'movies' | 'series'
+export type Table = 'users' | 'mangas' | 'movies' | 'series'
 
 export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | 'unknown'
 
@@ -63,7 +67,18 @@ export class FirebaseStore {
 		}
 	}
 
-	async login() {
+	onAuthChange = async (cb: (user: Item[]) => void) => {
+		onAuthStateChanged(getAuth(), async (user) => {
+			this.setCurrentUser(user)
+
+			if (!user) return cb([])
+
+			const datas = await this.getDatas('mangas')
+			cb(datas)
+		})
+	}
+
+	login = async () => {
 		await signInWithPopup(this.auth, this.googleAuthProvider)
 
 		if (!this.currentUser) return
@@ -75,32 +90,36 @@ export class FirebaseStore {
 		await setDoc(userRef, { email: this.currentUser.email })
 	}
 
-	async logout() {
+	logout = async () => {
 		await signOut(this.auth)
 	}
 
-	private putDoc = async (table: Table, entry: string, item: Item) => {
-		const docRef = doc(this.db, table, entry).withConverter(
+	getDatas = async (table: Table) => {
+		const tableRef = collection(this.db, table)
+		const q = query(tableRef, where('userId', '==', this.currentUser?.uid))
+		const snapshot = await getDocs(q)
+		return snapshot.docs.map((doc) => {
+			const ItemDto = doc.data() as ItemDto
+			return Item.convertFromDto(doc.id, ItemDto)
+		}) as Item[]
+	}
+
+	writeData = async (table: Table, item: Item) => {
+		const docRef = doc(this.db, table, item.id).withConverter(
 			this.itemConverter
 		)
 		await setDoc(docRef, item, { merge: true })
 	}
 
-	// temp = async () => {
-	// 	this.putDoc('temp', 'data', { three: 'three' })
-	// }
+	deleteData = async (table: Table, itemId: string) => {
+		const docRef = doc(this.db, table, itemId)
+		await deleteDoc(docRef)
+	}
 
-	postDatas = async (table: Table, itemDtos: ItemDto[]) => {
+	writeDatas = async (table: Table, itemDtos: ItemDto[]) => {
 		itemDtos.forEach(async (itemDto) => {
 			const tableRef = collection(this.db, table)
 			await addDoc(tableRef, itemDto)
 		})
-	}
-
-	onAuthChange() {
-		const unsubUser = onAuthStateChanged(getAuth(), (user) => {
-			this.setCurrentUser(user)
-		})
-		return unsubUser
 	}
 }

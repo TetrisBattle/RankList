@@ -9,17 +9,21 @@ import { moviesData } from 'backup/moviesData'
 import { seriesData } from 'backup/seriesData'
 import { mangasData } from 'backup/mangasData'
 export const App = observer(() => {
-	const { FirebaseStore, listStore } = useStore()
+	const { firebaseStore, itemStore } = useStore()
 
 	useEffect(() => {
-		const unsub = FirebaseStore.onAuthChange()
-		return () => unsub()
-	}, [FirebaseStore])
+		const authChangeListener = async () => {
+			await firebaseStore.onAuthChange((items) => {
+				itemStore.setItems(items)
+			})
+		}
+		authChangeListener()
+	}, [firebaseStore, itemStore])
 
-	function postDatas() {
-		FirebaseStore.postDatas('mangas', mangasData)
-		FirebaseStore.postDatas('movies', moviesData)
-		FirebaseStore.postDatas('series', seriesData)
+	function writeDatas() {
+		firebaseStore.writeDatas('mangas', mangasData)
+		firebaseStore.writeDatas('movies', moviesData)
+		firebaseStore.writeDatas('series', seriesData)
 	}
 
 	return (
@@ -30,13 +34,13 @@ export const App = observer(() => {
 					marginInline: 'auto',
 				}}
 			>
-				{FirebaseStore.currentUser ? (
+				{firebaseStore.currentUser ? (
 					<>
 						<TopBar />
 						<Button
 							onClick={() => {
 								// firebase.temp()
-								// postDatas()
+								// writeDatas()
 							}}
 						>
 							Temp
@@ -45,7 +49,7 @@ export const App = observer(() => {
 					</>
 				) : (
 					<Button
-						onClick={() => FirebaseStore.login()}
+						onClick={() => firebaseStore.login()}
 						sx={{
 							position: 'absolute',
 							top: '50%',

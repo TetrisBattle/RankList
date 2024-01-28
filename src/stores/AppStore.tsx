@@ -1,18 +1,19 @@
 import { makeAutoObservable } from 'mobx'
+import { Rank, Table } from './FirebaseStore'
 
 export class AppStore {
-	isDarkTheme = true
-	isLoading = false
+	selectedList: Table = 'mangas'
+	selectedPage: Rank = 'S'
 
 	constructor() {
 		makeAutoObservable(this)
 	}
 
-	toggleDarkTheme = () => {
-		this.isDarkTheme = !this.isDarkTheme
+	setSelectedList(table: Table) {
+		this.selectedList = table
 	}
 
-	setIsLoading(isLoading: boolean) {
-		this.isLoading = isLoading
+	setSelectedPage(rank: Rank) {
+		this.selectedPage = rank
 	}
 }
