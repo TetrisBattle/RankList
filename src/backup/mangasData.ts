@@ -1460,7 +1460,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'Hoarding in Hell',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1468,7 +1468,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'I Killed an Academy Player',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1476,7 +1476,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'I’m Not a Regressor',
 		created: Timestamp.fromDate(new Date()),
@@ -1484,7 +1484,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'Regressor of the Fallen family',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1492,7 +1492,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'Regressor’s Life After Retirement',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1500,7 +1500,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'Reincarnated Escort Warrior',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1508,7 +1508,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'Star-Embracing Swordmaster',
 		created: Timestamp.fromDate(new Date()),
@@ -1516,7 +1516,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'Steel-Eating Player',
 		created: Timestamp.fromDate(new Date()),
@@ -1524,7 +1524,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'The Blood Knight’s Villains',
 		created: Timestamp.fromDate(new Date()),
@@ -1532,7 +1532,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'The Extra is Too Strong',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),
@@ -1540,7 +1540,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'The Heavenly Demon’s Descendant',
 		created: Timestamp.fromDate(new Date()),
@@ -1548,7 +1548,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'The Priest of Corruption',
 		created: Timestamp.fromDate(new Date()),
@@ -1556,7 +1556,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		progress: '',
 		name: 'The Reincarnated Assassin is a Genius Swordsman',
 		created: Timestamp.fromDate(new Date()),
@@ -1564,7 +1564,7 @@ export const mangasData: ItemDto[] = [
 	},
 	{
 		userId: 'JiARetGkGiRwsFcqe81xlQWZ4SA3',
-		rank: 'unknown',
+		rank: '?',
 		name: 'To Hell With Being A Saint, I’m A Doctor',
 		progress: '',
 		created: Timestamp.fromDate(new Date()),

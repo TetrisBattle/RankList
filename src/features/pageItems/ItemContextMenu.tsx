@@ -4,7 +4,6 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useStore } from 'hooks/useStore'
-import { Item } from 'stores/itemStore/Item'
 
 export type ContextMenu = {
 	left: number
@@ -12,13 +11,11 @@ export type ContextMenu = {
 }
 
 type ItemContextMenuProps = {
-	item: Item
 	contextPos: ContextMenu
 	setContextPos: React.Dispatch<React.SetStateAction<ContextMenu>>
 }
 
 export const ItemContextMenu = ({
-	item,
 	contextPos,
 	setContextPos,
 }: ItemContextMenuProps) => {
@@ -30,18 +27,19 @@ export const ItemContextMenu = ({
 
 	function onGoogleSearch() {
 		const googleSearch = `https://google.com/search?q=${
-			item.name
-		} chapter ${item.progress ?? 1}`
+			itemStore.selectedItem.name
+		} chapter ${itemStore.selectedItem.progress ?? 1}`
 		window.open(googleSearch, '_blank')
 		onClose()
 	}
 
 	function onCopy() {
-		navigator.clipboard.writeText(item.name)
+		navigator.clipboard.writeText(itemStore.selectedItem.name)
 		onClose()
 	}
 
 	function onEdit() {
+		itemStore.setDialogOpen(true)
 		onClose()
 	}
 

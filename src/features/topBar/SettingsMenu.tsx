@@ -5,11 +5,12 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { useState } from 'react'
+import { Item } from 'stores/itemStore/Item'
 
 export const SettingsMenu = () => {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
-	const { firebaseStore, itemDialogStore } = useStore()
+	const { firebaseStore, itemStore } = useStore()
 
 	return (
 		<>
@@ -29,9 +30,9 @@ export const SettingsMenu = () => {
 			>
 				<MenuItem
 					onClick={() => {
-						itemDialogStore.setDialogType('new')
-						itemDialogStore.setDialogOpen(true)
 						setSettingsMenuAnchor(null)
+						itemStore.setSelectedItem(new Item())
+						itemStore.setDialogOpen(true)
 					}}
 				>
 					<ListItemIcon>
@@ -51,8 +52,8 @@ export const SettingsMenu = () => {
 				</MenuItem>
 				<MenuItem
 					onClick={() => {
-						firebaseStore.logout()
 						setSettingsMenuAnchor(null)
+						firebaseStore.logout()
 					}}
 				>
 					<ListItemIcon>

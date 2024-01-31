@@ -27,13 +27,18 @@ import { makeAutoObservable } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'
 
-export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | 'unknown'
+export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
+export const rankOptions: Rank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'X', '?']
+
+// export type Rank = keyof typeof ranks
+// export type Rank = typeof ranks[number]
+// export type Rank = typeof ranks[number]
 
 export type ItemDto = {
 	userId: string
-	rank: Rank
 	name: string
 	progress: string
+	rank: Rank
 	created: Timestamp
 	updated: Timestamp | null
 }

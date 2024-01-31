@@ -16,4 +16,15 @@ export class AppStore {
 	setSelectedPage(rank: Rank) {
 		this.selectedPage = rank
 	}
+
+	get selectedListLabel() {
+		switch (this.selectedList) {
+			case 'mangas':
+				return 'MangaList'
+			case 'movies':
+				return 'Movies'
+			case 'series':
+				return 'Series'
+		}
+	}
 }

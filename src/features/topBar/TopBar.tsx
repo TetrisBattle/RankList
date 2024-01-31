@@ -2,11 +2,9 @@ import { Box } from '@thng/react'
 import { PageButton } from './PageButton'
 import { SettingsMenu } from './SettingsMenu'
 import { ListMenu } from './ListMenu'
-import { Rank } from 'stores/FirebaseStore'
+import { rankOptions } from 'stores/FirebaseStore'
 
 export const TopBar = () => {
-	const pageOptions: Rank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F']
-
 	return (
 		<>
 			<Box
@@ -27,13 +25,14 @@ export const TopBar = () => {
 				<Box sx={{ display: 'flex' }}>
 					<ListMenu />
 					<Box sx={{ display: 'flex', flex: 3 }}>
-						<PageButton page={'X'} />
-						<PageButton page={'unknown'} />
+						{rankOptions.slice(7).map((page) => {
+							return <PageButton key={page} page={page} />
+						})}
 						<SettingsMenu />
 					</Box>
 				</Box>
 				<Box sx={{ display: 'flex', width: 1 }}>
-					{pageOptions.map((page) => {
+					{rankOptions.slice(0, 7).map((page) => {
 						return <PageButton key={page} page={page} />
 					})}
 				</Box>

@@ -13,7 +13,6 @@ export const PageItems = observer(() => {
 	const pageItems = itemStore.items.filter(
 		(item) => item.rank === appStore.selectedPage
 	)
-	if (!pageItems) return null
 
 	return (
 		<>
@@ -23,6 +22,13 @@ export const PageItems = observer(() => {
 						key={item.id}
 						onContextMenu={(e) => {
 							e.preventDefault()
+
+							if (contextPos.left && contextPos.top) {
+								setContextPos({ left: 0, top: 0 })
+								return
+							}
+
+							itemStore.setSelectedItem(item)
 							setContextPos({ left: e.clientX, top: e.clientY })
 						}}
 						disablePadding
@@ -42,22 +48,18 @@ export const PageItems = observer(() => {
 						</Typography>
 						<Typography
 							sx={{
-								flex:
-									appStore.selectedList !== 'movies'
-										? 4.5
-										: 6,
+								flex: itemStore.displayProgress ? 4.5 : 6,
 								px: 1,
 							}}
 						>
 							{item.name}
 						</Typography>
-						{appStore.selectedList !== 'movies' && (
+						{itemStore.displayProgress && (
 							<Typography sx={{ flex: 1.5, textAlign: 'center' }}>
 								{item.progress}
 							</Typography>
 						)}
 						<ItemContextMenu
-							item={item}
 							contextPos={contextPos}
 							setContextPos={setContextPos}
 						/>

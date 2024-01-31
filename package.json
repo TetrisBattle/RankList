@@ -13,6 +13,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.4",
     "@mui/icons-material": "^5.14.8",
     "@thng/react": "^1.1.7",
     "firebase": "^10.3.1",

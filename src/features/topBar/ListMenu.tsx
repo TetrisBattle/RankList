@@ -11,17 +11,6 @@ export const ListMenu = () => {
 
 	const listOptions: Table[] = ['mangas', 'movies', 'series']
 
-	const getLabel = (list: Table) => {
-		switch (list) {
-			case 'mangas':
-				return 'MangaList'
-			case 'movies':
-				return 'Movies'
-			case 'series':
-				return 'Series'
-		}
-	}
-
 	return (
 		<>
 			<Box
@@ -42,7 +31,7 @@ export const ListMenu = () => {
 						},
 					}}
 				>
-					{getLabel(appStore.selectedList)}
+					{appStore.selectedListLabel}
 				</Typography>
 			</Box>
 			<Menu
@@ -54,10 +43,16 @@ export const ListMenu = () => {
 					<MenuItem
 						key={option}
 						selected={option === appStore.selectedList}
-						onClick={() => {
-							appStore.setSelectedList(option)
-							itemStore.fetch(option)
+						onClick={async () => {
 							setListMenuAnchor(null)
+
+							await itemStore.fetch(option)
+
+							appStore.setSelectedList(option)
+
+							if (option === 'movies') {
+								itemStore.setDisplayProgress(false)
+							} else itemStore.setDisplayProgress(true)
 						}}
 					>
 						{option}

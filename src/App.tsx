@@ -3,7 +3,7 @@ import { useStore } from 'hooks/useStore'
 import { useEffect } from 'react'
 import { TopBar } from 'features/topBar/TopBar'
 import { PageItems } from 'features/pageItems/PageItems'
-import { ItemDialog } from 'features/ItemDialog'
+import { ItemDialog } from 'features/itemDialog/ItemDialog'
 import { useSetupTheme } from 'hooks/useSetupTheme'
 
 export const App = observer(() => {
