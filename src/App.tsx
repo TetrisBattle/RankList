@@ -1,13 +1,14 @@
-import { observer } from 'mobx-react-lite'
-import { Box, Button } from '@thng/react'
+import { Box, Button, observer } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import { ItemDialog } from 'components/ItemDialog'
 import { useEffect } from 'react'
 import { TopBar } from 'features/topBar/TopBar'
 import { PageItems } from 'features/pageItems/PageItems'
+import { ItemDialog } from 'features/ItemDialog'
+import { useSetupTheme } from 'hooks/useSetupTheme'
 
 export const App = observer(() => {
 	const { firebaseStore, itemStore } = useStore()
+	useSetupTheme()
 
 	useEffect(() => {
 		const authChangeListener = async () => {

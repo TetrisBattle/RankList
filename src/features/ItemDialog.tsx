@@ -9,13 +9,11 @@ import {
 	observer,
 } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import { firstLetterToUpperCase } from 'utils/firstLetterToUpperCase'
 
 export const ItemDialog = observer(() => {
 	const { itemDialogStore } = useStore()
 	const nameInputRef = useRef<HTMLInputElement | null>(null)
 	const progressInputRef = useRef<HTMLInputElement | null>(null)
-	const dialogTitle = firstLetterToUpperCase(itemDialogStore.dialogType)
 
 	useEffect(() => {
 		if (!itemDialogStore.dialogOpen) return
@@ -37,13 +35,11 @@ export const ItemDialog = observer(() => {
 
 	return (
 		<Dialog
-			open={itemDialogStore.dialogOpen}
+			open={true}
 			onClose={() => itemDialogStore.setDialogOpen(false)}
 			sx={{ '.MuiPaper-root': { minWidth: 360 } }}
 		>
-			<DialogTitle sx={{ textAlign: 'center' }}>
-				{dialogTitle}
-			</DialogTitle>
+			<DialogTitle sx={{ textAlign: 'center' }}>title</DialogTitle>
 			<DialogContent sx={{ display: 'flex', flexDirection: 'column' }}>
 				<TextField
 					value={itemDialogStore.item.name}

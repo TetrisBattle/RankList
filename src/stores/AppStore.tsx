@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable } from '@thng/react'
 import { Rank, Table } from './FirebaseStore'
 
 export class AppStore {

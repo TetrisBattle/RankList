@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "eslintConfig": {
-    "extends": "@thng"
+    "extends": "plugin:thng/recommendedReact"
   },
   "scripts": {
     "dev": "vite",
@@ -14,15 +14,15 @@
   },
   "dependencies": {
     "@mui/icons-material": "^5.14.8",
-    "@thng/react": "^1.0.4",
+    "@thng/react": "^1.1.7",
     "firebase": "^10.3.1",
-    "mobx": "^6.10.2",
-    "mobx-react-lite": "^4.0.4",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.3",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@thng/dev": "^1.1.0",
+    "@thng/dev": "^1.2.6",
     "vitest": "^0.34.6"
   }
 }

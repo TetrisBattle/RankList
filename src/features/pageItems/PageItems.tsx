@@ -1,6 +1,5 @@
-import { List, ListItem, Typography } from '@thng/react'
+import { List, ListItem, Typography, observer } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import { observer } from 'mobx-react-lite'
 import { ItemContextMenu } from './ItemContextMenu'
 import { useState } from 'react'
 

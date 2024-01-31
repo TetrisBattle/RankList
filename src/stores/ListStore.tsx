@@ -1,5 +1,5 @@
+import { makeAutoObservable } from '@thng/react'
 import { FirebaseStore } from 'stores/FirebaseStore'
-import { makeAutoObservable } from 'mobx'
 import { PageId, Page, ListDto, ListOption, Item } from 'types'
 
 export class ListStore {

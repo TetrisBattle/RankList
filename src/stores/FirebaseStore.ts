@@ -22,8 +22,8 @@ import {
 	where,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
-import { makeAutoObservable } from 'mobx'
 import { Item } from './itemStore/Item'
+import { makeAutoObservable } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'
 

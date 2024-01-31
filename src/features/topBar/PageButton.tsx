@@ -1,6 +1,5 @@
-import { Button, useTheme } from '@thng/react'
+import { Button, observer, useTheme } from '@thng/react'
 import { useStore } from 'hooks/useStore'
-import { observer } from 'mobx-react-lite'
 import { Rank } from 'stores/FirebaseStore'
 
 export const PageButton = observer(({ page }: { page: Rank }) => {

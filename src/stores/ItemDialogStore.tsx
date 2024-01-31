@@ -1,5 +1,5 @@
 import { Item, PageId } from 'types'
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable } from '@thng/react'
 import { ListStore } from './ListStore'
 
 type DialogType = 'new' | 'edit'

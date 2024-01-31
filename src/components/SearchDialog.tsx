@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { observer } from 'mobx-react-lite'
 import {
 	Autocomplete,
 	Button,
@@ -8,6 +7,7 @@ import {
 	DialogContent,
 	DialogTitle,
 	TextField,
+	observer,
 } from '@thng/react'
 import { useStore } from 'hooks/useStore'
 import { Item, PageId } from 'types'

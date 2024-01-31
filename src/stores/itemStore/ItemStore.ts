@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx'
+import { makeAutoObservable } from '@thng/react'
 import { AppStore } from 'stores/AppStore'
 import { FirebaseStore, Table } from 'stores/FirebaseStore'
 import { Item } from './Item'
