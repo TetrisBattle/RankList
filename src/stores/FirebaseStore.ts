@@ -31,10 +31,6 @@ export type Table = 'users' | 'mangas' | 'movies' | 'series'
 export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
 export const rankOptions: Rank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'X', '?']
 
-// export type Rank = keyof typeof ranks
-// export type Rank = typeof ranks[number]
-// export type Rank = typeof ranks[number]
-
 export type ItemDto = {
 	userId: string
 	name: string
@@ -136,12 +132,5 @@ export class FirebaseStore {
 	delete = async (table: Table, itemId: string) => {
 		const docRef = doc(this.db, table, itemId)
 		await deleteDoc(docRef)
-	}
-
-	writeDatas = async (table: Table, itemDtos: ItemDto[]) => {
-		itemDtos.forEach(async (itemDto) => {
-			const tableRef = collection(this.db, table)
-			await addDoc(tableRef, itemDto)
-		})
 	}
 }
