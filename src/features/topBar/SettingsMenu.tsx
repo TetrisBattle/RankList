@@ -10,7 +10,7 @@ import { Item } from 'stores/itemStore/Item'
 export const SettingsMenu = () => {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
-	const { firebaseStore, itemStore } = useStore()
+	const { firebaseStore, appStore, itemStore } = useStore()
 
 	return (
 		<>
@@ -31,7 +31,9 @@ export const SettingsMenu = () => {
 				<MenuItem
 					onClick={() => {
 						setSettingsMenuAnchor(null)
-						itemStore.setSelectedItem(new Item())
+						const newItem = new Item()
+						newItem.rank = appStore.selectedPage
+						itemStore.setSelectedItem(newItem)
 						itemStore.setDialogOpen(true)
 					}}
 				>
