@@ -13,13 +13,11 @@ export const ListMenu = () => {
 
 	return (
 		<>
-			<Box
-				onClick={(e) => setListMenuAnchor(e.currentTarget)}
-				sx={{ display: 'flex', alignItems: 'center', flex: 4 }}
-			>
+			<Box sx={{ display: 'flex', alignItems: 'center', flex: 4 }}>
 				<Typography
+					onClick={(e) => setListMenuAnchor(e.currentTarget)}
 					sx={{
-						mx: 1,
+						px: 1,
 						fontSize: 22,
 						color: (theme) =>
 							listMenuAnchor
