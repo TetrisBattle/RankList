@@ -15,9 +15,7 @@ import {
 	getDocs,
 	getFirestore,
 	query,
-	QueryDocumentSnapshot,
 	setDoc,
-	SnapshotOptions,
 	Timestamp,
 	updateDoc,
 	where,
@@ -27,6 +25,7 @@ import { Item } from './models/Item'
 import { makeAutoObservable, runInAction } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'
+export const tableOptions: Table[] = ['mangas', 'movies', 'series']
 
 export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
 export const rankOptions: Rank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'X', '?']
@@ -53,23 +52,6 @@ export class FirebaseStore {
 
 	setCurrentUser(user: User | null) {
 		this.currentUser = user
-	}
-
-	private get itemConverter() {
-		return {
-			toFirestore: (item: Item): ItemDto => {
-				if (!this.currentUser) throw new Error('User is not logged in')
-				item.userId = this.currentUser.uid
-				return item.convertToDto()
-			},
-			fromFirestore: (
-				snapshot: QueryDocumentSnapshot<ItemDto, ItemDto>,
-				options?: SnapshotOptions
-			): Item => {
-				const itemDto = snapshot.data(options)
-				return Item.convertFromDto(snapshot.id, itemDto)
-			},
-		}
 	}
 
 	onAuthChange = async (cb: (user: Item[]) => void) => {
@@ -120,10 +102,12 @@ export class FirebaseStore {
 	}
 
 	post = async (table: Table, item: Item) => {
-		const tableRef = collection(this.db, table).withConverter(
-			this.itemConverter
-		)
-		const savedDoc = await addDoc(tableRef, item)
+		if (!this.currentUser) throw new Error('User is not logged in')
+		item.userId = this.currentUser.uid
+		const itemDto = item.convertToDto()
+
+		const tableRef = collection(this.db, table)
+		const savedDoc = await addDoc(tableRef, itemDto)
 		item.id = savedDoc.id
 		return item
 	}

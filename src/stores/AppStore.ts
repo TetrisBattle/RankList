@@ -38,17 +38,6 @@ export class AppStore {
 		this.displayProgress = display
 	}
 
-	get selectedListLabel() {
-		switch (this.selectedList) {
-			case 'mangas':
-				return 'MangaList'
-			case 'movies':
-				return 'Movies'
-			case 'series':
-				return 'Series'
-		}
-	}
-
 	private sortItems = () => {
 		this.items.sort((a, b) => a.name.localeCompare(b.name))
 	}

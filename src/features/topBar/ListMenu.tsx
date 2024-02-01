@@ -1,15 +1,24 @@
-import { Box, Menu, MenuItem, Typography } from '@thng/react'
+import { Box, Menu, MenuItem, Typography, observer } from '@thng/react'
 import { useStore } from 'hooks/useStore'
 import { useState } from 'react'
-import { Table } from 'stores/FirebaseStore'
+import { Table, tableOptions } from 'stores/FirebaseStore'
 
-export const ListMenu = () => {
+export const ListMenu = observer(() => {
 	const { appStore } = useStore()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
 		null
 	)
 
-	const listOptions: Table[] = ['mangas', 'movies', 'series']
+	const getListLabel = (list: Table) => {
+		switch (list) {
+			case 'mangas':
+				return 'MangaList'
+			case 'movies':
+				return 'Movies'
+			case 'series':
+				return 'Series'
+		}
+	}
 
 	return (
 		<>
@@ -29,7 +38,7 @@ export const ListMenu = () => {
 						},
 					}}
 				>
-					{appStore.selectedListLabel}
+					{getListLabel(appStore.selectedList)}
 				</Typography>
 			</Box>
 			<Menu
@@ -37,7 +46,7 @@ export const ListMenu = () => {
 				open={!!listMenuAnchor}
 				onClose={() => setListMenuAnchor(null)}
 			>
-				{listOptions.map((option) => (
+				{tableOptions.map((option) => (
 					<MenuItem
 						key={option}
 						selected={option === appStore.selectedList}
@@ -53,10 +62,10 @@ export const ListMenu = () => {
 							} else appStore.setDisplayProgress(true)
 						}}
 					>
-						{option}
+						{getListLabel(option)}
 					</MenuItem>
 				))}
 			</Menu>
 		</>
 	)
-}
+})
