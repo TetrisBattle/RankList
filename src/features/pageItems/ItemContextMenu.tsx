@@ -55,6 +55,7 @@ export const ItemContextMenu = ({
 			anchorReference='anchorPosition'
 			anchorPosition={contextPos}
 			disableAutoFocusItem
+			slotProps={{ paper: { sx: { boxShadow: 2 } } }}
 		>
 			{appStore.selectedList === 'mangas' && (
 				<MenuItem onClick={onGoogleSearch}>
