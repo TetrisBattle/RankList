@@ -15,6 +15,10 @@ export const useSetupTheme = () => {
 					secondary: {
 						main: '#003549',
 					},
+					background: {
+						paper: '#040404',
+						default: '#000',
+					},
 				},
 			},
 			{
