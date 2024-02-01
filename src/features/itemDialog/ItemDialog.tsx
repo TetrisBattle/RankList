@@ -1,4 +1,5 @@
 import {
+	Autocomplete,
 	Button,
 	Dialog,
 	DialogActions,
@@ -17,9 +18,8 @@ import { useState } from 'react'
 import { Item } from 'stores/itemStore/Item'
 
 export const ItemDialog = observer(() => {
-	const { appStore, itemStore } = useStore()
+	const { itemStore } = useStore()
 	const [existingItem, setExistingItem] = useState<Item | null>(null)
-	const [nameErrorText, setNameErrorText] = useState('')
 	const {
 		control,
 		handleSubmit,
@@ -35,28 +35,36 @@ export const ItemDialog = observer(() => {
 		resolver: zodResolver(itemSchema),
 	})
 
+	const onClose = () => {
+		itemStore.setDialogOpen(false)
+		setExistingItem(null)
+		reset()
+	}
+
 	const onSubmit = handleSubmit(async (itemFormData: ItemFormData) => {
 		const item = itemStore.selectedItem.getCopyWithFormData(itemFormData)
-
-		const itemWithSameName = itemStore.items.find((i) => {
-			if (i.id === item.id) return false
-			return i.name.toLowerCase() === item.name.toLowerCase()
-		})
-
-		if (itemWithSameName) {
-			setExistingItem(itemWithSameName)
-			setNameErrorText(
-				`Item already exists in page ${itemWithSameName.rank}`
-			)
-			return
-		}
 
 		if (item.id) await itemStore.edit(item)
 		else await itemStore.add(item)
 
-		itemStore.setDialogOpen(false)
-		reset()
+		onClose()
 	})
+
+	const onSelect = (item: Item) => {
+		if (item.id === itemStore.selectedItem.id) setExistingItem(null)
+		else setExistingItem(item)
+	}
+
+	const onChange = (name: string) => {
+		const itemWithSameName = itemStore.items.find((i) => {
+			if (i.id === itemStore.selectedItem.id) return false
+			return i.name.toLowerCase() === name.toLowerCase()
+		})
+		setExistingItem(itemWithSameName || null)
+	}
+
+	const disableSaveButton =
+		!isValid || isSubmitting || !isDirty || !!existingItem
 
 	return (
 		<Dialog
@@ -67,7 +75,7 @@ export const ItemDialog = observer(() => {
 			maxWidth='xs'
 		>
 			<DialogTitle sx={{ textAlign: 'center', pb: 0 }}>
-				{appStore.selectedListLabel}
+				{itemStore.selectedItem.id ? 'Edit' : 'Add'}
 			</DialogTitle>
 
 			<DialogContent
@@ -81,20 +89,36 @@ export const ItemDialog = observer(() => {
 					control={control}
 					name='name'
 					render={({ field }) => (
-						<TextField
-							{...field}
-							label='Name'
-							error={!!errors.name || !!nameErrorText}
-							helperText={nameErrorText}
-							multiline
-							onChange={(e) => {
-								field.onChange(e)
-								if (existingItem) {
-									setExistingItem(null)
-									setNameErrorText('')
-								}
+						<Autocomplete
+							value={field.value}
+							onChange={(_e, item) => {
+								if (!item) return
+								if (typeof item === 'string') throw new Error()
+								field.onChange(item.name)
+								onSelect(item)
 							}}
-							sx={{ mt: 2 }}
+							renderInput={(params) => {
+								return (
+									<TextField
+										{...params}
+										{...field}
+										label='Name'
+										error={!!errors.name}
+										onChange={(e) => {
+											field.onChange(e)
+											onChange(e.target.value)
+										}}
+										sx={{ mt: 2 }}
+									/>
+								)
+							}}
+							options={itemStore.items}
+							getOptionLabel={(option) =>
+								typeof option === 'string'
+									? option
+									: option.name
+							}
+							freeSolo
 						/>
 					)}
 				/>
@@ -105,7 +129,7 @@ export const ItemDialog = observer(() => {
 					render={({ field }) => (
 						<TextField
 							{...field}
-							label='Progress'
+							label={`Progress ${existingItem?.progress || ''}`}
 							error={!!errors.progress}
 						/>
 					)}
@@ -117,7 +141,7 @@ export const ItemDialog = observer(() => {
 					render={({ field }) => (
 						<TextField
 							{...field}
-							label='Rank'
+							label={`Rank ${existingItem?.rank || ''}`}
 							error={!!errors.rank}
 							value={field.value}
 							select
@@ -137,26 +161,15 @@ export const ItemDialog = observer(() => {
 						onClick={() => {
 							itemStore.setSelectedItem(existingItem)
 							setExistingItem(null)
-							setNameErrorText('')
 						}}
 					>
 						Edit
 					</Button>
 				)}
-				<Button
-					type='submit'
-					disabled={!isValid || isSubmitting || !isDirty}
-				>
+				<Button type='submit' disabled={disableSaveButton}>
 					Save
 				</Button>
-				<Button
-					onClick={() => {
-						itemStore.setDialogOpen(false)
-						reset()
-					}}
-				>
-					Cancel
-				</Button>
+				<Button onClick={onClose}>Cancel</Button>
 			</DialogActions>
 		</Dialog>
 	)
