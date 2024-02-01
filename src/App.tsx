@@ -1,4 +1,4 @@
-import { Box, Button, observer } from '@thng/react'
+import { Box, Button, CircularProgress, observer } from '@thng/react'
 import { useStore } from 'hooks/useStore'
 import { useEffect } from 'react'
 import { TopBar } from 'features/topBar/TopBar'
@@ -18,6 +18,21 @@ export const App = observer(() => {
 		}
 		authChangeListener()
 	}, [firebaseStore, appStore])
+
+	if (firebaseStore.isLoading) {
+		return (
+			<Box
+				sx={{
+					height: '100dvh',
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+				}}
+			>
+				<CircularProgress />
+			</Box>
+		)
+	}
 
 	return (
 		<>

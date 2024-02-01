@@ -24,7 +24,7 @@ import {
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
 import { Item } from './models/Item'
-import { makeAutoObservable } from '@thng/react'
+import { makeAutoObservable, runInAction } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'
 
@@ -45,6 +45,7 @@ export class FirebaseStore {
 	private db = getFirestore(firebaseApp)
 	private auth = getAuth()
 	currentUser: User | null = null
+	isLoading = true
 
 	constructor() {
 		makeAutoObservable(this)
@@ -75,10 +76,18 @@ export class FirebaseStore {
 		onAuthStateChanged(getAuth(), async (user) => {
 			this.setCurrentUser(user)
 
-			if (!user) return cb([])
+			if (!user) {
+				runInAction(() => {
+					this.isLoading = false
+				})
+				return cb([])
+			}
 
 			const datas = await this.getUserData('mangas')
 			cb(datas)
+			runInAction(() => {
+				this.isLoading = false
+			})
 		})
 	}
 
