@@ -13,9 +13,13 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ItemFormData, itemSchema } from './itemValidation'
 import { rankOptions } from 'stores/FirebaseStore'
+import { useState } from 'react'
+import { Item } from 'stores/itemStore/Item'
 
 export const ItemDialog = observer(() => {
 	const { appStore, itemStore } = useStore()
+	const [existingItem, setExistingItem] = useState<Item | null>(null)
+	const [nameErrorText, setNameErrorText] = useState('')
 	const {
 		control,
 		handleSubmit,
@@ -33,6 +37,19 @@ export const ItemDialog = observer(() => {
 
 	const onSubmit = handleSubmit(async (itemFormData: ItemFormData) => {
 		const item = itemStore.selectedItem.getCopyWithFormData(itemFormData)
+
+		const itemWithSameName = itemStore.items.find((i) => {
+			if (i.id === item.id) return false
+			return i.name.toLowerCase() === item.name.toLowerCase()
+		})
+
+		if (itemWithSameName) {
+			setExistingItem(itemWithSameName)
+			setNameErrorText(
+				`Item already exists in page ${itemWithSameName.rank}`
+			)
+			return
+		}
 
 		if (item.id) await itemStore.edit(item)
 		else await itemStore.add(item)
@@ -67,8 +84,16 @@ export const ItemDialog = observer(() => {
 						<TextField
 							{...field}
 							label='Name'
-							error={!!errors.name}
+							error={!!errors.name || !!nameErrorText}
+							helperText={nameErrorText}
 							multiline
+							onChange={(e) => {
+								field.onChange(e)
+								if (existingItem) {
+									setExistingItem(null)
+									setNameErrorText('')
+								}
+							}}
 							sx={{ mt: 2 }}
 						/>
 					)}
@@ -107,6 +132,17 @@ export const ItemDialog = observer(() => {
 				/>
 			</DialogContent>
 			<DialogActions>
+				{existingItem && (
+					<Button
+						onClick={() => {
+							itemStore.setSelectedItem(existingItem)
+							setExistingItem(null)
+							setNameErrorText('')
+						}}
+					>
+						Edit
+					</Button>
+				)}
 				<Button
 					type='submit'
 					disabled={!isValid || isSubmitting || !isDirty}
