@@ -7,17 +7,17 @@ import { ItemDialog } from 'features/itemDialog/ItemDialog'
 import { useSetupTheme } from 'hooks/useSetupTheme'
 
 export const App = observer(() => {
-	const { firebaseStore, itemStore } = useStore()
+	const { firebaseStore, appStore } = useStore()
 	useSetupTheme()
 
 	useEffect(() => {
 		const authChangeListener = async () => {
 			await firebaseStore.onAuthChange((items) => {
-				itemStore.setItems(items)
+				appStore.setItems(items)
 			})
 		}
 		authChangeListener()
-	}, [firebaseStore, itemStore])
+	}, [firebaseStore, appStore])
 
 	return (
 		<>

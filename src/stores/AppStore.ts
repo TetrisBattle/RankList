@@ -1,23 +1,29 @@
 import { makeAutoObservable, runInAction } from '@thng/react'
-import { AppStore } from 'stores/AppStore'
-import { FirebaseStore, Table } from 'stores/FirebaseStore'
-import { Item } from './Item'
+import { FirebaseStore, Rank, Table } from 'stores/FirebaseStore'
+import { Item } from './models/Item'
 
-export class ItemStore {
+export class AppStore {
 	dialogOpen = false
+	selectedList: Table = 'mangas'
+	selectedPage: Rank = 'S'
 	items: Item[] = []
 	selectedItem = new Item()
 	displayProgress = true
 
-	constructor(
-		private db: FirebaseStore,
-		private appStore: AppStore
-	) {
+	constructor(private db: FirebaseStore) {
 		makeAutoObservable(this)
 	}
 
 	setDialogOpen = (open: boolean) => {
 		this.dialogOpen = open
+	}
+
+	setSelectedList(table: Table) {
+		this.selectedList = table
+	}
+
+	setSelectedPage(rank: Rank) {
+		this.selectedPage = rank
 	}
 
 	setItems = (items: Item[]) => {
@@ -32,6 +38,17 @@ export class ItemStore {
 		this.displayProgress = display
 	}
 
+	get selectedListLabel() {
+		switch (this.selectedList) {
+			case 'mangas':
+				return 'MangaList'
+			case 'movies':
+				return 'Movies'
+			case 'series':
+				return 'Series'
+		}
+	}
+
 	private sortItems = () => {
 		this.items.sort((a, b) => a.name.localeCompare(b.name))
 	}
@@ -41,7 +58,7 @@ export class ItemStore {
 	}
 
 	add = async (item: Item) => {
-		const savedItem = await this.db.post(this.appStore.selectedList, item)
+		const savedItem = await this.db.post(this.selectedList, item)
 
 		runInAction(() => {
 			this.items.push(savedItem)
@@ -57,7 +74,7 @@ export class ItemStore {
 		const nameHasChanged =
 			this.items[itemIndex].name.toLowerCase() !== item.name.toLowerCase()
 
-		await this.db.put(this.appStore.selectedList, item)
+		await this.db.put(this.selectedList, item)
 
 		runInAction(() => {
 			this.items[itemIndex] = item
@@ -70,6 +87,6 @@ export class ItemStore {
 		const itemIndex = this.items.findIndex((i) => i.id === itemId)
 		if (itemIndex === -1) throw new Error('Item not found')
 		this.items.splice(itemIndex, 1)
-		this.db.delete(this.appStore.selectedList, itemId)
+		this.db.delete(this.selectedList, itemId)
 	}
 }

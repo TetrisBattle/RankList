@@ -4,13 +4,13 @@ import { ItemContextMenu } from './ItemContextMenu'
 import { useState } from 'react'
 
 export const PageItems = observer(() => {
-	const { appStore, itemStore } = useStore()
+	const { appStore } = useStore()
 	const [contextPos, setContextPos] = useState({
 		left: 0,
 		top: 0,
 	})
 
-	const pageItems = itemStore.items.filter(
+	const pageItems = appStore.items.filter(
 		(item) => item.rank === appStore.selectedPage
 	)
 
@@ -28,7 +28,7 @@ export const PageItems = observer(() => {
 								return
 							}
 
-							itemStore.setSelectedItem(item)
+							appStore.setSelectedItem(item)
 							setContextPos({ left: e.clientX, top: e.clientY })
 						}}
 						disablePadding
@@ -48,13 +48,13 @@ export const PageItems = observer(() => {
 						</Typography>
 						<Typography
 							sx={{
-								flex: itemStore.displayProgress ? 4.5 : 6,
+								flex: appStore.displayProgress ? 4.5 : 6,
 								px: 1,
 							}}
 						>
 							{item.name}
 						</Typography>
-						{itemStore.displayProgress && (
+						{appStore.displayProgress && (
 							<Typography sx={{ flex: 1.5, textAlign: 'center' }}>
 								{item.progress}
 							</Typography>

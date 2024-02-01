@@ -19,7 +19,7 @@ export const ItemContextMenu = ({
 	contextPos,
 	setContextPos,
 }: ItemContextMenuProps) => {
-	const { appStore, itemStore } = useStore()
+	const { appStore } = useStore()
 
 	function onClose() {
 		setContextPos({ left: 0, top: 0 })
@@ -27,24 +27,24 @@ export const ItemContextMenu = ({
 
 	function onGoogleSearch() {
 		const googleSearch = `https://google.com/search?q=${
-			itemStore.selectedItem.name
-		} chapter ${itemStore.selectedItem.progress ?? 1}`
+			appStore.selectedItem.name
+		} chapter ${appStore.selectedItem.progress ?? 1}`
 		window.open(googleSearch, '_blank')
 		onClose()
 	}
 
 	function onCopy() {
-		navigator.clipboard.writeText(itemStore.selectedItem.name)
+		navigator.clipboard.writeText(appStore.selectedItem.name)
 		onClose()
 	}
 
 	function onEdit() {
-		itemStore.setDialogOpen(true)
+		appStore.setDialogOpen(true)
 		onClose()
 	}
 
 	function onDelete() {
-		itemStore.delete(itemStore.selectedItem.id)
+		appStore.delete(appStore.selectedItem.id)
 		onClose()
 	}
 

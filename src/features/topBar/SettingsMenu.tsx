@@ -5,12 +5,12 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { useState } from 'react'
-import { Item } from 'stores/itemStore/Item'
+import { Item } from 'stores/models/Item'
 
 export const SettingsMenu = () => {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
 		useState<HTMLElement | null>(null)
-	const { firebaseStore, appStore, itemStore } = useStore()
+	const { firebaseStore, appStore } = useStore()
 
 	return (
 		<>
@@ -33,8 +33,8 @@ export const SettingsMenu = () => {
 						setSettingsMenuAnchor(null)
 						const newItem = new Item()
 						newItem.rank = appStore.selectedPage
-						itemStore.setSelectedItem(newItem)
-						itemStore.setDialogOpen(true)
+						appStore.setSelectedItem(newItem)
+						appStore.setDialogOpen(true)
 					}}
 				>
 					<ListItemIcon>

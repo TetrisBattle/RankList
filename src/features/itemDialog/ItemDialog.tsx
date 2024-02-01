@@ -15,10 +15,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ItemFormData, itemSchema } from './itemValidation'
 import { rankOptions } from 'stores/FirebaseStore'
 import { useState } from 'react'
-import { Item } from 'stores/itemStore/Item'
+import { Item } from 'stores/models/Item'
 
 export const ItemDialog = observer(() => {
-	const { itemStore } = useStore()
+	const { appStore } = useStore()
 	const [existingItem, setExistingItem] = useState<Item | null>(null)
 	const {
 		control,
@@ -28,36 +28,36 @@ export const ItemDialog = observer(() => {
 	} = useForm<ItemFormData>({
 		mode: 'all',
 		values: {
-			name: itemStore.selectedItem.name,
-			progress: itemStore.selectedItem.progress,
-			rank: itemStore.selectedItem.rank,
+			name: appStore.selectedItem.name,
+			progress: appStore.selectedItem.progress,
+			rank: appStore.selectedItem.rank,
 		},
 		resolver: zodResolver(itemSchema),
 	})
 
 	const onClose = () => {
-		itemStore.setDialogOpen(false)
+		appStore.setDialogOpen(false)
 		setExistingItem(null)
 		reset()
 	}
 
 	const onSubmit = handleSubmit(async (itemFormData: ItemFormData) => {
-		const item = itemStore.selectedItem.getCopyWithFormData(itemFormData)
+		const item = appStore.selectedItem.getCopyWithFormData(itemFormData)
 
-		if (item.id) await itemStore.edit(item)
-		else await itemStore.add(item)
+		if (item.id) await appStore.edit(item)
+		else await appStore.add(item)
 
 		onClose()
 	})
 
 	const onSelect = (item: Item) => {
-		if (item.id === itemStore.selectedItem.id) setExistingItem(null)
+		if (item.id === appStore.selectedItem.id) setExistingItem(null)
 		else setExistingItem(item)
 	}
 
 	const onChange = (name: string) => {
-		const itemWithSameName = itemStore.items.find((i) => {
-			if (i.id === itemStore.selectedItem.id) return false
+		const itemWithSameName = appStore.items.find((i) => {
+			if (i.id === appStore.selectedItem.id) return false
 			return i.name.toLowerCase() === name.toLowerCase()
 		})
 		setExistingItem(itemWithSameName || null)
@@ -69,13 +69,13 @@ export const ItemDialog = observer(() => {
 	return (
 		<Dialog
 			PaperProps={{ component: 'form' }}
-			open={itemStore.dialogOpen}
+			open={appStore.dialogOpen}
 			onSubmit={onSubmit}
 			fullWidth
 			maxWidth='xs'
 		>
 			<DialogTitle sx={{ textAlign: 'center', pb: 0 }}>
-				{itemStore.selectedItem.id ? 'Edit' : 'Add'}
+				{appStore.selectedItem.id ? 'Edit' : 'Add'}
 			</DialogTitle>
 
 			<DialogContent
@@ -112,7 +112,7 @@ export const ItemDialog = observer(() => {
 									/>
 								)
 							}}
-							options={itemStore.items}
+							options={appStore.items}
 							getOptionLabel={(option) =>
 								typeof option === 'string'
 									? option
@@ -159,7 +159,7 @@ export const ItemDialog = observer(() => {
 				{existingItem && (
 					<Button
 						onClick={() => {
-							itemStore.setSelectedItem(existingItem)
+							appStore.setSelectedItem(existingItem)
 							setExistingItem(null)
 						}}
 					>

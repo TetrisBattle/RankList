@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Table } from 'stores/FirebaseStore'
 
 export const ListMenu = () => {
-	const { appStore, itemStore } = useStore()
+	const { appStore } = useStore()
 	const [listMenuAnchor, setListMenuAnchor] = useState<HTMLElement | null>(
 		null
 	)
@@ -44,13 +44,13 @@ export const ListMenu = () => {
 						onClick={async () => {
 							setListMenuAnchor(null)
 
-							await itemStore.fetch(option)
+							await appStore.fetch(option)
 
 							appStore.setSelectedList(option)
 
 							if (option === 'movies') {
-								itemStore.setDisplayProgress(false)
-							} else itemStore.setDisplayProgress(true)
+								appStore.setDisplayProgress(false)
+							} else appStore.setDisplayProgress(true)
 						}}
 					>
 						{option}

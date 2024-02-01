@@ -23,7 +23,7 @@ import {
 	where,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
-import { Item } from './itemStore/Item'
+import { Item } from './models/Item'
 import { makeAutoObservable } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'
