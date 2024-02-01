@@ -1,13 +1,12 @@
-import { makeAutoObservable } from '@thng/react'
+import { makeAutoObservable, runInAction } from '@thng/react'
 import { AppStore } from 'stores/AppStore'
 import { FirebaseStore, Table } from 'stores/FirebaseStore'
 import { Item } from './Item'
-import { ItemForm } from 'features/itemDialog/itemValidation'
 
 export class ItemStore {
 	dialogOpen = false
 	items: Item[] = []
-	selectedItem: Item = new Item()
+	selectedItem = new Item()
 	displayProgress = true
 
 	constructor(
@@ -33,44 +32,44 @@ export class ItemStore {
 		this.displayProgress = display
 	}
 
-	fetch = async (table: Table) => {
-		this.setItems(await this.db.getDatas(table))
-	}
-
-	private add = async (item: Item) => {
-		this.items.push(item)
+	private sortItems = () => {
 		this.items.sort((a, b) => a.name.localeCompare(b.name))
-		this.db.writeData(this.appStore.selectedList, item)
 	}
 
-	private edit = async (item: Item) => {
+	fetch = async (table: Table) => {
+		this.setItems(await this.db.getUserData(table))
+	}
+
+	add = async (item: Item) => {
+		const savedItem = await this.db.post(this.appStore.selectedList, item)
+
+		runInAction(() => {
+			this.items.push(savedItem)
+		})
+
+		this.sortItems()
+	}
+
+	edit = async (item: Item) => {
 		const itemIndex = this.items.findIndex((i) => i.id === item.id)
-		if (itemIndex === -1) return
+		if (itemIndex === -1) throw new Error('Item not found')
 
 		const nameHasChanged =
-			this.items[itemIndex].name.toLowerCase() === item.name.toLowerCase()
+			this.items[itemIndex].name.toLowerCase() !== item.name.toLowerCase()
 
-		this.items[itemIndex] = item
+		await this.db.put(this.appStore.selectedList, item)
 
-		if (nameHasChanged) {
-			this.items.sort((a, b) => a.name.localeCompare(b.name))
-		}
+		runInAction(() => {
+			this.items[itemIndex] = item
+		})
 
-		this.db.writeData(this.appStore.selectedList, item)
+		if (nameHasChanged) this.sortItems()
 	}
 
 	delete = async (itemId: string) => {
-		const index = this.items.findIndex((i) => i.id === itemId)
-		if (index === -1) return
-		this.items.splice(index, 1)
-		this.db.deleteData(this.appStore.selectedList, itemId)
-	}
-
-	save = async (item: ItemForm) => {
-		this.selectedItem.name = item.name.trim()
-		this.selectedItem.progress = item.progress.trim()
-		this.selectedItem.rank = item.rank
-
-		console.log('Saved')
+		const itemIndex = this.items.findIndex((i) => i.id === itemId)
+		if (itemIndex === -1) throw new Error('Item not found')
+		this.items.splice(itemIndex, 1)
+		this.db.delete(this.appStore.selectedList, itemId)
 	}
 }

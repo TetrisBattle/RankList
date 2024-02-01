@@ -44,8 +44,7 @@ export const ItemContextMenu = ({
 	}
 
 	function onDelete() {
-		//todo: add confirmation dialog
-		// itemStore.delete(item.id)
+		itemStore.delete(itemStore.selectedItem.id)
 		onClose()
 	}
 

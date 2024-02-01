@@ -19,6 +19,7 @@ import {
 	setDoc,
 	SnapshotOptions,
 	Timestamp,
+	updateDoc,
 	where,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
@@ -60,6 +61,8 @@ export class FirebaseStore {
 	private get itemConverter() {
 		return {
 			toFirestore: (item: Item): ItemDto => {
+				if (!this.currentUser) throw new Error('User is not logged in')
+				item.userId = this.currentUser.uid
 				return item.convertToDto()
 			},
 			fromFirestore: (
@@ -78,7 +81,7 @@ export class FirebaseStore {
 
 			if (!user) return cb([])
 
-			const datas = await this.getDatas('mangas')
+			const datas = await this.getUserData('mangas')
 			cb(datas)
 		})
 	}
@@ -99,9 +102,10 @@ export class FirebaseStore {
 		await signOut(this.auth)
 	}
 
-	getDatas = async (table: Table) => {
+	getUserData = async (table: Table) => {
+		if (!this.currentUser) throw new Error('User is not logged in')
 		const tableRef = collection(this.db, table)
-		const q = query(tableRef, where('userId', '==', this.currentUser?.uid))
+		const q = query(tableRef, where('userId', '==', this.currentUser.uid))
 		const snapshot = await getDocs(q)
 		const items = snapshot.docs.map((doc) => {
 			const ItemDto = doc.data() as ItemDto
@@ -110,14 +114,26 @@ export class FirebaseStore {
 		return items.sort((a, b) => a.name.localeCompare(b.name))
 	}
 
-	writeData = async (table: Table, item: Item) => {
-		const docRef = doc(this.db, table, item.id).withConverter(
+	post = async (table: Table, item: Item) => {
+		const tableRef = collection(this.db, table).withConverter(
 			this.itemConverter
 		)
-		await setDoc(docRef, item, { merge: true })
+		const savedDoc = await addDoc(tableRef, item)
+		item.id = savedDoc.id
+		return item
 	}
 
-	deleteData = async (table: Table, itemId: string) => {
+	put = async (table: Table, item: Item) => {
+		const docRef = doc(this.db, table, item.id)
+		await updateDoc(docRef, {
+			name: item.name,
+			progress: item.progress,
+			rank: item.rank,
+			updated: Timestamp.fromDate(new Date()),
+		})
+	}
+
+	delete = async (table: Table, itemId: string) => {
 		const docRef = doc(this.db, table, itemId)
 		await deleteDoc(docRef)
 	}

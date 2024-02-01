@@ -7,4 +7,4 @@ export const itemSchema = z.object({
 	rank: z.string().min(1),
 })
 
-export type ItemForm = z.infer<typeof itemSchema> & { rank: Rank }
+export type ItemFormData = z.infer<typeof itemSchema> & { rank: Rank }

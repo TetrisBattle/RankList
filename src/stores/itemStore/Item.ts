@@ -1,3 +1,4 @@
+import { ItemFormData } from 'features/itemDialog/itemValidation'
 import { Timestamp } from 'firebase/firestore'
 import { ItemDto, Rank } from 'stores/FirebaseStore'
 
@@ -32,6 +33,18 @@ export class Item {
 			dto.rank,
 			dto.created.toDate(),
 			dto.updated?.toDate() ?? null
+		)
+	}
+
+	getCopyWithFormData = (itemFormData: ItemFormData): Item => {
+		return new Item(
+			this.id,
+			this.userId,
+			itemFormData.name.trim(),
+			itemFormData.progress.trim(),
+			itemFormData.rank,
+			this.created,
+			this.updated
 		)
 	}
 }

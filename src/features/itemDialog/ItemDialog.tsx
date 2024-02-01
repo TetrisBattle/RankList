@@ -11,7 +11,7 @@ import {
 import { useStore } from 'hooks/useStore'
 import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ItemForm, itemSchema } from './itemValidation'
+import { ItemFormData, itemSchema } from './itemValidation'
 import { rankOptions } from 'stores/FirebaseStore'
 
 export const ItemDialog = observer(() => {
@@ -21,7 +21,7 @@ export const ItemDialog = observer(() => {
 		handleSubmit,
 		formState: { errors, isSubmitting, isValid, isDirty },
 		reset,
-	} = useForm<ItemForm>({
+	} = useForm<ItemFormData>({
 		mode: 'all',
 		values: {
 			name: itemStore.selectedItem.name,
@@ -31,10 +31,14 @@ export const ItemDialog = observer(() => {
 		resolver: zodResolver(itemSchema),
 	})
 
-	const onSubmit = handleSubmit(async (item: ItemForm) => {
-		await itemStore.save(item).then(() => {
-			itemStore.setDialogOpen(false)
-		})
+	const onSubmit = handleSubmit(async (itemFormData: ItemFormData) => {
+		const item = itemStore.selectedItem.getCopyWithFormData(itemFormData)
+
+		if (item.id) await itemStore.edit(item)
+		else await itemStore.add(item)
+
+		itemStore.setDialogOpen(false)
+		reset()
 	})
 
 	return (
