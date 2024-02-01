@@ -15,7 +15,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { ItemFormData, itemSchema } from './itemValidation'
 import { rankOptions } from 'stores/FirebaseStore'
 import { useState } from 'react'
-import { Item } from 'stores/models/Item'
+import { Item } from 'models/Item'
 
 export const ItemDialog = observer(() => {
 	const { appStore } = useStore()

@@ -21,7 +21,7 @@ import {
 	where,
 } from 'firebase/firestore'
 import { firebaseApp } from 'firebaseApp'
-import { Item } from './models/Item'
+import { Item } from '../models/Item'
 import { makeAutoObservable, runInAction } from '@thng/react'
 
 export type Table = 'users' | 'mangas' | 'movies' | 'series'

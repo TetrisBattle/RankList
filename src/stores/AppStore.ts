@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from '@thng/react'
 import { FirebaseStore, Rank, Table } from 'stores/FirebaseStore'
-import { Item } from './models/Item'
+import { Item } from '../models/Item'
 
 export class AppStore {
 	dialogOpen = false

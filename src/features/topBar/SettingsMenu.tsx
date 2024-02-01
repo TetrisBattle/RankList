@@ -5,7 +5,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { useState } from 'react'
-import { Item } from 'stores/models/Item'
+import { Item } from 'models/Item'
 
 export const SettingsMenu = () => {
 	const [settingsMenuAnchor, setSettingsMenuAnchor] =
