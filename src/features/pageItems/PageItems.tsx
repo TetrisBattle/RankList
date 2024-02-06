@@ -10,7 +10,7 @@ export const PageItems = observer(() => {
 		top: 0,
 	})
 
-	const pageItems = appStore.items.filter(
+	const pageItems = appStore.listItmes.filter(
 		(item) => item.rank === appStore.selectedPage
 	)
 

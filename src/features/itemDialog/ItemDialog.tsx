@@ -56,7 +56,7 @@ export const ItemDialog = observer(() => {
 	}
 
 	const onChange = (name: string) => {
-		const itemWithSameName = appStore.items.find((i) => {
+		const itemWithSameName = appStore.listItmes.find((i) => {
 			if (i.id === appStore.selectedItem.id) return false
 			return i.name.toLowerCase() === name.toLowerCase()
 		})
@@ -112,7 +112,7 @@ export const ItemDialog = observer(() => {
 									/>
 								)
 							}}
-							options={appStore.items}
+							options={appStore.listItmes}
 							getOptionLabel={(option) =>
 								typeof option === 'string'
 									? option

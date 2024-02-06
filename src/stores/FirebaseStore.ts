@@ -24,7 +24,7 @@ import { firebaseApp } from 'firebaseApp'
 import { Item } from '../models/Item'
 import { makeAutoObservable, runInAction } from '@thng/react'
 
-export type Table = 'users' | 'mangas' | 'movies' | 'series'
+export type Table = 'mangas' | 'movies' | 'series'
 export const tableOptions: Table[] = ['mangas', 'movies', 'series']
 
 export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
