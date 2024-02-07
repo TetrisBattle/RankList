@@ -52,11 +52,7 @@ export const ListMenu = observer(() => {
 						selected={option === appStore.selectedList}
 						onClick={async () => {
 							setListMenuAnchor(null)
-
-							appStore.setSelectedList(option)
-							if (appStore.listItmes.length === 0) {
-								await appStore.fetch(option)
-							}
+							await appStore.setSelectedList(option)
 
 							if (option === 'movies') {
 								appStore.setDisplayProgress(false)

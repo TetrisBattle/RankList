@@ -20,23 +20,27 @@ export class AppStore {
 		makeAutoObservable(this)
 	}
 
+	private get listItems() {
+		return this.items[this.selectedList]
+	}
+
+	get sortedListItems() {
+		return this.listItems.toSorted((a, b) => a.name.localeCompare(b.name))
+	}
+
 	setDialogOpen = (open: boolean) => {
 		this.dialogOpen = open
 	}
 
-	get listItmes() {
-		return this.items[this.selectedList]
-	}
-
-	setListItems = (items: Item[]) => {
-		this.items[this.selectedList] = items
-	}
-
-	setSelectedList(table: Table) {
+	setSelectedList = async (table: Table) => {
 		this.selectedList = table
+
+		if (this.listItems.length === 0) {
+			await this.fetchListItems()
+		}
 	}
 
-	setSelectedPage(rank: Rank) {
+	setSelectedPage = (rank: Rank) => {
 		this.selectedPage = rank
 	}
 
@@ -48,46 +52,47 @@ export class AppStore {
 		this.displayProgress = display
 	}
 
-	private sortListItems = () => {
-		this.listItmes.sort((a, b) => a.name.localeCompare(b.name))
+	reset = () => {
+		this.dialogOpen = false
+		this.items = {
+			mangas: [],
+			movies: [],
+			series: [],
+		}
+		this.selectedList = 'mangas'
+		this.selectedPage = 'S'
+		this.selectedItem = new Item()
+		this.displayProgress = true
 	}
 
-	fetch = async (table: Table) => {
-		const listItems = await this.db.getUserData(table)
-		this.setListItems(listItems)
+	fetchListItems = async () => {
+		const listItems = await this.db.getUserData(this.selectedList)
+		this.items[this.selectedList] = listItems
 	}
 
 	add = async (item: Item) => {
 		const savedItem = await this.db.post(this.selectedList, item)
 
 		runInAction(() => {
-			this.listItmes.push(savedItem)
+			this.listItems.push(savedItem)
 		})
-
-		this.sortListItems()
 	}
 
 	edit = async (item: Item) => {
-		const itemIndex = this.listItmes.findIndex((i) => i.id === item.id)
+		const itemIndex = this.listItems.findIndex((i) => i.id === item.id)
 		if (itemIndex === -1) throw new Error('Item not found')
-
-		const nameHasChanged =
-			this.listItmes[itemIndex].name.toLowerCase() !==
-			item.name.toLowerCase()
 
 		await this.db.put(this.selectedList, item)
 
 		runInAction(() => {
-			this.listItmes[itemIndex] = item
+			this.listItems[itemIndex] = item
 		})
-
-		if (nameHasChanged) this.sortListItems()
 	}
 
 	delete = async (itemId: string) => {
-		const itemIndex = this.listItmes.findIndex((i) => i.id === itemId)
+		const itemIndex = this.listItems.findIndex((i) => i.id === itemId)
 		if (itemIndex === -1) throw new Error('Item not found')
-		this.listItmes.splice(itemIndex, 1)
+		this.listItems.splice(itemIndex, 1)
 		this.db.delete(this.selectedList, itemId)
 	}
 }

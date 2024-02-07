@@ -54,19 +54,11 @@ export class FirebaseStore {
 		this.currentUser = user
 	}
 
-	onAuthChange = async (cb: (user: Item[]) => void) => {
-		onAuthStateChanged(getAuth(), async (user) => {
+	onAuthChange = async (cb: (user: User | null) => Promise<void>) => {
+		onAuthStateChanged(this.auth, async (user) => {
 			this.setCurrentUser(user)
+			cb(user)
 
-			if (!user) {
-				runInAction(() => {
-					this.isLoading = false
-				})
-				return cb([])
-			}
-
-			const datas = await this.getUserData('mangas')
-			cb(datas)
 			runInAction(() => {
 				this.isLoading = false
 			})
@@ -98,7 +90,7 @@ export class FirebaseStore {
 			const ItemDto = doc.data() as ItemDto
 			return Item.convertFromDto(doc.id, ItemDto)
 		}) as Item[]
-		return items.sort((a, b) => a.name.localeCompare(b.name))
+		return items
 	}
 
 	post = async (table: Table, item: Item) => {

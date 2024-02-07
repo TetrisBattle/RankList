@@ -12,8 +12,9 @@ export const App = observer(() => {
 
 	useEffect(() => {
 		const authChangeListener = async () => {
-			await firebaseStore.onAuthChange((items) => {
-				appStore.setListItems(items)
+			await firebaseStore.onAuthChange(async (user) => {
+				if (user) await appStore.fetchListItems()
+				else appStore.reset()
 			})
 		}
 		authChangeListener()
