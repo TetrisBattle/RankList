@@ -59,12 +59,12 @@ export const PageItems = observer(() => {
 								{item.progress}
 							</Typography>
 						)}
-						<ItemContextMenu
-							contextPos={contextPos}
-							setContextPos={setContextPos}
-						/>
 					</ListItem>
 				))}
+				<ItemContextMenu
+					contextPos={contextPos}
+					setContextPos={setContextPos}
+				/>
 			</List>
 		</>
 	)
