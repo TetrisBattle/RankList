@@ -42,7 +42,8 @@ export const ItemDialog = observer(() => {
 	}
 
 	const onSubmit = handleSubmit(async (itemFormData: ItemFormData) => {
-		const item = appStore.selectedItem.getCopyWithFormData(itemFormData)
+		appStore.selectedItem.setFormData(itemFormData)
+		const item = appStore.selectedItem.copy()
 
 		if (item.id) await appStore.edit(item)
 		else await appStore.add(item)

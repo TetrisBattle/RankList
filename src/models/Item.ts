@@ -13,6 +13,12 @@ export class Item {
 		public updated: Date | null = null
 	) {}
 
+	setFormData = (itemFormData: ItemFormData) => {
+		this.name = itemFormData.name.trim()
+		this.progress = itemFormData.progress.trim()
+		this.rank = itemFormData.rank
+	}
+
 	convertToDto(): ItemDto {
 		return {
 			userId: this.userId,
@@ -36,13 +42,13 @@ export class Item {
 		)
 	}
 
-	getCopyWithFormData = (itemFormData: ItemFormData): Item => {
+	copy = (): Item => {
 		return new Item(
 			this.id,
 			this.userId,
-			itemFormData.name.trim(),
-			itemFormData.progress.trim(),
-			itemFormData.rank,
+			this.name,
+			this.progress,
+			this.rank,
 			this.created,
 			this.updated
 		)
