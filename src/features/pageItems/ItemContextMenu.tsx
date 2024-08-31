@@ -42,7 +42,7 @@ export const ItemContextMenu = ({
 	}
 
 	function onEdit() {
-		appStore.setDialogOpen(true)
+		appStore.setItemDialogOpen(true)
 		onClose()
 	}
 

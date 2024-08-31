@@ -1,9 +1,9 @@
 import { Button, ListItemIcon, Menu, MenuItem } from '@thng/react'
 import SettingsIcon from '@mui/icons-material/Settings'
 import { useStore } from 'hooks/useStore'
-import LogoutIcon from '@mui/icons-material/Logout'
 import AddIcon from '@mui/icons-material/Add'
-import SearchIcon from '@mui/icons-material/Search'
+import HelpIcon from '@mui/icons-material/Help'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { useState } from 'react'
 import { Item } from 'models/Item'
 
@@ -34,7 +34,7 @@ export const SettingsMenu = () => {
 						const newItem = new Item()
 						newItem.rank = appStore.selectedPage
 						appStore.setSelectedItem(newItem)
-						appStore.setDialogOpen(true)
+						appStore.setItemDialogOpen(true)
 					}}
 				>
 					<ListItemIcon>
@@ -45,12 +45,13 @@ export const SettingsMenu = () => {
 				<MenuItem
 					onClick={() => {
 						setSettingsMenuAnchor(null)
+						appStore.setStatusInfoDialogOpen(true)
 					}}
 				>
 					<ListItemIcon>
-						<SearchIcon fontSize='small' />
+						<HelpIcon fontSize='small' />
 					</ListItemIcon>
-					Search
+					Info
 				</MenuItem>
 				<MenuItem
 					onClick={() => {

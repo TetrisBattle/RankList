@@ -1,9 +1,11 @@
 import { makeAutoObservable, runInAction } from '@thng/react'
 import { FirebaseStore, Rank, Table } from 'stores/FirebaseStore'
 import { Item } from '../models/Item'
+import dayjs from 'dayjs'
 
 export class AppStore {
-	dialogOpen = false
+	itemDialogOpen = false
+	statusInfoDialogOpen = false
 	private items: {
 		[key in Table]: Item[]
 	} = {
@@ -28,8 +30,12 @@ export class AppStore {
 		return this.listItems.toSorted((a, b) => a.name.localeCompare(b.name))
 	}
 
-	setDialogOpen = (open: boolean) => {
-		this.dialogOpen = open
+	setItemDialogOpen = (open: boolean) => {
+		this.itemDialogOpen = open
+	}
+
+	setStatusInfoDialogOpen = (open: boolean) => {
+		this.statusInfoDialogOpen = open
 	}
 
 	setSelectedList = async (table: Table) => {
@@ -53,7 +59,7 @@ export class AppStore {
 	}
 
 	reset = () => {
-		this.dialogOpen = false
+		this.itemDialogOpen = false
 		this.items = {
 			mangas: [],
 			movies: [],
@@ -67,7 +73,10 @@ export class AppStore {
 
 	fetchListItems = async () => {
 		const listItems = await this.db.getUserData(this.selectedList)
-		this.items[this.selectedList] = listItems
+
+		runInAction(() => {
+			this.items[this.selectedList] = listItems
+		})
 	}
 
 	add = async (item: Item) => {
@@ -94,5 +103,16 @@ export class AppStore {
 		if (itemIndex === -1) throw new Error('Item not found')
 		this.listItems.splice(itemIndex, 1)
 		this.db.delete(this.selectedList, itemId)
+	}
+
+	getStatus(date: Date) {
+		const monthDiff = Math.abs(dayjs(date).diff(new Date(), 'month'))
+		return monthDiff >= 12
+			? 'hsl(0, 100%, 40%)'
+			: monthDiff >= 6
+				? 'hsl(35, 100%, 45%)'
+				: monthDiff >= 3
+					? 'hsl(50, 100%, 45%)'
+					: 'hsl(100, 100%, 40%)'
 	}
 }

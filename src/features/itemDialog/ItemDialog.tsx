@@ -1,10 +1,13 @@
 import {
 	Autocomplete,
 	Button,
+	Checkbox,
 	Dialog,
 	DialogActions,
 	DialogContent,
 	DialogTitle,
+	FormControlLabel,
+	Grid,
 	MenuItem,
 	TextField,
 	observer,
@@ -31,12 +34,13 @@ export const ItemDialog = observer(() => {
 			name: appStore.selectedItem.name,
 			progress: appStore.selectedItem.progress,
 			rank: appStore.selectedItem.rank,
+			completed: appStore.selectedItem.completed,
 		},
 		resolver: zodResolver(itemSchema),
 	})
 
 	const onClose = () => {
-		appStore.setDialogOpen(false)
+		appStore.setItemDialogOpen(false)
 		setExistingItem(null)
 		reset()
 	}
@@ -70,7 +74,7 @@ export const ItemDialog = observer(() => {
 	return (
 		<Dialog
 			PaperProps={{ component: 'form' }}
-			open={appStore.dialogOpen}
+			open={appStore.itemDialogOpen}
 			onSubmit={onSubmit}
 			fullWidth
 			maxWidth='xs'
@@ -79,82 +83,98 @@ export const ItemDialog = observer(() => {
 				{appStore.selectedItem.id ? 'Edit' : 'Add'}
 			</DialogTitle>
 
-			<DialogContent
-				sx={{
-					display: 'flex',
-					flexDirection: 'column',
-					gap: 2,
-				}}
-			>
-				<Controller
-					control={control}
-					name='name'
-					render={({ field }) => (
-						<Autocomplete
-							value={field.value}
-							onChange={(_e, item) => {
-								if (!item) return
-								if (typeof item === 'string') throw new Error()
-								field.onChange(item.name)
-								onSelect(item)
-							}}
-							renderInput={(params) => {
-								return (
-									<TextField
-										{...params}
-										{...field}
-										label='Name'
-										error={!!errors.name}
-										onChange={(e) => {
-											field.onChange(e)
-											onChange(e.target.value)
-										}}
-										sx={{ mt: 2 }}
-									/>
-								)
-							}}
-							options={appStore.sortedListItems}
-							getOptionLabel={(option) =>
-								typeof option === 'string'
-									? option
-									: option.name
-							}
-							freeSolo
+			<DialogContent>
+				<Grid container spacing={2}>
+					<Grid item xs={12}>
+						<Controller
+							control={control}
+							name='name'
+							render={({ field }) => (
+								<Autocomplete
+									value={field.value}
+									onChange={(_e, item) => {
+										if (!(item instanceof Item)) return
+										field.onChange(item.name)
+										onSelect(item)
+									}}
+									renderInput={(params) => {
+										return (
+											<TextField
+												{...params}
+												{...field}
+												label='Name'
+												error={!!errors.name}
+												onChange={(e) => {
+													field.onChange(e)
+													onChange(e.target.value)
+												}}
+												sx={{ mt: 2 }}
+											/>
+										)
+									}}
+									options={appStore.sortedListItems}
+									getOptionLabel={(option) =>
+										typeof option === 'string'
+											? option
+											: option.name
+									}
+									freeSolo
+								/>
+							)}
 						/>
-					)}
-				/>
-
-				<Controller
-					control={control}
-					name='progress'
-					render={({ field }) => (
-						<TextField
-							{...field}
-							label={`Progress ${existingItem?.progress || ''}`}
-							error={!!errors.progress}
+					</Grid>
+					<Grid item xs={6}>
+						<Controller
+							control={control}
+							name='progress'
+							render={({ field }) => (
+								<TextField
+									{...field}
+									label={`Progress ${existingItem?.progress || ''}`}
+									error={!!errors.progress}
+								/>
+							)}
 						/>
-					)}
-				/>
-
-				<Controller
-					control={control}
-					name='rank'
-					render={({ field }) => (
-						<TextField
-							{...field}
-							label={`Rank ${existingItem?.rank || ''}`}
-							error={!!errors.rank}
-							value={field.value}
-							select
-						>
-							{rankOptions.map((rank) => (
-								<MenuItem key={rank} value={rank}>
-									{rank}
-								</MenuItem>
-							))}
-						</TextField>
-					)}
-				/>
+					</Grid>
+					<Grid item xs={6}>
+						<Controller
+							control={control}
+							name='rank'
+							render={({ field }) => (
+								<TextField
+									{...field}
+									label={`Rank ${existingItem?.rank || ''}`}
+									error={!!errors.rank}
+									value={field.value}
+									select
+								>
+									{rankOptions.map((rank) => (
+										<MenuItem key={rank} value={rank}>
+											{rank}
+										</MenuItem>
+									))}
+								</TextField>
+							)}
+						/>
+					</Grid>
+					<Grid item xs={12}>
+						<Controller
+							control={control}
+							name='completed'
+							render={({ field }) => (
+								<FormControlLabel
+									label='Completed'
+									control={
+										<Checkbox
+											{...field}
+											checked={field.value}
+										/>
+									}
+								/>
+							)}
+						/>
+					</Grid>
+				</Grid>
 			</DialogContent>
 			<DialogActions>
 				{existingItem && (

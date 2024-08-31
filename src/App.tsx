@@ -5,6 +5,7 @@ import { TopBar } from 'features/topBar/TopBar'
 import { PageItems } from 'features/pageItems/PageItems'
 import { ItemDialog } from 'features/itemDialog/ItemDialog'
 import { useSetupTheme } from 'hooks/useSetupTheme'
+import { InfoDialog } from 'features/InfoDialog'
 
 export const App = observer(() => {
 	const { firebaseStore, appStore } = useStore()
@@ -64,6 +65,7 @@ export const App = observer(() => {
 				)}
 			</Box>
 			<ItemDialog />
+			<InfoDialog />
 		</>
 	)
 })

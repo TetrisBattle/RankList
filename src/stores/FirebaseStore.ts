@@ -35,6 +35,7 @@ export type ItemDto = {
 	name: string
 	progress: string
 	rank: Rank
+	completed: boolean
 	created: Timestamp
 	updated: Timestamp | null
 }
@@ -95,6 +96,7 @@ export class FirebaseStore {
 
 	post = async (table: Table, item: Item) => {
 		if (!this.currentUser) throw new Error('User is not logged in')
+
 		item.userId = this.currentUser.uid
 		const itemDto = item.convertToDto()
 
@@ -110,6 +112,7 @@ export class FirebaseStore {
 			name: item.name,
 			progress: item.progress,
 			rank: item.rank,
+			completed: item.completed,
 			updated: Timestamp.fromDate(new Date()),
 		})
 	}
@@ -117,5 +120,27 @@ export class FirebaseStore {
 	delete = async (table: Table, itemId: string) => {
 		const docRef = doc(this.db, table, itemId)
 		await deleteDoc(docRef)
+	}
+
+	addColumn = async ({ name, value }: { name: string; value: any }) => {
+		// Data cannot be manipulated if user is not logged in
+		if (!this.currentUser) throw new Error('User is not logged in')
+
+		tableOptions.forEach(async (table) => {
+			const colRef = collection(this.db, table)
+			const docSnap = await getDocs(colRef)
+
+			docSnap.docs.forEach(async (document) => {
+				if (document.data()[name] !== undefined)
+					throw new Error('Column already exists!')
+
+				const docRef = doc(this.db, table, document.id)
+				await updateDoc(docRef, {
+					[name]: value,
+				})
+			})
+		})
+
+		console.log('Done!')
 	}
 }

@@ -9,6 +9,7 @@ export class Item {
 		public name = '',
 		public progress = '',
 		public rank: Rank = '?',
+		public completed = false,
 		public created: Date = new Date(),
 		public updated: Date | null = null
 	) {}
@@ -17,6 +18,7 @@ export class Item {
 		this.name = itemFormData.name.trim()
 		this.progress = itemFormData.progress.trim()
 		this.rank = itemFormData.rank
+		this.completed = itemFormData.completed
 	}
 
 	convertToDto(): ItemDto {
@@ -25,6 +27,7 @@ export class Item {
 			name: this.name,
 			progress: this.progress,
 			rank: this.rank,
+			completed: this.completed,
 			created: Timestamp.fromDate(this.created),
 			updated: this.updated ? Timestamp.fromDate(this.updated) : null,
 		}
@@ -37,6 +40,7 @@ export class Item {
 			dto.name,
 			dto.progress,
 			dto.rank,
+			dto.completed,
 			dto.created.toDate(),
 			dto.updated?.toDate() ?? null
 		)
@@ -49,6 +53,7 @@ export class Item {
 			this.name,
 			this.progress,
 			this.rank,
+			this.completed,
 			this.created,
 			this.updated
 		)
