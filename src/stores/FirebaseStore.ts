@@ -27,7 +27,7 @@ import { makeAutoObservable, runInAction } from '@thng/react'
 export type Table = 'mangas' | 'movies' | 'series'
 export const tableOptions: Table[] = ['mangas', 'movies', 'series']
 
-export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?'
+export type Rank = 'S' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'X' | '?' | 'Z'
 export const rankOptions: Rank[] = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'X', '?']
 
 export type ItemDto = {

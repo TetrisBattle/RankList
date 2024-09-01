@@ -112,7 +112,9 @@ export const ItemDialog = observer(() => {
 											/>
 										)
 									}}
-									options={appStore.sortedListItems}
+									options={appStore.sortedListItems.filter(
+										(item) => item.rank !== 'Z'
+									)}
 									getOptionLabel={(option) =>
 										typeof option === 'string'
 											? option
@@ -136,27 +138,29 @@ export const ItemDialog = observer(() => {
 							)}
 						/>
 					</Grid>
-					<Grid item xs={6}>
-						<Controller
-							control={control}
-							name='rank'
-							render={({ field }) => (
-								<TextField
-									{...field}
-									label={`Rank ${existingItem?.rank || ''}`}
-									error={!!errors.rank}
-									value={field.value}
-									select
-								>
-									{rankOptions.map((rank) => (
-										<MenuItem key={rank} value={rank}>
-											{rank}
-										</MenuItem>
-									))}
-								</TextField>
-							)}
-						/>
-					</Grid>
+					{!appStore.isSecretCode && (
+						<Grid item xs={6}>
+							<Controller
+								control={control}
+								name='rank'
+								render={({ field }) => (
+									<TextField
+										{...field}
+										label={`Rank ${existingItem?.rank || ''}`}
+										error={!!errors.rank}
+										value={field.value}
+										select
+									>
+										{rankOptions.map((rank) => (
+											<MenuItem key={rank} value={rank}>
+												{rank}
+											</MenuItem>
+										))}
+									</TextField>
+								)}
+							/>
+						</Grid>
+					)}
 					<Grid item xs={12}>
 						<Controller
 							control={control}

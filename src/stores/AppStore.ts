@@ -18,8 +18,13 @@ export class AppStore {
 	selectedItem = new Item()
 	displayProgress = true
 
+	private secretCode: Rank[] = ['S', 'B', 'D', 'F', 'A', 'C', 'E']
+	private currentCode: Rank[] = []
+
 	constructor(private db: FirebaseStore) {
 		makeAutoObservable(this)
+
+		this.currentCode.push(this.selectedPage)
 	}
 
 	private get listItems() {
@@ -28,6 +33,14 @@ export class AppStore {
 
 	get sortedListItems() {
 		return this.listItems.toSorted((a, b) => a.name.localeCompare(b.name))
+	}
+
+	get isSecretCode(): boolean {
+		if (this.currentCode.length === this.secretCode.length) {
+			return this.currentCode.every(
+				(code, index) => code === this.secretCode[index]
+			)
+		} else return false
 	}
 
 	setItemDialogOpen = (open: boolean) => {
@@ -48,6 +61,15 @@ export class AppStore {
 
 	setSelectedPage = (rank: Rank) => {
 		this.selectedPage = rank
+
+		if (this.currentCode.length < this.secretCode.length) {
+			this.currentCode.push(rank)
+		} else {
+			this.currentCode.shift()
+			this.currentCode.push(rank)
+		}
+
+		if (this.isSecretCode) this.selectedPage = 'Z'
 	}
 
 	setSelectedItem = (item: Item) => {
