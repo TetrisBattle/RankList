@@ -127,7 +127,7 @@ export class AppStore {
 		this.db.delete(this.selectedList, itemId)
 	}
 
-	getStatus(date: Date) {
+	getStatus = (date: Date) => {
 		const monthDiff = Math.abs(dayjs(date).diff(new Date(), 'month'))
 		return monthDiff >= 12
 			? 'hsl(0, 100%, 40%)'
